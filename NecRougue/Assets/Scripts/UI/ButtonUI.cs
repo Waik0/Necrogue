@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ButtonUI : MonoBehaviour,IButtonUI
+public class ButtonUI : MonoBehaviour,IModalUI
 {
     [SerializeField] private Button _button;
 
@@ -17,6 +17,12 @@ public class ButtonUI : MonoBehaviour,IButtonUI
     {
         _isClicked = false;
     }
+
+    public void ResetUI()
+    {
+        
+    }
+
     public bool UpdateUI()
     {
         return _isClicked;

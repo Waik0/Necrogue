@@ -4,6 +4,7 @@
     <e p="C:\Users\stoas\.Rider2019.3\system\extResources" t="IncludeRecursive" />
     <e p="C:\Users\stoas\.Rider2019.3\system\resharper-host\local\Transient\ReSharperHost\v193\SolutionCaches\_NecRougue.-987795839.00" t="ExcludeRecursive" />
     <e p="E:\works\unity\Necrogue\unity\NecRougue" t="IncludeRecursive">
+      <e p="Assembly-CSharp-Editor.csproj" t="IncludeRecursive" />
       <e p="Assembly-CSharp.csproj" t="IncludeRecursive" />
       <e p="Assets" t="Include">
         <e p="Plugins" t="Include">
@@ -526,36 +527,85 @@
         <e p="Scripts" t="Include">
           <e p="Boot.cs" t="Include" />
           <e p="Debug" t="Include">
+            <e p="DebugLog.cs" t="Include" />
             <e p="GameDebugManager.cs" t="Include" />
           </e>
           <e p="Game" t="Include">
-            <e p="Battle" t="Include">
-              <e p="Ability.cs" t="Include" />
-              <e p="BattleEnitities.cs" t="Include" />
-              <e p="BattleSequence.cs" t="Include" />
-              <e p="BattleView.cs" t="Include" />
+            <e p="Entities" t="Include">
+              <e p="Entities.cs" t="Include" />
             </e>
-            <e p="DataController.cs" t="Include" />
-            <e p="GameSequence.cs" t="Include" />
             <e p="ISequence.cs" t="Include" />
-            <e p="Map" t="Include">
+            <e p="MakeEnemyFromMap.cs" t="Include" />
+            <e p="Presenter" t="Include">
+              <e p="BattlePresenter.cs" t="Include" />
+            </e>
+            <e p="Sequence" t="Include">
+              <e p="BattleSequence.cs" t="Include" />
+              <e p="GameSequence.cs" t="Include" />
               <e p="MapSequence.cs" t="Include" />
             </e>
-            <e p="Player" t="Include">
-              <e p="PlayerData.cs" t="Include" />
+            <e p="UseCase" t="Include">
+              <e p="BattleDataUseCase.cs" t="Include" />
+              <e p="EnemyDataUseCase.cs" t="Include" />
+              <e p="MapDataUseCase.cs" t="Include" />
+              <e p="PlayerDataUseCAse.cs" t="Include" />
+            </e>
+            <e p="Utility" t="Include">
+              <e p="AbilityEffects.cs" t="Include" />
+              <e p="BattleProcess.cs" t="Include" />
+              <e p="Enum.cs" t="Include" />
+            </e>
+          </e>
+          <e p="MasterdataExtensions.cs" t="Include" />
+          <e p="MasterDefine" t="Include">
+            <e p="Record" t="Include">
+              <e p="MstAbilityRecord.cs" t="Include" />
+              <e p="MstCharacterRecord.cs" t="Include" />
+              <e p="MstEnemyDeckRecord.cs" t="Include" />
+              <e p="MstMapNodeRecord.cs" t="Include" />
+              <e p="MstMonsterRecord.cs" t="Include" />
+              <e p="MstRaceRecord.cs" t="Include" />
             </e>
           </e>
           <e p="UI" t="Include">
             <e p="ButtonUI.cs" t="Include" />
-            <e p="DeckOrderUI.cs" t="Include" />
+            <e p="DeckEditUI.cs" t="Include" />
+            <e p="MapUI.cs" t="Include" />
             <e p="UIInterface.cs" t="Include" />
           </e>
         </e>
         <e p="ThirdPirty" t="Include">
+          <e p="CleanArchtecture" t="Include">
+            <e p="Interfaces" t="Include">
+              <e p="Interfaces.cs" t="Include" />
+            </e>
+          </e>
+          <e p="MiniJSON" t="Include">
+            <e p="MiniJSON.cs" t="Include" />
+          </e>
           <e p="StateMachineSystem" t="Include">
             <e p="StateMachine.cs" t="Include" />
             <e p="StateMachineInfo.cs" t="Include" />
             <e p="StateMachineSample.cs" t="Include" />
+          </e>
+          <e p="Toast_EditorUtil" t="Include">
+            <e p="Editor" t="Include">
+              <e p="EditorUtil.cs" t="Include" />
+            </e>
+          </e>
+          <e p="Toast_Masterdata" t="Include">
+            <e p="Editor" t="Include">
+              <e p="MasterdataEditor.cs" t="Include" />
+              <e p="MasterdataEditorClasses.cs" t="Include" />
+              <e p="MasterdataEditorMenu.cs" t="Include" />
+              <e p="MasterdataSetting.cs" t="Include" />
+              <e p="MasterdataToExcel.cs" t="Include" />
+              <e p="Template.cs" t="Include" />
+            </e>
+            <e p="MasterdataManager.cs" t="Include" />
+          </e>
+          <e p="Toast_Singleton" t="Include">
+            <e p="RgSingleton.cs" t="Include" />
           </e>
         </e>
       </e>

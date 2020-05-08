@@ -3,16 +3,16 @@ using System.Collections.Generic;
 using Toast;
 using UnityEngine;
 
-public interface ISequence
+public interface ISequence<T>
 {
     void ResetSequence();
-    string UpdateSequence();
+    T UpdateSequence();
 
 }
 
-public abstract class SequenceBehaviour : MonoBehaviour, ISequence
+public abstract class SequenceBehaviour<T> : MonoBehaviour, ISequence<T>
 {
     public abstract void ResetSequence();
 
-    public abstract string UpdateSequence();
+    public abstract T UpdateSequence();
 }
