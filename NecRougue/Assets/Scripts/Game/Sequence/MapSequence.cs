@@ -52,6 +52,7 @@ public class MapSequence : SequenceBehaviour<int>
 
     private IEnumerator Select() 
     {
+        GameLogger.GameLog("マップ選択");
         _mapUi.ResetUI();
         while (!_mapUi.UpdateUI())
         {

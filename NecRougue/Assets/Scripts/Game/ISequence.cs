@@ -16,3 +16,9 @@ public abstract class SequenceBehaviour<T> : MonoBehaviour, ISequence<T>
 
     public abstract T UpdateSequence();
 }
+public abstract class Sequence<T> : ISequence<T>
+{
+    public abstract void ResetSequence();
+
+    public abstract T UpdateSequence();
+}

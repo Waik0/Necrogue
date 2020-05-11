@@ -11,7 +11,8 @@ public class MstAbilityRecord : IMasterRecord
         get => id;
     }
     public int id;
-    public AbilityTimingType timingType;
+    public string name;
+    //public AbilityTimingType timingType;
     public int param1;//汎用的に使用するパラメーター
     public string description;
 }

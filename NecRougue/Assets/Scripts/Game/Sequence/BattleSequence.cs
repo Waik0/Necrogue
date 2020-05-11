@@ -21,6 +21,7 @@ public class BattleSequence : SequenceBehaviour<BattleResult>
         Init,//内部的初期化
         Setup,//対面する演出
         DeckPrepare,
+        Summon,
         Resolve,//実際の処理は別クラスで管理
         End
     }
@@ -32,18 +33,17 @@ public class BattleSequence : SequenceBehaviour<BattleResult>
     private PlayerDataUseCase _playerDataUseCase;
     private EnemyDataUseCase _enemyDataUseCase;
     private BattlePresenter _battlePresenter = new BattlePresenter();
+    private BattleDeckEditSequence _battleDeckEditSequence = new BattleDeckEditSequence();
+    private BattleProcessSequence _battleProcess = new BattleProcessSequence();
 
-    private BattleProcess _battleProcess = new BattleProcess();
-    //ui
-    private DeckEditUI _deckEditUi = new DeckEditUI();
     
     public void Inject(PlayerDataUseCase playerDataUseCase,EnemyDataUseCase enemyDataUseCase)
     {
         _playerDataUseCase = playerDataUseCase;
         _enemyDataUseCase = enemyDataUseCase;
-        _deckEditUi.Inject(_battleDataUseCase);
         _battlePresenter.Inject(_battleDataUseCase);
         _battleProcess.Inject(_battleDataUseCase);
+        _battleDeckEditSequence.Inject(_battleDataUseCase,_battlePresenter);
         //イベント接続
         _battleProcess.OnCommand.RemoveAllListeners();
         _battleProcess.OnCommand.AddListener(_battlePresenter.OnCommand);
@@ -62,7 +62,7 @@ public class BattleSequence : SequenceBehaviour<BattleResult>
         {
             return null;
         }
-        return _battleDataUseCase.GetCurrentPlayer();
+        return _battleDataUseCase.GetOperationPlayer();
     }
     public override BattleResult UpdateSequence()
     {
@@ -80,7 +80,7 @@ public class BattleSequence : SequenceBehaviour<BattleResult>
         _statemachine.Next(State.Init);
         _battleDataUseCase.ResetData();
         _battlePresenter.Reset();
-        _battleProcess.ResetStep();
+        _battleProcess.ResetSequence();
         _result = BattleResult.None;
     }
     //todo UI初期化
@@ -110,12 +110,10 @@ public class BattleSequence : SequenceBehaviour<BattleResult>
     //todo デッキ変換
     IEnumerator DeckPrepare()
     {
-        _battleDataUseCase.ChangeState(BattleState.DeckPrepare);
-        DebugLog.Function(this,1);
-        _deckEditUi.ResetUI();
-        _battlePresenter.OnCommand(new BattleCommand().Generate(_battleDataUseCase.GetSnapShot()));
 
-        while (!_deckEditUi.UpdateUI())
+        DebugLog.Function(this,1);
+        _battleDeckEditSequence.ResetSequence();
+        while (_battleDeckEditSequence.UpdateSequence())
         {
             yield return null;
         }
@@ -124,11 +122,18 @@ public class BattleSequence : SequenceBehaviour<BattleResult>
 
     IEnumerator Resolve()
     {
-        _battleProcess.ResetStep();
+        _battleProcess.ResetSequence();
         DebugLog.Function(this,1);
-        yield return _battleProcess.Calc();
-        //yield return _battlePresenter.ProcessQueue();
-        if (_battlePresenter.IsEndBattle())
+        while (_battleProcess.UpdateSequence())
+        {
+            yield return null;
+        }
+
+        while (!_battlePresenter.IsEndTurn())
+        {
+            yield return null;
+        }
+        if (_battleDataUseCase.IsEndBattle())
         {
             _statemachine.Next(State.End);
         }
@@ -185,7 +190,7 @@ public class BattleSequence : SequenceBehaviour<BattleResult>
             case State.DeckPrepare:
                 
                 _battlePresenter.DebugUI();
-                _deckEditUi.DebugUI();
+                _battleDeckEditSequence.DebugUI();
                 break;
             
             case State.Resolve:

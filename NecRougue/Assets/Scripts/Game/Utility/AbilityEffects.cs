@@ -6,7 +6,7 @@ using UnityEngine;
 public class AbilityEffectsArgument
 {
     public BattleDataUseCase BattleDataUseCase;
-    public BattleProcess BattleProcess;
+    public BattleProcessSequence BattleProcess;
     public int PlayerIndex;
     public int DeckIndex;
     public int Level;

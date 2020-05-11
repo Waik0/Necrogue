@@ -13,7 +13,6 @@ public class BattlePresenter
     private BattleDataUseCase _battleDataUseCase;
     private Queue<BattleCommand> _battleCommandQueue;
     private bool _endTurn = false;
-    private bool _endAnimation = false;
     private IEnumerator _processQueue;
     private BattleViewAnimator _battleViewAnimator;
 
@@ -30,9 +29,9 @@ public class BattlePresenter
     {
         _battleViewAnimator = new BattleViewAnimator();
         _battleCommandQueue = new Queue<BattleCommand>();
-        _endTurn = false;
-        _endAnimation = false;
-        _battleCommandQueue.Clear();
+        _endTurn = false; 
+        //_battleCommandQueue.Clear();
+        _processQueue = null;
     }
      public void UpdateCommandProcess()
      {
@@ -42,16 +41,13 @@ public class BattlePresenter
          }
     
          var isContinue = _processQueue.MoveNext();
-         if (!isContinue)
-         {
-             _processQueue = null;
-         }
-    }
+   }
 
     public IEnumerator ProcessQueue()
     {
+        DebugLog.Function(this);
         var end = false;
-
+        _endTurn = false;
 
 
         while (!end)
@@ -74,19 +70,19 @@ public class BattlePresenter
             }
         }
 
-        _endAnimation = true;
+        _endTurn = true;
+        _processQueue = null;
     }
 
-
+    public bool IsEndTurn()
+    {
+        return _endTurn;
+    }
     public void OnCommand(BattleCommand command)
     {
         _battleCommandQueue.Enqueue(command);
     }
-
-    public bool IsEndBattle()
-    {
-        return _battleDataUseCase.IsEndBattle();
-    }
+    
 
     private class BattleViewAnimator
     {
@@ -112,24 +108,25 @@ public class BattlePresenter
             switch (card.State)
             {
                 case BattleCardState.None:
+                    GUILayout.Label(" ");
                     break;
                 case BattleCardState.Attack:
-                    GUILayout.Label("攻撃");
+                    GUILayout.Label("<color=red>攻撃</color>");
                     break;
                 case BattleCardState.Damage:
-                    GUILayout.Label("ダメージ");
+                    GUILayout.Label("<color=red>ダメージ</color>");
                     break;
                 case BattleCardState.Ability:
-                    GUILayout.Label("能力発動");
+                    GUILayout.Label("<color=yellow>能力発動</color>");
                     break;
                 case BattleCardState.Dead:
-                    GUILayout.Label("死亡");
+                    GUILayout.Label("<color=red>死亡</color>");
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
         }
-        public void DebugUI()
+        public void DebugUI(bool auto = false)
         {
             if (_snapShot == null)
             {
@@ -138,29 +135,35 @@ public class BattlePresenter
             }
             GUILayout.BeginVertical();
             GUILayout.Label(_snapShot.State.ToString());
-            for (var i = 0; i < _snapShot.PlayerList.Count; i++)
+            for (var i = _snapShot.PlayerList.Count - 1; i >= 0; i--)
             {
                 var pdata = _snapShot.PlayerList[i];
-
-                GUILayout.BeginHorizontal();
+                GUILayout.Label(pdata.PlayerType.ToString());
+                GUILayout.BeginHorizontal(GUILayout.Height(100));
+                if (pdata.Deck.Count == 0)
+                {
+                    GUILayout.Label(" ");
+                }
                 for (int j = 0; j < pdata.Deck.Count; j++)
                 { 
-                    GUILayout.BeginVertical("box");
+                    GUILayout.BeginVertical("box",GUILayout.Width(Screen.width / 4));
                     DebugCardView(pdata.Deck[j] );
-                    GUILayout.Label(pdata.Deck[j].Id.ToString());
-                    GUILayout.Label("Hp : " + pdata.Deck[j].Hp.Current.ToString());
-                    GUILayout.Label("At : "+  pdata.Deck[j].Attack.Current.ToString());
+                    //GUILayout.Label(pdata.Deck[j].Id.ToString());
+                    GUILayout.Label( pdata.Deck[j].Name.ToString());
+                    GUILayout.Label($"<color=green>H: { pdata.Deck[j].Hp.Current,-3}</color> <color=red>A: { pdata.Deck[j].Attack.Current,-3}</color>");
+                    foreach (var ability in pdata.Deck[j].AbilityList)
+                    {
+                        GUILayout.Label($"能力 : {ability.Name}");
+                    }
+                   
                     GUILayout.EndVertical();
                 }
                 GUILayout.EndHorizontal();
             }
 
-            if (_isEnd == false)
+            if (GUILayout.Button("Next") || auto)
             {
-                if (GUILayout.Button("Next"))
-                {
-                    _isEnd = true;
-                }
+                _isEnd = true;
             }
             GUILayout.EndVertical();
         }
@@ -168,10 +171,10 @@ public class BattlePresenter
     }
 #if DEBUG
 
-    public void DebugUI()
+    public void DebugUI(bool auto = false)
     {
         GUILayout.Label("CommandQueue : "+_battleCommandQueue.Count.ToString());
-        _battleViewAnimator.DebugUI();
+        _battleViewAnimator.DebugUI(auto);
     }
     
 #endif

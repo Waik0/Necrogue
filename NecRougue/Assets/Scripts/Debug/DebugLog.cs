@@ -11,10 +11,10 @@ public class DebugLog
         string idt = "";
         for (int i = 0; i < indent; i++)
         {
-            idt += "    ";
+            idt += "-- ";
         }
-
-        Debug.Log($"{idt}[ {self.GetType().Name} ] {name} ");
+        string str = $"[<color=#015010> {self.GetType().Name} </color>] ";
+        Debug.Log($"{idt}{str,-45}{name} ");
         //"(Line : {lineNumber})");
 #endif
     }

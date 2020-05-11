@@ -41,8 +41,19 @@ public class PlayerDataUseCase : IEntityUseCase<PlayerData>
     //----------------------------------------------------------------------------------------------------------------------
     //ストック操作
     //----------------------------------------------------------------------------------------------------------------------
+    public void AddStock(int monsterId)
+    {
+        var mst = MasterdataManager.Get<MstMonsterRecord>(monsterId);
+        AddStock(new CardData().Generate(mst));
+    }
     public void AddStock(CardData card)
     {
         _playerData.Stock.Add(card);
+    }
+    public CardData PopAndRemoveStock(int order)
+    {
+        var pop = _playerData.Stock[order];
+        _playerData.Stock.RemoveAt(order);
+        return pop;
     }
 }

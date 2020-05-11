@@ -27,12 +27,15 @@ public class PlayerData : IEntity,
     IGenerateFromMasterRecord<PlayerData,MstCharacterRecord>
 {
     public int CharaId;
+    public int Gold;
     public List<CardData> Deck;//デッキ
     public List<CardData> Stock;//デッキに入れていないカード
     public void Convert(MstCharacterRecord record)
     {
         CharaId = record.Id;
         Deck = new List<CardData>();
+        Stock = new List<CardData>();
+        Gold = 0;
         var cards = new[]
         {
             record.MonsterId1,
@@ -76,10 +79,12 @@ public class CardData : IEntity,
 {
     public int Id;
     public string Name;
+    public int Rarity;
     public int Attack;
     public int Hp;
     public int Defence;
     public List<int> Abilities;
+    public int Level;
 
     public CardData Generate(MstMonsterRecord record)
     {
@@ -98,6 +103,8 @@ public class CardData : IEntity,
         Attack = record.attack;
         Hp = record.hp;
         Defence = record.defence;
+        Level = record.level;
+        Rarity = record.rarity;
         Abilities = new List<int>()
         {
             record.abilityId1,
@@ -113,6 +120,8 @@ public class CardData : IEntity,
         Hp = entity.Hp.Max;
         Defence = entity.Defence.Max;
         Abilities = entity.AbilityList.ConvertAll(a => a.Id);
+        Level = entity.Level;
+        Rarity = entity.Rarity;
     }
 }
 //選択されたマップの敵データ
@@ -181,6 +190,7 @@ public class BattlePlayerData : IEntity,
     public int CharaId;
     public int AttackerIndex;
     public List<BattleCard> Deck;// = new List<BattleCard>();//モンスターカード 順番も関係ある
+    public List<BattleCard> Stock;//操作キャラ以外はnull
     public int Speed;
     //public bool IsAttackIndexOut => AttackerIndex >= Deck.Count;
     public void ResetAttackIndex()
@@ -193,6 +203,7 @@ public class BattlePlayerData : IEntity,
         PlayerType = PlayerType.Player;
         CharaId = entity.CharaId;
         Deck = entity.Deck.ConvertAll(card => new BattleCard().Generate(card));
+        Stock = entity.Stock.ConvertAll(card => new BattleCard().Generate(card));
         AttackerIndex = 0;
         
     }
@@ -244,6 +255,8 @@ public class BattleCard :IEntity,
 {
     public int Id;//マスターから素材引っ張る用
     public string Name;
+    public int Rarity;
+    public int Level;
     public ValueSet Attack;
     public ValueSet Hp;
     public ValueSet Defence;
@@ -257,6 +270,8 @@ public class BattleCard :IEntity,
     {
         Id = entity.Id;
         Name = entity.Name;
+        Level = entity.Level;
+        Rarity = entity.Rarity;
         Hp = new ValueSet(entity.Hp);
         Attack = new ValueSet(entity.Attack);
         Defence = new ValueSet(entity.Defence);
@@ -278,6 +293,8 @@ public class BattleCard :IEntity,
     {
         Id = record.id;
         Name = record.name;
+        Level = record.level;
+        Rarity = record.rarity;
         Hp = new ValueSet(record.hp);
         Attack = new ValueSet(record.attack);
         Defence = new ValueSet(record.defence);
@@ -337,13 +354,15 @@ public class Ability : IConvertFromMasterRecord<MstAbilityRecord>,
     IGenerateFromMasterRecord<Ability,MstAbilityRecord>
 {
     public int Id;//AbilityEffectsから効果ひっぱったり
+    public string Name;
     public Func<AbilityEffectsArgument,bool> Effect;
-    public AbilityTimingType TimingType;
+    //public AbilityTimingType TimingType;
     public void Convert(MstAbilityRecord record)
     {
+        Name = record.name;
         Id = record.id;
         Effect = AbilityEffects.GetEffect(Id);
-        TimingType = record.timingType;
+    //    TimingType = record.timingType;
     }
 
     public Ability Generate(MstAbilityRecord record)

@@ -4,12 +4,14 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Toast;
+using System.Text.RegularExpressions;
 
 public class GameSequence : MonoBehaviour
 {
     public enum State
     {
         Init,
+        FirstStock,
         Prepare,
         Map,
         Battle,
@@ -40,9 +42,20 @@ public class GameSequence : MonoBehaviour
     //初回に呼ばれる
     IEnumerator Init()
     {
+
+        DebugLog.Function(this);
         _playerDataUseCase.MakePlayerDataFromMaster(101);
         _mapSequence.Inject(_mapDataUseCase);
         _battleSequence.Inject(_playerDataUseCase,_enemyDataUseCase);
+        _statemachine.Next(State.FirstStock);
+        yield return null;
+    }
+    //初期手札を選ぶ
+    IEnumerator FirstStock()
+    {
+        DebugLog.Function(this);
+        _playerDataUseCase.AddStock(101);
+        _playerDataUseCase.AddStock(102);
         _statemachine.Next(State.Prepare);
         yield return null;
     }
@@ -68,7 +81,6 @@ public class GameSequence : MonoBehaviour
             result = _mapSequence.UpdateSequence();
            
         }
-        Debug.Log(result);
         _statemachine.Next(BranchFromMapResult(result));
     }
 
@@ -141,8 +153,13 @@ public class GameSequence : MonoBehaviour
     {
         _statemachine.Update();
     }
+
+
 #if DEBUG
+
+
     private Vector2 debug;
+    public static Vector2 logscr;
     private Font font = null;
     void OnGUI()
     {
@@ -153,25 +170,36 @@ public class GameSequence : MonoBehaviour
         }
 
         //float zoom = Screen.width / 480f;
-        GUI.skin.label.fontSize =  Screen.width / 24;
-        
-            GUI.skin.button.fontSize = Screen.width / 24;
+        GUI.skin.label.fontSize =  Screen.width / 32;
+        GUI.skin.button.fontSize = Screen.width / 32;
         //Matrix4x4 Translation = Matrix4x4.TRS(new Vector3(0,0,0),Quaternion.identity,Vector3.one);
         //Matrix4x4 Scale = Matrix4x4.Scale(new Vector3(zoom, zoom, 1.0f));
 
         //GUI.matrix = Translation*Scale*Translation.inverse;
+        GUILayout.BeginVertical();
+        //        
+        //GUILayout.BeginHorizontal(GUILayout.Height(150));
+        logscr = GUILayout.BeginScrollView(logscr,"box",GUILayout.Height(100));
+     
+        GUILayout.Label(GameLogger._log);
+
+        GUILayout.EndScrollView();
+        //GUILayout.EndHorizontal();
         debug = GUILayout.BeginScrollView(debug,GUILayout.Width(Screen.width));
         DebugUI();
         GUILayout.EndScrollView();
+        GUILayout.EndVertical();
     }
     void DebugUI()
     {
-        GUILayout.Label("[ GAME ] STATE : " +_statemachine.Current.ToString());
-        
+        //GUILayout.Label("[ GAME ] STATE : " +_statemachine.Current.ToString());
+
         switch (_statemachine.Current)
         {
             case State.Map:
                 _mapSequence.DebugUI();
+                break;
+            case State.FirstStock:
                 break;
             case State.Battle:
                 _battleSequence.DebugUI();
@@ -195,4 +223,21 @@ public class GameSequence : MonoBehaviour
     }
 #endif
 
+}
+public class GameLogger
+{
+#if DEBUG
+    public static string _log = "";
+#endif
+    public static void GameLog(string l)
+    {
+#if DEBUG
+        _log += l + "\n";
+        if (_log.Count(c => c == '\n') + 1 > 300)
+        {
+            Regex.Replace(_log, "(.*?)\n", "");
+        }
+        GameSequence.logscr.y = Mathf.Infinity;
+#endif
+    }
 }

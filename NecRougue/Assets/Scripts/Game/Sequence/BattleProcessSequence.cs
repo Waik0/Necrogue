@@ -10,8 +10,11 @@ using Random = UnityEngine.Random;
 /// <summary>
 /// バトル計算 1ターンごと
 /// </summary>
-public class BattleProcess
+public class BattleProcessSequence : Sequence<bool>
 {
+    //----------------------------------------------------------------------------------------------------------------------
+    // Enum,イベント用クラス定義
+    //----------------------------------------------------------------------------------------------------------------------
     public enum State
     {
         Init,
@@ -25,20 +28,28 @@ public class BattleProcess
         CheckAndIncrement,
         End
     }
-
     public class CommandEvent : UnityEvent<BattleCommand>{ }
+    //----------------------------------------------------------------------------------------------------------------------
+    // Event
+    //----------------------------------------------------------------------------------------------------------------------
+
     //演出用のイベント
     public CommandEvent OnCommand = new CommandEvent();
+
+    //----------------------------------------------------------------------------------------------------------------------
+    // フィールド
+    //----------------------------------------------------------------------------------------------------------------------
 
     
     private Statemachine<State> _statemachine;
     private BattleDataUseCase _battleDataUseCase;
-    private List<PlayerType> _order;
-    private PlayerType _currentAttacker;
-    private PlayerType _currentDefender;
-    private int _orderIndex = 0;
+
     //private int _defender;
-    public BattleProcess()
+    //----------------------------------------------------------------------------------------------------------------------
+    // パブリックメソッド
+    //----------------------------------------------------------------------------------------------------------------------
+
+    public BattleProcessSequence()
     {
         _statemachine = new Statemachine<State>();
         _statemachine.Init(this);
@@ -47,6 +58,21 @@ public class BattleProcess
     {
         _battleDataUseCase = battleDataUseCase;
     }
+    public override void ResetSequence()
+    {
+        _statemachine.Next(State.Init);
+    }
+
+    public override bool UpdateSequence()
+    {
+        _statemachine.Update();
+        return _statemachine.Current != State.End;
+        throw new NotImplementedException();
+    }
+    //----------------------------------------------------------------------------------------------------------------------
+    // シーケンス
+    //----------------------------------------------------------------------------------------------------------------------
+
     IEnumerator Init()
     {
         DebugLog.Function(this,2);
@@ -66,7 +92,7 @@ public class BattleProcess
         DebugLog.Function(this,2);
         _battleDataUseCase.ChangeState(BattleState.TurnStart);
         OnCommand.Invoke(new BattleCommand().Generate(_battleDataUseCase.GetSnapShot()));
-        _orderIndex = 0;//
+
         if (_battleDataUseCase.IsFirstTurn())
         {
             ResolveAbilityAllCard(AbilityTimingType.BattleStart);
@@ -89,7 +115,6 @@ public class BattleProcess
     IEnumerator ConfirmAttacker()
     {
         DebugLog.Function(this,2);
-        var playerNum = 2;
         //死亡チェック
         _battleDataUseCase.IncrementOrChangeIfAttackerIsDead();
         if (_battleDataUseCase.IsAllAttackEnd())
@@ -106,7 +131,6 @@ public class BattleProcess
     IEnumerator ConfirmTarget()
     {
         DebugLog.Function(this,2);
-        var playerNum = 2;
         
         //ターゲット選出
         var selection = _battleDataUseCase.ConfirmTarget();
@@ -167,11 +191,12 @@ public class BattleProcess
         if (end)
         {
             _battleDataUseCase.ChangeState(BattleState.TurnEnd);
+            //_battleDataUseCase.ResetStatus();
             OnCommand.Invoke(new BattleCommand().Generate(_battleDataUseCase.GetSnapShot()));
             _statemachine.Next(State.End);
             yield return null;
         }
-        _battleDataUseCase.ResetStatus();
+       
         _statemachine.Next(State.StepStart);
         yield return null;
     }
@@ -194,26 +219,21 @@ public class BattleProcess
             type,
             index);
     }
-
-
-
-    public void ResetStep()
-    {
-        _statemachine.Next(State.Init);
-    }
+    
   
-    public IEnumerator Calc()
-    {
-        while (_statemachine.Current != State.End)
-        {
-             _statemachine.Update();
-             yield return null;
-        }
-    }
+    // public IEnumerator Calc()
+    // {
+    //     while (_statemachine.Current != State.End)
+    //     {
+    //          _statemachine.Update();
+    //          yield return null;
+    //     }
+    // }
     #if DEBUG
     public void DebugUI()
     {
         GUILayout.Label("Process State : "+ _statemachine.Current);
     }
     #endif
+
 }

@@ -32,7 +32,7 @@ public class BattleDataUseCase : IEntityUseCase<BattleData>
         _battleData.Turn = 0;
         _battleData.PlayerList = new List<BattlePlayerData>();
     }
-    
+
     public bool SetPlayer(BattlePlayerData data)
     {
         if (_battleData.PlayerList.Any(p => p.PlayerType == data.PlayerType))
@@ -49,7 +49,7 @@ public class BattleDataUseCase : IEntityUseCase<BattleData>
     }
     //----------------------------------------------------------------------------------------------------------------------
     //デッキ編成処理
-    public bool ChangeCard(int select , int change)
+    public bool ChangeCard(int select, int change)
     {
         var index = _battleData.PlayerList.FindIndex(_ => _.PlayerType == PlayerType.Player);
         if (index == -1)
@@ -62,6 +62,12 @@ public class BattleDataUseCase : IEntityUseCase<BattleData>
         _battleData.PlayerList[index].Deck[change] = cache;
         return true;
 
+    }
+    public void Summon(int stockOrder, int order)
+    {
+        var card = GetOperationPlayer().Stock[stockOrder];
+        GetOperationPlayer().Stock.RemoveAt(stockOrder);
+        GetOperationPlayer().Deck.Insert(order, card);
     }
     //----------------------------------------------------------------------------------------------------------------------
     //バトル処理
@@ -223,7 +229,8 @@ public class BattleDataUseCase : IEntityUseCase<BattleData>
                             DeckIndex = j,
                             PlayerIndex = i,
                             TimingType = timingType,
-                            IsMine   = isMine
+                            IsMine   = isMine,
+                            Level = _battleData.PlayerList[i].Deck[j].Level
                         });
                         if (isAbilityExecute)
                         {
@@ -321,7 +328,12 @@ public class BattleDataUseCase : IEntityUseCase<BattleData>
 
     public bool IsOutOfDeckRange(int playerIndex, int deckIndex)
     {
-        return deckIndex < 0 || _battleData.PlayerList[playerIndex].Deck.Count > deckIndex;
+        var isPlayerIndexOut = playerIndex < 0 ||  _battleData.PlayerList.Count <= playerIndex;
+        if (isPlayerIndexOut)
+        {
+            return true;
+        }
+        return (deckIndex < 0 || _battleData.PlayerList[playerIndex].Deck.Count <= deckIndex);
     }
     //----------------------------------------------------------------------------------------------------------------------
     // 値取得
@@ -348,8 +360,8 @@ public class BattleDataUseCase : IEntityUseCase<BattleData>
         UpdateCardState(); 
         return  Data.DeepCopy();
     }
-
-    public BattlePlayerData GetCurrentPlayer()
+    //操作キャラのデータ取得
+    public BattlePlayerData GetOperationPlayer()
     {
         var index = _battleData.PlayerList.FindIndex(_ => _.PlayerType == PlayerType.Player);
         if (index == -1)
@@ -358,6 +370,16 @@ public class BattleDataUseCase : IEntityUseCase<BattleData>
         }
 
         return _battleData.PlayerList[index];
+    }
+    public int GetOperationPlayerIndex()
+    {
+        var index = _battleData.PlayerList.FindIndex(_ => _.PlayerType == PlayerType.Player);
+        if (index == -1)
+        {
+            return -1;
+        }
+        return index;
+
     }
     //----------------------------------------------------------------------------------------------------------------------
     // 値取得(参照)

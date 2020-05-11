@@ -63,14 +63,14 @@ public class MapUI : MonoBehaviour, IModalUI
             string text = mapRefNode.NodeId + " : \n" + mapRefNode.MapType.ToString();
             if (mapRefNode.Depth == nowDepth)
             {
-                if (GUILayout.Button(text,GUILayout.Width(100),GUILayout.Height(100)))
+                if (GUILayout.Button(text,GUILayout.Width(40),GUILayout.Height(30)))
                 {
                     _selectedMap = mapRefNode.SerialNumber;
                 }
             }
             else
             {
-                GUILayout.Label(text,GUILayout.Width(100));
+                GUILayout.Label(text,GUILayout.Width(40));
             }
         }
         GUILayout.EndVertical();

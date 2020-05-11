@@ -13,6 +13,8 @@ public class MstMonsterRecord : IMasterRecord
 
     public int id;
     public string name;
+    public int rarity;
+    public int level;
     public int attack;
     public int hp;
     public int defence;
