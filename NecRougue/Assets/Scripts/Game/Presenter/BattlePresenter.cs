@@ -155,6 +155,11 @@ public class BattlePresenter
                         continue;
                     }
                     //GUILayout.Label(pdata.Deck[j].Id.ToString());
+                    if(pdata.Deck[j].Name == null)
+                    {
+                        continue;
+                    }
+                    //Debug.Log(pdata.Deck[j].Name.ToString());
                     GUILayout.Label( pdata.Deck[j].Name.ToString() );
                     GUILayout.Label($"<color=green>H: { pdata.Deck[j].Hp.Current,-3}</color> <color=red>A: { pdata.Deck[j].Attack.Current,-3}</color>");
                     foreach (var ability in pdata.Deck[j].AbilityList)

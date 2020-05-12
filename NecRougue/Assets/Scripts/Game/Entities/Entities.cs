@@ -118,12 +118,14 @@ public class CardData : IEntity,
     public void Convert(BattleCard entity)
     {
         Id = entity.Id;
+        Name = entity.Name;
         Attack = entity.Attack.Max;
         Hp = entity.Hp.Max;
         Defence = entity.Defence.Max;
-        Abilities = entity.AbilityList.ConvertAll(a => a.Id);
         Level = entity.Level;
         Rarity = entity.Rarity;
+        Abilities = entity.AbilityList.ConvertAll(a => a.Id);
+
     }
 }
 //選択されたマップの敵データ

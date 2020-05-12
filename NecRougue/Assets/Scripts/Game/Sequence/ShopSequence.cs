@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Toast;
 using UnityEngine;
 
@@ -75,6 +76,8 @@ public class ShopSequence : Sequence<bool>
             _battlePresenter.UpdateCommandProcess();
             yield return null;
         }
+        _playerDataUseCase.SetDeck(_battleDataUseCase.GetRemainDecks().Select(_ => new CardData().Generate(_)).ToList());
+        _playerDataUseCase.SetStock(_battleDataUseCase.GetRemainStocks().Select(_ => new CardData().Generate(_)).ToList());
         _statemachine.Next(State.End);
         //yield return null;
     }
@@ -99,6 +102,7 @@ public class ShopSequence : Sequence<bool>
     }
     public void DebugUI2()
     {
+        _battlePresenter.DebugUI2();
         _shopUI.DebugUI2();
     }
 #endif
