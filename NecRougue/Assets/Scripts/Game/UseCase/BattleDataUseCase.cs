@@ -63,6 +63,11 @@ public class BattleDataUseCase : IEntityUseCase<BattleData>
         return true;
 
     }
+    public void AddStock(int id)
+    {
+        var mst = MasterdataManager.Get<MstMonsterRecord>(id);
+        GetOperationPlayer().Stock.Add(new BattleCard().Generate(mst));
+    }
     public void Summon(int stockOrder, int order)
     {
         var card = GetOperationPlayer().Stock[stockOrder];
@@ -380,6 +385,15 @@ public class BattleDataUseCase : IEntityUseCase<BattleData>
         }
         return index;
 
+    }
+    //生き残ったデッキ
+    public List<BattleCard> GetRemainDecks()
+    {
+        return GetOperationPlayer().Deck.Where(_ => _.Hp.Current > 0).ToList();
+    }
+    public List<BattleCard> GetRemainStocks()
+    {
+        return GetOperationPlayer().Stock;
     }
     //----------------------------------------------------------------------------------------------------------------------
     // 値取得(参照)

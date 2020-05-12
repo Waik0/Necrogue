@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Toast;
 using UnityEngine;
 
-public class BattleDeckEditSequence : Sequence<bool>
+public class DeckEditSequence : Sequence<bool>
 {
     //----------------------------------------------------------------------------------------------------------------------
     // Enum定義
@@ -43,7 +43,7 @@ public class BattleDeckEditSequence : Sequence<bool>
     // パブリックメソッド
     //----------------------------------------------------------------------------------------------------------------------
 
-    public BattleDeckEditSequence()
+    public DeckEditSequence()
     {
         _statemachine = new Statemachine<State>();
         _statemachine.Init(this);
@@ -135,12 +135,12 @@ public class BattleDeckEditSequence : Sequence<bool>
         _battleDataUseCase.ResolveAbilityAll(
             AbilityTimingType.SummonOwn,
             ss =>
-                _battlePresenter.OnCommand(new BattleCommand().Generate(ss)),
+                _battlePresenter?.OnCommand(new BattleCommand().Generate(ss)),
             _battleDataUseCase.GetOperationPlayerIndex(),
             _summonArguments.DeckOrder);
         _battleDataUseCase.ResolveAbilityAll(AbilityTimingType.SummonRace,
             ss =>
-                _battlePresenter.OnCommand(new BattleCommand().Generate(ss)));
+                _battlePresenter?.OnCommand(new BattleCommand().Generate(ss)));
         _statemachine.Next(State.WaitForInput);
         yield return null;
     }
@@ -150,6 +150,10 @@ public class BattleDeckEditSequence : Sequence<bool>
         //GUILayout.Label("[ DECK EDIT ] STATE : " + _statemachine.Current.ToString());
         _deckEditUI.DebugUI();
 
+    }
+    public void DebugUI2()
+    {
+        _deckEditUI.DebugUI2();
     }
 #endif
 }

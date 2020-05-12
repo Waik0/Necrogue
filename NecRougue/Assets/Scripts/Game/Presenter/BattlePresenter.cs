@@ -128,44 +128,56 @@ public class BattlePresenter
         }
         public void DebugUI(bool auto = false)
         {
+            var width = GUILayout.Width(Screen.width / 7);
+            var height = GUILayout.Height(Screen.height / 5);
             if (_snapShot == null)
             {
                 return;
                 
             }
             GUILayout.BeginVertical();
-            GUILayout.Label(_snapShot.State.ToString());
+           
             for (var i = _snapShot.PlayerList.Count - 1; i >= 0; i--)
             {
                 var pdata = _snapShot.PlayerList[i];
                 GUILayout.Label(pdata.PlayerType.ToString());
-                GUILayout.BeginHorizontal(GUILayout.Height(100));
+                GUILayout.BeginHorizontal(height);
                 if (pdata.Deck.Count == 0)
                 {
                     GUILayout.Label(" ");
                 }
                 for (int j = 0; j < pdata.Deck.Count; j++)
                 { 
-                    GUILayout.BeginVertical("box",GUILayout.Width(Screen.width / 4));
-                    DebugCardView(pdata.Deck[j] );
+                    GUILayout.BeginVertical("box", width, height);
+                    DebugCardView(pdata.Deck[j]);
+                    if(pdata.Deck[j] == null)
+                    {
+                        continue;
+                    }
                     //GUILayout.Label(pdata.Deck[j].Id.ToString());
-                    GUILayout.Label( pdata.Deck[j].Name.ToString());
+                    GUILayout.Label( pdata.Deck[j].Name.ToString() );
                     GUILayout.Label($"<color=green>H: { pdata.Deck[j].Hp.Current,-3}</color> <color=red>A: { pdata.Deck[j].Attack.Current,-3}</color>");
                     foreach (var ability in pdata.Deck[j].AbilityList)
                     {
                         GUILayout.Label($"能力 : {ability.Name}");
                     }
-                   
                     GUILayout.EndVertical();
                 }
                 GUILayout.EndHorizontal();
             }
 
-            if (GUILayout.Button("Next") || auto)
+           
+            GUILayout.EndVertical();
+        }
+        public void DebugUI2()
+        {
+            //var width = GUILayout.Width(Screen.width / 7);
+            var height = GUILayout.Height(Screen.height / 5);
+           
+            if (GUILayout.Button("演出を進める", height))
             {
                 _isEnd = true;
             }
-            GUILayout.EndVertical();
         }
 #endif
     }
@@ -173,9 +185,15 @@ public class BattlePresenter
 
     public void DebugUI(bool auto = false)
     {
-        GUILayout.Label("CommandQueue : "+_battleCommandQueue.Count.ToString());
+        //GUILayout.Label("CommandQueue : "+_battleCommandQueue.Count.ToString());
         _battleViewAnimator.DebugUI(auto);
     }
-    
+    public void DebugUI2()
+    {
+        GUILayout.Label("演出ストック : " + _battleCommandQueue.Count.ToString());
+        //GUILayout.Label("CommandQueue : "+_battleCommandQueue.Count.ToString());
+        _battleViewAnimator.DebugUI2();
+    }
+
 #endif
 }

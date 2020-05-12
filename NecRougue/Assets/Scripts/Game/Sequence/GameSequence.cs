@@ -23,9 +23,11 @@ public class GameSequence : MonoBehaviour
     //todo DI対応---
     [SerializeField] private MapSequence _mapSequence;
     [SerializeField] private BattleSequence _battleSequence;
+    private ShopSequence _shopSequence = new ShopSequence();
     private PlayerDataUseCase _playerDataUseCase = new PlayerDataUseCase();
     private MapDataUseCase _mapDataUseCase = new MapDataUseCase();
     private EnemyDataUseCase _enemyDataUseCase = new EnemyDataUseCase();
+  
     //---
     private Statemachine<State> _statemachine;
 
@@ -47,6 +49,7 @@ public class GameSequence : MonoBehaviour
         _playerDataUseCase.MakePlayerDataFromMaster(101);
         _mapSequence.Inject(_mapDataUseCase);
         _battleSequence.Inject(_playerDataUseCase,_enemyDataUseCase);
+        _shopSequence.Inject(_playerDataUseCase);
         _statemachine.Next(State.FirstStock);
         yield return null;
     }
@@ -110,6 +113,16 @@ public class GameSequence : MonoBehaviour
                 throw new ArgumentOutOfRangeException();
         }
     }
+    IEnumerator Shop()
+    {
+        while (_shopSequence.UpdateSequence())
+        {
+            yield return null;
+        }
+        _mapDataUseCase.IncrementDepth();
+        _statemachine.Next(State.Map);
+        yield return null;
+    }
     //----------------------------------------------------------------------------------------------------------------------
     //private
     //----------------------------------------------------------------------------------------------------------------------
@@ -139,7 +152,7 @@ public class GameSequence : MonoBehaviour
             case MapType.Item:
                 break;
             case MapType.Shop:
-                break;
+                return State.Shop;
             case MapType.Event:
                 break;
             default:
@@ -170,25 +183,28 @@ public class GameSequence : MonoBehaviour
         }
 
         //float zoom = Screen.width / 480f;
-        GUI.skin.label.fontSize =  Screen.width / 32;
-        GUI.skin.button.fontSize = Screen.width / 32;
+        GUI.skin.label.fontSize =  Screen.width / 64;
+        GUI.skin.button.fontSize = Screen.width / 64;
         //Matrix4x4 Translation = Matrix4x4.TRS(new Vector3(0,0,0),Quaternion.identity,Vector3.one);
         //Matrix4x4 Scale = Matrix4x4.Scale(new Vector3(zoom, zoom, 1.0f));
 
         //GUI.matrix = Translation*Scale*Translation.inverse;
-        GUILayout.BeginVertical();
+        GUILayout.BeginHorizontal(GUILayout.Width(Screen.width), GUILayout.Height(Screen.height));
         //        
         //GUILayout.BeginHorizontal(GUILayout.Height(150));
-        logscr = GUILayout.BeginScrollView(logscr,"box",GUILayout.Height(100));
+        logscr = GUILayout.BeginScrollView(logscr,"box",GUILayout.Width(Screen.width / 8));
      
         GUILayout.Label(GameLogger._log);
 
         GUILayout.EndScrollView();
         //GUILayout.EndHorizontal();
-        debug = GUILayout.BeginScrollView(debug,GUILayout.Width(Screen.width));
+        debug = GUILayout.BeginScrollView(debug);
         DebugUI();
         GUILayout.EndScrollView();
+        GUILayout.BeginVertical("box", GUILayout.Width(Screen.width / 8));
+        DebugUI2();
         GUILayout.EndVertical();
+        GUILayout.EndHorizontal();
     }
     void DebugUI()
     {
@@ -208,6 +224,7 @@ public class GameSequence : MonoBehaviour
                 
                 break;
             case State.Shop:
+                _shopSequence.DebugUI();
                 break;
             case State.Pause:
                 break;
@@ -221,6 +238,36 @@ public class GameSequence : MonoBehaviour
 
         
     }
+    void DebugUI2()
+    {
+        GUILayout.Label($"お金 : {_playerDataUseCase.Data.Gold}");
+        switch (_statemachine.Current)
+        {
+            case State.Map:
+                break;
+            case State.FirstStock:
+                break;
+            case State.Battle:
+                _battleSequence.DebugUI2();
+                break;
+            case State.Event:
+
+                break;
+            case State.Shop:
+                _shopSequence.DebugUI2();
+                break;
+            case State.Pause:
+                break;
+            case State.Init:
+                break;
+            case State.Prepare:
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+    }
+#else
+
 #endif
 
 }

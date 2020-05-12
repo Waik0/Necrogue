@@ -232,7 +232,7 @@ public class BattleProcessSequence : Sequence<bool>
     #if DEBUG
     public void DebugUI()
     {
-        GUILayout.Label("Process State : "+ _statemachine.Current);
+        //GUILayout.Label("Process State : "+ _statemachine.Current);
     }
     #endif
 

@@ -28,6 +28,7 @@ public class PlayerData : IEntity,
 {
     public int CharaId;
     public int Gold;
+    public int ShopLevel;
     public List<CardData> Deck;//デッキ
     public List<CardData> Stock;//デッキに入れていないカード
     public void Convert(MstCharacterRecord record)
@@ -36,6 +37,7 @@ public class PlayerData : IEntity,
         Deck = new List<CardData>();
         Stock = new List<CardData>();
         Gold = 0;
+        ShopLevel = 1;
         var cards = new[]
         {
             record.MonsterId1,

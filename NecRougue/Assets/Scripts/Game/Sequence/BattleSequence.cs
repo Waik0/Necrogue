@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Toast;
 using UnityEngine;
 using UnityEngine.Events;
@@ -33,7 +34,7 @@ public class BattleSequence : SequenceBehaviour<BattleResult>
     private PlayerDataUseCase _playerDataUseCase;
     private EnemyDataUseCase _enemyDataUseCase;
     private BattlePresenter _battlePresenter = new BattlePresenter();
-    private BattleDeckEditSequence _battleDeckEditSequence = new BattleDeckEditSequence();
+    private DeckEditSequence _battleDeckEditSequence = new DeckEditSequence();
     private BattleProcessSequence _battleProcess = new BattleProcessSequence();
 
     
@@ -160,6 +161,8 @@ public class BattleSequence : SequenceBehaviour<BattleResult>
     IEnumerator End()
     {
         DebugLog.Function(this,1);
+        _playerDataUseCase.SetDeck(_battleDataUseCase.GetRemainDecks().Select(_ => new CardData().Generate(_)).ToList());
+        _playerDataUseCase.SetStock(_battleDataUseCase.GetRemainStocks().Select(_ => new CardData().Generate(_)).ToList());
         Debug.Log(_battleDataUseCase.Winner());
         switch (_battleDataUseCase.Winner())
         {
@@ -180,7 +183,7 @@ public class BattleSequence : SequenceBehaviour<BattleResult>
     #if DEBUG
     public void DebugUI()
     {
-        GUILayout.Label("[ BATTLE ] STATE : "+ _statemachine.Current.ToString());
+        //GUILayout.Label("[ BATTLE ] STATE : "+ _statemachine.Current.ToString());
         switch (_statemachine.Current)
         {
             case State.Init:
@@ -191,11 +194,12 @@ public class BattleSequence : SequenceBehaviour<BattleResult>
                 
                 _battlePresenter.DebugUI();
                 _battleDeckEditSequence.DebugUI();
+ 
                 break;
             
             case State.Resolve:
-                _battleProcess.DebugUI();
                 _battlePresenter.DebugUI();
+  
                 break;
             case State.End:
                 break;
@@ -204,6 +208,32 @@ public class BattleSequence : SequenceBehaviour<BattleResult>
         }
         
     }
-    #endif
+    public void DebugUI2()
+    {
+        switch (_statemachine.Current)
+        {
+            case State.Init:
+                break;
+            case State.Setup:
+                break;
+            case State.DeckPrepare:
+
+
+                _battlePresenter.DebugUI2();
+                _battleDeckEditSequence.DebugUI2();
+                break;
+
+            case State.Resolve:
+
+                _battlePresenter.DebugUI2();
+                break;
+            case State.End:
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+
+    }
+#endif
 
 }

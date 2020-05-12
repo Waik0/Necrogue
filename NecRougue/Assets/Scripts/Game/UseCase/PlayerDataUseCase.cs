@@ -18,6 +18,15 @@ public class PlayerDataUseCase : IEntityUseCase<PlayerData>
     {
         ResetData();
     }
+    public bool Pay(int price)
+    {
+        var canpay = _playerData.Gold >= price;
+        if (canpay)
+        {
+            _playerData.Gold -= price;
+        }
+        return canpay;
+    }
     //----------------------------------------------------------------------------------------------------------------------
     //デッキ操作
     //----------------------------------------------------------------------------------------------------------------------
@@ -37,6 +46,10 @@ public class PlayerDataUseCase : IEntityUseCase<PlayerData>
     public void SetDeck(List<CardData> cards)
     {
         _playerData.Deck = cards;
+    }
+    public void SetStock(List<CardData> cards)
+    {
+        _playerData.Stock = cards;
     }
     //----------------------------------------------------------------------------------------------------------------------
     //ストック操作
