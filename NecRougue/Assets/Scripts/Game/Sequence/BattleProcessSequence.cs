@@ -43,7 +43,7 @@ public class BattleProcessSequence : Sequence<bool>
     
     private Statemachine<State> _statemachine;
     private BattleDataUseCase _battleDataUseCase;
-
+    private PlayerDataUseCase _playerDataUseCase;
     //private int _defender;
     //----------------------------------------------------------------------------------------------------------------------
     // パブリックメソッド
@@ -54,9 +54,10 @@ public class BattleProcessSequence : Sequence<bool>
         _statemachine = new Statemachine<State>();
         _statemachine.Init(this);
     }
-    public void Inject(BattleDataUseCase battleDataUseCase)
+    public void Inject(BattleDataUseCase battleDataUseCase,PlayerDataUseCase playerDataUseCase)
     {
         _battleDataUseCase = battleDataUseCase;
+        _playerDataUseCase = playerDataUseCase;
     }
     public override void ResetSequence()
     {
@@ -67,7 +68,6 @@ public class BattleProcessSequence : Sequence<bool>
     {
         _statemachine.Update();
         return _statemachine.Current != State.End;
-        throw new NotImplementedException();
     }
     //----------------------------------------------------------------------------------------------------------------------
     // シーケンス
@@ -153,7 +153,19 @@ public class BattleProcessSequence : Sequence<bool>
     {
         DebugLog.Function(this,2);
         _battleDataUseCase.ChangeState(BattleState.Attack);
-        _battleDataUseCase.Attack(_battleDataUseCase.DefenderDeckIndex());
+        var enemyState =_battleDataUseCase.Attack(_battleDataUseCase.DefenderDeckIndex());
+        switch (enemyState)
+        {
+            case EnemyDestroyState.None:
+                break;
+            case EnemyDestroyState.Gold:
+                var price = _battleDataUseCase.GetCurrentDefenderCard().Rarity + 1;
+                _playerDataUseCase.AddGold(price);
+                break;
+            case EnemyDestroyState.Capture:
+                _playerDataUseCase.AddStock(_battleDataUseCase.GetCurrentDefenderCard().Id);
+                break;
+        }
         OnCommand.Invoke(new BattleCommand().Generate(_battleDataUseCase.GetSnapShot()));
         ResolveAbility(AbilityTimingType.Attack,
             _battleDataUseCase.AttackerPlayerIndex(),
@@ -234,6 +246,6 @@ public class BattleProcessSequence : Sequence<bool>
     {
         //GUILayout.Label("Process State : "+ _statemachine.Current);
     }
-    #endif
+#endif
 
 }

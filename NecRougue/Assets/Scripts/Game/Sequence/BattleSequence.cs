@@ -43,7 +43,7 @@ public class BattleSequence : SequenceBehaviour<BattleResult>
         _playerDataUseCase = playerDataUseCase;
         _enemyDataUseCase = enemyDataUseCase;
         _battlePresenter.Inject(_battleDataUseCase);
-        _battleProcess.Inject(_battleDataUseCase);
+        _battleProcess.Inject(_battleDataUseCase,_playerDataUseCase);
         _battleDeckEditSequence.Inject(_battleDataUseCase,_battlePresenter);
         //イベント接続
         _battleProcess.OnCommand.RemoveAllListeners();

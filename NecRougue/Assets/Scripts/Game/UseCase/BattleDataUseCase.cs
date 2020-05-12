@@ -173,12 +173,29 @@ public class BattleDataUseCase : IEntityUseCase<BattleData>
         _target = indexList[Random.Range(0, indexList.Count)];
         return true;
     }
+    //倒したのが敵でゴールド入手した場合のみtrue
 
-    public void Attack(int target)
+    public EnemyDestroyState Attack(int target)
     {
         var attacker = _battleData.PlayerList[_battleData.CurrentAttacker].AttackerIndex;
         var atk = _battleData.PlayerList[_battleData.CurrentAttacker].Deck[attacker].Attack;
         _battleData.PlayerList[_battleData.CurrentDefencer].Deck[target].Hp.Current -= atk.Current;
+        if (_battleData.PlayerList[_battleData.CurrentDefencer].PlayerType == PlayerType.Enemy)
+        {
+            if (_battleData.PlayerList[_battleData.CurrentDefencer].Deck[target].Hp.Current < 0)
+            {
+                return EnemyDestroyState.Gold;
+            }
+            if (_battleData.PlayerList[_battleData.CurrentDefencer].Deck[target].Hp.Current == 0)
+            {
+                return EnemyDestroyState.Capture;
+            }
+        }
+        return EnemyDestroyState.None;
+    }
+    public BattleCard GetCurrentDefenderCard()
+    {
+        return _battleData.PlayerList[_battleData.CurrentDefencer].Deck[DefenderDeckIndex()];
     }
     public BattlePlayerData Attacker() => _battleData.PlayerList[_battleData.CurrentAttacker];
     public BattlePlayerData Defender()=>_battleData.PlayerList[_battleData.CurrentDefencer];

@@ -73,3 +73,9 @@ public enum BattleState
     End,
 }
 
+public enum EnemyDestroyState
+{
+    None,
+    Gold,
+    Capture
+};

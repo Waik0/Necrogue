@@ -115,6 +115,7 @@ public class GameSequence : MonoBehaviour
     }
     IEnumerator Shop()
     {
+        _shopSequence.ResetSequence();
         while (_shopSequence.UpdateSequence())
         {
             yield return null;
