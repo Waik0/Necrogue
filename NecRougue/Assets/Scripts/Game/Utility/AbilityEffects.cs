@@ -15,6 +15,7 @@ public class AbilityEffectsArgument
 }
 public static class AbilityEffects
 {
+
     private static Dictionary<int, Func<AbilityEffectsArgument,bool>> EffectList = new Dictionary<int,  Func<AbilityEffectsArgument,bool>>()
     {
         {//ターン開始時: 隣接するモンスターは攻撃力+{Level}を得る

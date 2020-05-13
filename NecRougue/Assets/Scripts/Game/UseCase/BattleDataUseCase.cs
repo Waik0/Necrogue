@@ -167,6 +167,10 @@ public class BattleDataUseCase : IEntityUseCase<BattleData>
             }
         }
     }
+    public bool IsDeadCurrentDefender()
+    {
+        return _battleData.PlayerList[DefenderPlayerIndex()].Deck[DefenderDeckIndex()].Hp.Current <= 0;
+    }
     public bool ConfirmTarget()
     {
         var indexList = Defender()
@@ -242,6 +246,34 @@ public class BattleDataUseCase : IEntityUseCase<BattleData>
     {
         _battleData.State = state;
     }
+    public void ResolveAbilityDead(List<BattleCard> cards, Action<BattleData> command)
+    {
+        foreach (var card in cards)
+        {
+            for (var k = 0; k < card.AbilityList.Count; k++)
+            {
+
+                var isAbilityExecute = card.AbilityList[k].Effect(new AbilityEffectsArgument()
+                {
+                    BattleDataUseCase = this,
+                    DeckIndex = -1,
+                    PlayerIndex = -1,
+                    TimingType = AbilityTimingType.Dead,
+                    IsMine = true,
+                    Level = card.Level
+                });
+                if (isAbilityExecute)
+                {
+                    // _currentAbilityUser = PlayerType.Player;
+                    // _currentAbilityTimingType = timingType;
+                    // _currentAbilityUserCard = j;
+                    //todo スナップショットに死亡カードデータを残す
+                    command(GetSnapShot());
+
+                }
+            }
+        }
+    }
     //todo タイミング判定をEffects側に移す
     public void ResolveAbilityAll(AbilityTimingType timingType, Action<BattleData> command, int playerIndex = -1, int deckIndex = -1)
     {
@@ -285,7 +317,24 @@ public class BattleDataUseCase : IEntityUseCase<BattleData>
             }
         }
     }
+    public List<BattleCard> RemoveDeadCard()
+    {
+        var removed = new List<BattleCard>();
+        for (var i = 0; i < _battleData.PlayerList.Count; i++)
+        {
+            _battleData.PlayerList[i].Deck.RemoveAll(_ =>
+            {
+                if (_.Hp.Current <= 0)
+                {
+                    removed.Add(_);
+                    return true;
+                }
+                return false;
+            });
 
+        }
+        return removed;
+    }
     public void ConfirmWinner(PlayerType type)
     {
         DebugLog.Function(this,2);

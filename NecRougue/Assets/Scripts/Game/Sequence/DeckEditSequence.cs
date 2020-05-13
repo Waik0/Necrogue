@@ -144,8 +144,17 @@ public class DeckEditSequence : Sequence<bool>
         _battleDataUseCase.ResolveAbilityAll(AbilityTimingType.SummonRace,
             ss =>
                 _battlePresenter?.OnCommand(new BattleCommand().Generate(ss)));
+        RemoveDeadAndInvokeAbility();
         _statemachine.Next(State.WaitForInput);
         yield return null;
+    }
+    private void RemoveDeadAndInvokeAbility()
+    {
+        var removed = _battleDataUseCase.RemoveDeadCard();
+        _battleDataUseCase.ChangeState(BattleState.Ability);
+        _battleDataUseCase.ResolveAbilityDead(removed, ss =>
+                _battlePresenter?.OnCommand(new BattleCommand().Generate(ss)));
+
     }
 #if DEBUG
     public void DebugUI()

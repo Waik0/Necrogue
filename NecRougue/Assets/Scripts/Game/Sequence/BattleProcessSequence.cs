@@ -167,14 +167,16 @@ public class BattleProcessSequence : Sequence<bool>
                 break;
         }
         OnCommand.Invoke(new BattleCommand().Generate(_battleDataUseCase.GetSnapShot()));
+        RemoveDeadAndInvokeAbility();
         ResolveAbility(AbilityTimingType.Attack,
             _battleDataUseCase.AttackerPlayerIndex(),
             _battleDataUseCase.AttackerDeckIndex());
         ResolveAbility(AbilityTimingType.Defence,
             _battleDataUseCase.DefenderPlayerIndex(),
             _battleDataUseCase.DefenderDeckIndex());
-        _statemachine.Next(State.CheckAndIncrement);
 
+        _statemachine.Next(State.CheckAndIncrement);
+        
         yield return null;
     }
 
@@ -212,7 +214,13 @@ public class BattleProcessSequence : Sequence<bool>
         _statemachine.Next(State.StepStart);
         yield return null;
     }
-
+    private void RemoveDeadAndInvokeAbility() {
+        var removed = _battleDataUseCase.RemoveDeadCard();
+        _battleDataUseCase.ChangeState(BattleState.Ability);
+        _battleDataUseCase.ResolveAbilityDead(removed, ss =>
+                OnCommand.Invoke(new BattleCommand().Generate(ss)));
+        
+    }
     private void ResolveAbilityAllCard(AbilityTimingType timingType)
     {
         _battleDataUseCase.ChangeState(BattleState.Ability);
@@ -230,8 +238,9 @@ public class BattleProcessSequence : Sequence<bool>
                 OnCommand.Invoke(new BattleCommand().Generate(ss)),
             type,
             index);
+        RemoveDeadAndInvokeAbility();
     }
-    
+
   
     // public IEnumerator Calc()
     // {

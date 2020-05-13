@@ -38,10 +38,40 @@ public enum AbilityTimingType
     ConfirmTargetDefence,//ターゲットにされた時
     Attack,
     Defence,
+    Dead,
     TurnEnd,
 }
+/// <summary>
+/// アビリティ発動タイミングの行動を起こしたプレイヤーが自分か敵か味方か両方か
+/// </summary>
+public enum AbilityTimingTargetType
+{
+    None,
+    Self,//自分
+    Ally,//味方
+    Enemy,//敵
+    Any,//だれでも
+}
 
+/// <summary>
+/// 実際に効果を及ぼすターゲットカード
+/// </summary>
+public enum AbilityEffectTargetType
+{
+    None,
+    Self,
+    Side,
+    Left,
 
+}
+public enum AbilityEffectType
+{
+    None,
+    PowerUp,
+    Possession,
+    Shield,
+
+}
 public enum BattleCommandType
 {
     None,
