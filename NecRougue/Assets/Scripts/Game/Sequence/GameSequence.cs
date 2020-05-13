@@ -15,6 +15,7 @@ public class GameSequence : MonoBehaviour
         Prepare,
         Map,
         Battle,
+        Item,
         Event,
         Shop,
         Pause
@@ -49,7 +50,7 @@ public class GameSequence : MonoBehaviour
         _playerDataUseCase.MakePlayerDataFromMaster(101);
         _mapSequence.Inject(_mapDataUseCase);
         _battleSequence.Inject(_playerDataUseCase,_enemyDataUseCase);
-        _shopSequence.Inject(_playerDataUseCase);
+        _shopSequence.Inject(_playerDataUseCase,_mapDataUseCase);
         _statemachine.Next(State.FirstStock);
         yield return null;
     }
@@ -124,6 +125,12 @@ public class GameSequence : MonoBehaviour
         _statemachine.Next(State.Map);
         yield return null;
     }
+    IEnumerator Item()
+    {
+        _mapDataUseCase.IncrementDepth();
+        _statemachine.Next(State.Map);
+        yield return null;
+    }
     //----------------------------------------------------------------------------------------------------------------------
     //private
     //----------------------------------------------------------------------------------------------------------------------
@@ -151,7 +158,7 @@ public class GameSequence : MonoBehaviour
                 _enemyDataUseCase.SetEnemyId(_mapDataUseCase.GetCurrentMapEnemyId());
                 return State.Battle;
             case MapType.Item:
-                break;
+                return State.Item;
             case MapType.Shop:
                 return State.Shop;
             case MapType.Event:

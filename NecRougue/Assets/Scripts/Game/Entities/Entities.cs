@@ -119,7 +119,7 @@ public class CardData : IEntity,
     {
         Id = entity.Id;
         Name = entity.Name;
-        Attack = entity.Attack.Max;
+        Attack = entity.Attack;//.Max;
         Hp = entity.Hp.Max;
         Defence = entity.Defence.Max;
         Level = entity.Level;
@@ -179,7 +179,8 @@ public class BattleData : IEntity,
     public PlayerType Winner;
     public List<BattlePlayerData> PlayerList;
     public BattleState State;
-
+    public List<BattleCard> GetCard;
+    public int GetGold;
 }
 [Serializable]
 public class BattlePlayerData : IEntity,
@@ -261,7 +262,7 @@ public class BattleCard :IEntity,
     public string Name;
     public int Rarity;
     public int Level;
-    public ValueSet Attack;
+    public int Attack;
     public ValueSet Hp;
     public ValueSet Defence;
     public ValueSet AttackPriolity;
@@ -277,7 +278,7 @@ public class BattleCard :IEntity,
         Level = entity.Level;
         Rarity = entity.Rarity;
         Hp = new ValueSet(entity.Hp);
-        Attack = new ValueSet(entity.Attack);
+        Attack = entity.Attack;//new ValueSet(entity.Attack);
         Defence = new ValueSet(entity.Defence);
         AttackPriolity = new ValueSet(0);
         AbilityList = entity.Abilities.Where(id =>
@@ -300,7 +301,7 @@ public class BattleCard :IEntity,
         Level = record.level;
         Rarity = record.rarity;
         Hp = new ValueSet(record.hp);
-        Attack = new ValueSet(record.attack);
+        Attack = record.attack;// new ValueSet(record.attack);
         Defence = new ValueSet(record.defence);
         AttackPriolity = new ValueSet(0);
         AbilityList = new List<int>()

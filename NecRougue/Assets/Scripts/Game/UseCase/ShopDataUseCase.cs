@@ -13,10 +13,17 @@ public class ShopDataUseCase : IEntityUseCase<ShopData>
         _shopData = new ShopData();
         _shopData.Cards = new List<int>(); 
     }
-    public List<int> Cards() => _shopData.Cards;
-    public void LotteryMonsters(int shopLevel)
+    public void ResetData(int ShopLevel,int ShopLevelUpPrice)
     {
         ResetData();
+        SetShopLevel(ShopLevel);
+        SetShopLevelUpPrice(ShopLevelUpPrice);
+    }
+    public List<int> Cards() => _shopData.Cards;
+    public void LotteryMonsters()
+    {
+        var shopLevel = _shopData.ShopLevel;
+        ResetData(shopLevel,_shopData.ShopLevelUpPrice);
         var count = shopLevel + 2;
         for(var i = 0;i < count; i++)
         {
@@ -30,6 +37,18 @@ public class ShopDataUseCase : IEntityUseCase<ShopData>
             _shopData.Cards.Add(targets[r].Id);
         }
     }
+    public void SetShopLevel(int l)
+    {
+        _shopData.ShopLevel = l;
+    }
+    public void SetShopLevelUpPrice(int p)
+    {
+        _shopData.ShopLevelUpPrice = p;
+    }
+    public int GetShopLevelUpPrice()
+    {
+        return _shopData.ShopLevelUpPrice;
+    }
     public void Remove(int order)
     {
         _shopData.Cards.RemoveAt(order);
@@ -38,5 +57,9 @@ public class ShopDataUseCase : IEntityUseCase<ShopData>
     {
         var mst = MasterdataManager.Get<MstMonsterRecord>(_shopData.Cards[order]);
         return new BattleCard().Generate(mst);
+    }
+    public int GetShopLevel()
+    {
+        return _shopData.ShopLevel;
     }
 }

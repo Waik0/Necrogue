@@ -1,13 +1,20 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+
 
 public class ShopUI : IModalUI
 {
     ShopDataUseCase _shopDataUseCase;
     BattleDataUseCase _battleDataUseCase;
     PlayerDataUseCase _playerDataUseCase;
-    bool _end;
+
+    public Action<int> OnBuy;
+    public Action<int> OnSell;
+    public Action OnEnd;
+    public Action OnLevelUp;
+    public Action OnReload;
     public void Inject(ShopDataUseCase shopDataUseCase,
         BattleDataUseCase battleDataUseCase,
         PlayerDataUseCase playerDataUseCase)
@@ -18,13 +25,34 @@ public class ShopUI : IModalUI
     }
     public void ResetUI()
     {
-        _end = false;
+    
     }
 
     public bool UpdateUI()
     {
-        return !_end;
+        return true;
     }
+    void Buy(int order)
+    {
+        OnBuy?.Invoke(order);
+    }
+    void Sell(int order)
+    {
+        OnSell?.Invoke(order);
+    }
+    void End()
+    {
+        OnEnd?.Invoke();
+    }
+    void LevelUp()
+    {
+        OnLevelUp?.Invoke();
+    }
+    void Reroll()
+    {
+        OnReload?.Invoke();
+    }
+    /*
     bool Buy(int order)
     {
         var card = _shopDataUseCase.GetBattleCardData(order);
@@ -38,6 +66,15 @@ public class ShopUI : IModalUI
         
 
     }
+    bool Sell(int order)
+    {
+        var card = _battleDataUseCase.GetOperationPlayer().Deck[order];
+        var price = 1;
+        _battleDataUseCase.AddGold(price);
+        _battleDataUseCase.RemoveDeckCard(order);
+        return true;
+    }
+    */
 #if DEBUG
     public void DebugUI()
     {
@@ -45,6 +82,7 @@ public class ShopUI : IModalUI
         if(_shopDataUseCase.Cards() == null){
             return;
         }
+        GUILayout.Label("ショップレベル : " + _shopDataUseCase.GetShopLevel());
         GUILayout.BeginHorizontal();
         for (var i = 0;i < _shopDataUseCase.Cards().Count; i ++)
         {
@@ -52,7 +90,7 @@ public class ShopUI : IModalUI
             GUILayout.BeginVertical("box",width);
             GUILayout.Label("レア度 : "+data.Rarity.ToString());
             GUILayout.Label(data.Name.ToString());
-            GUILayout.Label($"<color=green>H: { data.Hp.Current,-3}</color> <color=red>A: { data.Attack.Current,-3}</color>");
+            GUILayout.Label($"<color=green>H: { data.Hp.Current,-3}</color> <color=red>A: { data.Attack,-3}</color>");
             if (GUILayout.Button("買う"))
             {
                 Buy(i);
@@ -61,12 +99,38 @@ public class ShopUI : IModalUI
             GUILayout.EndVertical();
         }
         GUILayout.EndHorizontal();
+        GUILayout.BeginHorizontal();
+        for (var i = 0; i < _battleDataUseCase.GetOperationPlayer().Deck.Count; i++)
+        {
+          
+            if (GUILayout.Button("売る", width))
+            {
+                Sell(i);
+            }
+
+            //GUILayout.EndVertical();
+        }
+        GUILayout.EndHorizontal();
     }
     public void DebugUI2()
     {
-        if (GUILayout.Button("終了"))
+        if(_shopDataUseCase.Data == null)
         {
-            _end = true;
+            return;
+        }
+        var height = GUILayout.Height(Screen.height / 5);
+        if (GUILayout.Button($"レベルアップ\n{_shopDataUseCase.GetShopLevelUpPrice()} G",height))
+        {
+            LevelUp();
+        }
+        if (GUILayout.Button("リロード \n 2 G",height))
+        {
+            Reroll();
+        }
+
+        if (GUILayout.Button("終了",height))
+        {
+            End();
         }
     }
 #endif

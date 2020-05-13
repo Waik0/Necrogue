@@ -70,6 +70,7 @@ public enum BattleState
     Attack,
     Ability,
     TurnEnd,
+    Sell,//SHOP用
     End,
 }
 

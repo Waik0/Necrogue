@@ -142,7 +142,13 @@ public class BattleSequence : SequenceBehaviour<BattleResult>
         {
             _statemachine.Next(State.DeckPrepare);
         }
-       
+        //キャプチャーしたカードを手札に追加
+        foreach(var card in _battleDataUseCase.GetAndRemoveCaptureCard())
+        {
+            _battleDataUseCase.AddStock(card.Id);
+        }
+     
+        yield return null;
         //todo 
         // if (endProcess)
         // {
@@ -161,8 +167,10 @@ public class BattleSequence : SequenceBehaviour<BattleResult>
     IEnumerator End()
     {
         DebugLog.Function(this,1);
+        //バトル中に変化したデータを反映
         _playerDataUseCase.SetDeck(_battleDataUseCase.GetRemainDecks().Select(_ => new CardData().Generate(_)).ToList());
         _playerDataUseCase.SetStock(_battleDataUseCase.GetRemainStocks().Select(_ => new CardData().Generate(_)).ToList());
+        _playerDataUseCase.AddGold(_battleDataUseCase.GetAndRemoveGold());
         Debug.Log(_battleDataUseCase.Winner());
         switch (_battleDataUseCase.Winner())
         {

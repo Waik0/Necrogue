@@ -55,6 +55,14 @@ public class PlayerDataUseCase : IEntityUseCase<PlayerData>
     {
         _playerData.Stock = cards;
     }
+    public void SetShopLevel(int l)
+    {
+        _playerData.ShopLevel = l;
+    }
+    public int GetShopLevel()
+    {
+        return _playerData.ShopLevel;
+    }
     //----------------------------------------------------------------------------------------------------------------------
     //ストック操作
     //----------------------------------------------------------------------------------------------------------------------

@@ -10,3 +10,9 @@ public interface IModalUI
     
 }
 
+public interface IModalUI<T>
+{
+    void ResetUI();
+    T UpdateUI();
+}
+

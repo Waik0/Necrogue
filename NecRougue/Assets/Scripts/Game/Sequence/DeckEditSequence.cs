@@ -63,7 +63,10 @@ public class DeckEditSequence : Sequence<bool>
     {
         _statemachine.Next(State.Init);
     }
-
+    public void ResetSelected()
+    {
+        _deckEditUI.ResetSelect();
+    }
     public override bool UpdateSequence()
     {
 
@@ -71,7 +74,7 @@ public class DeckEditSequence : Sequence<bool>
         return _statemachine.Current != State.End;
     }
     //----------------------------------------------------------------------------------------------------------------------
-    // メソッド
+    // プライベートメソッド
     //----------------------------------------------------------------------------------------------------------------------
     private void StartChangeOrder(int a,int b)
     {

@@ -31,6 +31,7 @@ public class BattleDataUseCase : IEntityUseCase<BattleData>
         _battleData = new BattleData();
         _battleData.Turn = 0;
         _battleData.PlayerList = new List<BattlePlayerData>();
+        _battleData.GetCard = new List<BattleCard>();
     }
 
     public bool SetPlayer(BattlePlayerData data)
@@ -68,11 +69,26 @@ public class BattleDataUseCase : IEntityUseCase<BattleData>
         var mst = MasterdataManager.Get<MstMonsterRecord>(id);
         GetOperationPlayer().Stock.Add(new BattleCard().Generate(mst));
     }
+    public void AddGold(int gold)
+    {
+        _battleData.GetGold += gold;
+    }
     public void Summon(int stockOrder, int order)
     {
         var card = GetOperationPlayer().Stock[stockOrder];
         GetOperationPlayer().Stock.RemoveAt(stockOrder);
         GetOperationPlayer().Deck.Insert(order, card);
+    }
+    public void AddCaptureCard(int id)
+    {
+        var card = new BattleCard().Generate(MasterdataManager.Get<MstMonsterRecord>(id));
+        _battleData.GetCard.Add(card);
+    }
+    public void RemoveDeckCard(int order)
+    {
+        
+        GetOperationPlayer().Deck.RemoveAt(order);
+
     }
     //----------------------------------------------------------------------------------------------------------------------
     //バトル処理
@@ -179,7 +195,7 @@ public class BattleDataUseCase : IEntityUseCase<BattleData>
     {
         var attacker = _battleData.PlayerList[_battleData.CurrentAttacker].AttackerIndex;
         var atk = _battleData.PlayerList[_battleData.CurrentAttacker].Deck[attacker].Attack;
-        _battleData.PlayerList[_battleData.CurrentDefencer].Deck[target].Hp.Current -= atk.Current;
+        _battleData.PlayerList[_battleData.CurrentDefencer].Deck[target].Hp.Current -= atk;
         if (_battleData.PlayerList[_battleData.CurrentDefencer].PlayerType == PlayerType.Enemy)
         {
             if (_battleData.PlayerList[_battleData.CurrentDefencer].Deck[target].Hp.Current < 0)
@@ -284,7 +300,7 @@ public class BattleDataUseCase : IEntityUseCase<BattleData>
         {
             for (var j = 0; j < _battleData.PlayerList[i].Deck.Count; j++)
             {
-                _battleData.PlayerList[i].Deck[j].Attack.Current = _battleData.PlayerList[i].Deck[j].Attack.Max;
+                _battleData.PlayerList[i].Deck[j].Attack = _battleData.PlayerList[i].Deck[j].Attack;
             }
         }
     }
@@ -393,6 +409,7 @@ public class BattleDataUseCase : IEntityUseCase<BattleData>
 
         return _battleData.PlayerList[index];
     }
+
     public int GetOperationPlayerIndex()
     {
         var index = _battleData.PlayerList.FindIndex(_ => _.PlayerType == PlayerType.Player);
@@ -403,6 +420,7 @@ public class BattleDataUseCase : IEntityUseCase<BattleData>
         return index;
 
     }
+   
     //生き残ったデッキ
     public List<BattleCard> GetRemainDecks()
     {
@@ -411,6 +429,21 @@ public class BattleDataUseCase : IEntityUseCase<BattleData>
     public List<BattleCard> GetRemainStocks()
     {
         return GetOperationPlayer().Stock;
+    }
+    public List<BattleCard> GetAndRemoveCaptureCard()
+    {
+        var list = new List<BattleCard>();
+        foreach (var c in _battleData.GetCard) {
+            list.Add(c);
+        }
+        _battleData.GetCard.Clear();
+        return list;
+    }
+    public int GetAndRemoveGold()
+    {
+        int g = _battleData.GetGold;
+        _battleData.GetGold = 0;
+        return g;
     }
     //----------------------------------------------------------------------------------------------------------------------
     // 値取得(参照)

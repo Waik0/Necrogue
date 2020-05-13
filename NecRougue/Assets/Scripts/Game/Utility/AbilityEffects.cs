@@ -29,8 +29,8 @@ public static class AbilityEffects
                     .GetCardRef(abilityEffectsArgument.PlayerIndex,abilityEffectsArgument.DeckIndex - 1);
                 var right = abilityEffectsArgument.BattleDataUseCase
                     .GetCardRef(abilityEffectsArgument.PlayerIndex,abilityEffectsArgument.DeckIndex + 1);
-                if (left != null) left.Attack.Current+= abilityEffectsArgument.Level;
-                if (right != null) right.Attack.Current+= abilityEffectsArgument.Level;
+                if (left != null) left.Attack+= abilityEffectsArgument.Level;
+                if (right != null) right.Attack+= abilityEffectsArgument.Level;
                 return true;
             }
             
@@ -62,7 +62,7 @@ public static class AbilityEffects
                 }
                 var own = abilityEffectsArgument.BattleDataUseCase
                     .GetCardRef(abilityEffectsArgument.PlayerIndex,abilityEffectsArgument.DeckIndex );
-                if (own != null) own.Attack.Current+= abilityEffectsArgument.Level;
+                if (own != null) own.Attack+= abilityEffectsArgument.Level;
                 return true;
             }
         },

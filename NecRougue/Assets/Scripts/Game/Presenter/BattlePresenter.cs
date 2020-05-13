@@ -101,8 +101,8 @@ public class BattlePresenter
             return _isEnd;
         }
 #if DEBUG
-
-
+        
+        int time = 0;
         void DebugCardView(BattleCard card)
         {
             switch (card.State)
@@ -135,6 +135,43 @@ public class BattlePresenter
                 return;
                 
             }
+            //演出自動進行処理
+            if (time <= 0 && !_isEnd)
+            {//初回のみ呼ばれるはず
+                switch (_snapShot.State)
+                {
+                    case BattleState.None:
+                        break;
+                    case BattleState.DeckPrepare:
+                        time = 5;
+                        break;
+                    case BattleState.TurnStart:
+                        time = 5;
+                        break;
+                    case BattleState.Attack:
+                        time = 120;
+                        break;
+                    case BattleState.Ability:
+                        time = 250;
+                        break;
+                    case BattleState.TurnEnd:
+                        time = 30;
+                        break;
+                    case BattleState.Sell:
+                        time = 2;
+                        break;
+                    case BattleState.End:
+                        time = 5;
+                        break;
+                }
+                //time = 100;
+            }
+            time--;
+            //デクリメントで0以下になった時のみよばれる
+            if(time <= 0)
+            {
+                _isEnd = true;
+            }
             GUILayout.BeginVertical();
            
             for (var i = _snapShot.PlayerList.Count - 1; i >= 0; i--)
@@ -161,7 +198,7 @@ public class BattlePresenter
                     }
                     //Debug.Log(pdata.Deck[j].Name.ToString());
                     GUILayout.Label( pdata.Deck[j].Name.ToString() );
-                    GUILayout.Label($"<color=green>H: { pdata.Deck[j].Hp.Current,-3}</color> <color=red>A: { pdata.Deck[j].Attack.Current,-3}</color>");
+                    GUILayout.Label($"<color=green>H: { pdata.Deck[j].Hp.Current,-3}</color> <color=red>A: { pdata.Deck[j].Attack,-3}</color>");
                     foreach (var ability in pdata.Deck[j].AbilityList)
                     {
                         GUILayout.Label($"能力 : {ability.Name}");
@@ -179,9 +216,10 @@ public class BattlePresenter
             //var width = GUILayout.Width(Screen.width / 7);
             var height = GUILayout.Height(Screen.height / 5);
            
-            if (GUILayout.Button("演出を進める", height))
+            if (GUILayout.Button("演出スキップ", height))
             {
                 _isEnd = true;
+                time = 0;
             }
         }
 #endif

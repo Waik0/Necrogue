@@ -160,10 +160,10 @@ public class BattleProcessSequence : Sequence<bool>
                 break;
             case EnemyDestroyState.Gold:
                 var price = _battleDataUseCase.GetCurrentDefenderCard().Rarity + 1;
-                _playerDataUseCase.AddGold(price);
+                _battleDataUseCase.AddGold(price);
                 break;
             case EnemyDestroyState.Capture:
-                _playerDataUseCase.AddStock(_battleDataUseCase.GetCurrentDefenderCard().Id);
+                _battleDataUseCase.AddCaptureCard(_battleDataUseCase.GetCurrentDefenderCard().Id);
                 break;
         }
         OnCommand.Invoke(new BattleCommand().Generate(_battleDataUseCase.GetSnapShot()));

@@ -15,6 +15,8 @@ public class DeckEditUI : IModalUI
 
     private BattleDataUseCase _battleDataUseCase;
     private bool _isEnd = false;
+    private int _select = -1;
+    private int _selectStock = -1;
     //----------------------------------------------------------------------------------------------------------------------
     // パブリックメソッド
     //----------------------------------------------------------------------------------------------------------------------
@@ -35,13 +37,17 @@ public class DeckEditUI : IModalUI
     {
         return _isEnd;
     }
+    public void ResetSelect()
+    {
+        _select = -1;
+        _selectStock = -1;
+    }
     //----------------------------------------------------------------------------------------------------------------------
     // プライベートメソッド
     //----------------------------------------------------------------------------------------------------------------------
 
 #if DEBUG
-    private int _select = -1;
-    private int _selectStock = -1;
+
     public void DebugUI()
     {
         
@@ -118,7 +124,7 @@ public class DeckEditUI : IModalUI
             GUILayout.BeginVertical("box", GUILayout.Width(Screen.width / 6));
             GUILayout.Label(_selectStock == i ? "selected" : " ");
             GUILayout.Label(pdata.Stock[i].Name.ToString());
-            GUILayout.Label($"<color=green>H: { pdata.Stock[i].Hp.Current,-3}</color> <color=red>A: { pdata.Stock[i].Attack.Current,-3}</color>");
+            GUILayout.Label($"<color=green>H: { pdata.Stock[i].Hp.Current,-3}</color> <color=red>A: { pdata.Stock[i].Attack,-3}</color>");
 
             if (GUILayout.Button("Select"))
             {
