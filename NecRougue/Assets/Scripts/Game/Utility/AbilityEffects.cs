@@ -90,7 +90,8 @@ public static class AbilityEffects
                  arg =>
                 {
                     return
-                    arg.ActionPlayerIndex == arg.AbilityPlayerIndex;
+                    arg.ActionPlayerIndex == arg.AbilityPlayerIndex &&
+                    arg.ActionDeckIndex != arg.AbilityDeckIndex;
 
                 }
 

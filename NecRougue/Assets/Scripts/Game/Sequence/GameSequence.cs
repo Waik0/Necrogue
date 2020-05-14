@@ -59,6 +59,8 @@ public class GameSequence : MonoBehaviour
     {
         DebugLog.Function(this);
         _playerDataUseCase.AddStock(101);
+        _playerDataUseCase.AddStock(101);
+        _playerDataUseCase.AddStock(101);
         _playerDataUseCase.AddStock(102);
         _statemachine.Next(State.Prepare);
         yield return null;

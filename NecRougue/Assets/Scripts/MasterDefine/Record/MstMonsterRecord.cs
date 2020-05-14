@@ -17,7 +17,8 @@ public class MstMonsterRecord : IMasterRecord
     public int level;
     public int attack;
     public int hp;
-    public int defence;
+    public int defence;//聖なる盾
+    public int priority;//挑発
     public int raceId1;
     public int raceId2;
     public int abilityId1;

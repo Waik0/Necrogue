@@ -15,6 +15,7 @@ public class DeckEditSequence : Sequence<bool>
         WaitForInput,
         ChangeOrder,
         Summon,
+        MakeTriple,
         End
     }
     private class ChangeOrderArguments
@@ -73,6 +74,7 @@ public class DeckEditSequence : Sequence<bool>
         _statemachine.Update();
         return _statemachine.Current != State.End;
     }
+
     //----------------------------------------------------------------------------------------------------------------------
     // プライベートメソッド
     //----------------------------------------------------------------------------------------------------------------------
@@ -141,11 +143,18 @@ public class DeckEditSequence : Sequence<bool>
                 _battlePresenter?.OnCommand(new BattleCommand().Generate(ss)),
             _battleDataUseCase.GetOperationPlayerIndex(),
             _summonArguments.DeckOrder);
-        _battleDataUseCase.ResolveAbilityAll(AbilityTimingType.SummonRace,
+        _battleDataUseCase.ResolveAbilityAll(
+            AbilityTimingType.SummonRace,
             ss =>
                 _battlePresenter?.OnCommand(new BattleCommand().Generate(ss)),
-            _battleDataUseCase.GetOperationPlayerIndex());
+            _battleDataUseCase.GetOperationPlayerIndex(),
+            _summonArguments.DeckOrder);
         RemoveDeadAndInvokeAbility();
+        if (_battleDataUseCase.CheckAndMakeTriple())
+        {
+            _battleDataUseCase.ChangeState(BattleState.Triple);
+            _battlePresenter?.OnCommand(new BattleCommand().Generate(_battleDataUseCase.GetSnapShot()));
+        }
         _statemachine.Next(State.WaitForInput);
         yield return null;
     }

@@ -90,7 +90,7 @@ public class ShopUI : IModalUI
             GUILayout.BeginVertical("box",width);
             GUILayout.Label("レア度 : "+data.Rarity.ToString());
             GUILayout.Label(data.Name.ToString());
-            GUILayout.Label($"<color=green>H: { data.Hp.Current,-3}</color> <color=red>A: { data.Attack,-3}</color>");
+            GUILayout.Label($"<color=green>H: { data.Hp,-3}</color> <color=red>A: { data.Attack,-3}</color>");
             if (GUILayout.Button("買う"))
             {
                 Buy(i);

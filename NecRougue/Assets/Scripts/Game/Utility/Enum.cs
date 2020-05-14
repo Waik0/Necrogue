@@ -107,6 +107,7 @@ public enum BattleState
     Ability,
     TurnEnd,
     Sell,//SHOP用
+    Triple,//トリプルができた時
     End,
 }
 

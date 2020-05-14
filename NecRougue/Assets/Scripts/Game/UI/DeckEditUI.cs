@@ -124,7 +124,7 @@ public class DeckEditUI : IModalUI
             GUILayout.BeginVertical("box", GUILayout.Width(Screen.width / 6));
             GUILayout.Label(_selectStock == i ? "selected" : " ");
             GUILayout.Label(pdata.Stock[i].Name.ToString());
-            GUILayout.Label($"<color=green>H: { pdata.Stock[i].Hp.Current,-3}</color> <color=red>A: { pdata.Stock[i].Attack,-3}</color>");
+            GUILayout.Label($"<color=green>H: { pdata.Stock[i].Hp,-3}</color> <color=red>A: { pdata.Stock[i].Attack,-3}</color>");
 
             if (GUILayout.Button("Select"))
             {

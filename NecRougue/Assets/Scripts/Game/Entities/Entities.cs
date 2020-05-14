@@ -85,6 +85,7 @@ public class CardData : IEntity,
     public int Attack;
     public int Hp;
     public int Defence;
+    public int AttackPriority;
     public List<int> Race;
     public List<int> Abilities;
     public int Level;
@@ -106,6 +107,7 @@ public class CardData : IEntity,
         Attack = record.attack;
         Hp = record.hp;
         Defence = record.defence;
+        AttackPriority = record.priority;
         Level = record.level;
         Rarity = record.rarity;
         Race = new List<int>()
@@ -126,8 +128,9 @@ public class CardData : IEntity,
         Id = entity.Id;
         Name = entity.Name;
         Attack = entity.Attack;//.Max;
-        Hp = entity.Hp.Max;
+        Hp = entity.Hp;
         Defence = entity.Defence.Max;
+        AttackPriority = entity.AttackPriolity;
         Level = entity.Level;
         Rarity = entity.Rarity;
         Race = entity.Race.ConvertAll(r=>r.Id);
@@ -271,24 +274,25 @@ public class BattleCard :IEntity,
     public int Level;
     public int Attack;
     public List<RaceData> Race;
-    public ValueSet Hp;
+    public int Hp;
     public ValueSet Defence;
-    public ValueSet AttackPriolity;
+    public int AttackPriolity;
     public List<Ability> AbilityList = new List<Ability>();//マスターから素材ひっぱったり AbilityEffectsから効果ひっぱったり
     public List<Disease> DiseaseList = new List<Disease>();//状態異常
     public bool UseAbilityBefore;
     //view用
     public BattleCardState State;
+
     public void Convert(CardData entity)
     {
         Id = entity.Id;
         Name = entity.Name;
         Level = entity.Level;
         Rarity = entity.Rarity;
-        Hp = new ValueSet(entity.Hp);
+        Hp = entity.Hp;
         Attack = entity.Attack;//new ValueSet(entity.Attack);
         Defence = new ValueSet(entity.Defence);
-        AttackPriolity = new ValueSet(0);
+        AttackPriolity = entity.AttackPriority;
         Race = entity.Race.Where(id =>
         {
             var mst = MasterdataManager.Get<MstRaceRecord>(id);
@@ -317,10 +321,10 @@ public class BattleCard :IEntity,
         Name = record.name;
         Level = record.level;
         Rarity = record.rarity;
-        Hp = new ValueSet(record.hp);
+        Hp = record.hp;
         Attack = record.attack;// new ValueSet(record.attack);
         Defence = new ValueSet(record.defence);
-        AttackPriolity = new ValueSet(0);
+        AttackPriolity = record.priority;
         Race = new List<int>()
         {
             record.raceId1,

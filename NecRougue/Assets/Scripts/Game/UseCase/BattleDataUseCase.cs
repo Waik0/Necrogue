@@ -69,6 +69,10 @@ public class BattleDataUseCase : IEntityUseCase<BattleData>
         var mst = MasterdataManager.Get<MstMonsterRecord>(id);
         GetOperationPlayer().Stock.Add(new BattleCard().Generate(mst));
     }
+    public void AddStock(BattleCard card)
+    {
+        GetOperationPlayer().Stock.Add(card);
+    }
     public void AddGold(int gold)
     {
         _battleData.GetGold += gold;
@@ -89,6 +93,49 @@ public class BattleDataUseCase : IEntityUseCase<BattleData>
         
         GetOperationPlayer().Deck.RemoveAt(order);
 
+    }
+    public bool CheckAndMakeTriple()
+    {
+        var triple = new Dictionary<int,int>();
+        foreach(var card in GetOperationPlayer().Deck)
+        {
+            if (!triple.ContainsKey(card.Id))
+            {
+                triple.Add(card.Id, 0);
+            }
+            triple[card.Id]++;
+        }
+        var makeTriple = false;
+        foreach(var set in triple)
+        {
+            if(set.Value >= 3)
+            {
+                makeTriple = true;
+                var newId = set.Key + 1000;//IDに1000を足したIDから引く
+                var newCard = new BattleCard().Generate(MasterdataManager.Get<MstMonsterRecord>(newId));
+                var currentCard = new BattleCard().Generate(MasterdataManager.Get<MstMonsterRecord>(set.Key));
+                var extAtk = 0;
+                var extHp = 0;
+                var extDef = 0;
+                var extPri = 0;
+                foreach (var set2 in GetOperationPlayer().Deck.Where(c => c.Id == set.Key))
+                {
+                    extAtk += set2.Attack - currentCard.Attack;
+                    extDef += set2.Defence.Max - currentCard.Defence.Max;
+                    extHp += Math.Max(set2.Hp - currentCard.Hp,0);
+                    extPri += set2.AttackPriolity - currentCard.AttackPriolity;
+
+                }
+                newCard.Attack += Math.Max(extAtk, 0);
+                newCard.Hp += Math.Max(extHp,0);
+                newCard.Defence = new ValueSet(Math.Max(extDef, 0));
+                newCard.AttackPriolity += Math.Max(extPri, 0);
+                AddStock(newCard);
+                GetOperationPlayer().Deck.RemoveAll(_ => _.Id == set.Key);
+            }
+
+        }
+        return makeTriple;
     }
     //----------------------------------------------------------------------------------------------------------------------
     //バトル処理
@@ -169,19 +216,19 @@ public class BattleDataUseCase : IEntityUseCase<BattleData>
     }
     public bool IsDeadCurrentDefender()
     {
-        return _battleData.PlayerList[DefenderPlayerIndex()].Deck[DefenderDeckIndex()].Hp.Current <= 0;
+        return _battleData.PlayerList[DefenderPlayerIndex()].Deck[DefenderDeckIndex()].Hp <= 0;
     }
     public bool ConfirmTarget()
     {
         var indexList = Defender()
             .Deck
             .Select((item, index) => new {Index = index, Value = item})
-            .Where(_ => _.Value.Hp.Current > 0)
+            .Where(_ => _.Value.Hp > 0)
             .Where(_ =>
-                _.Value.AttackPriolity.Current == Defender()
+                _.Value.AttackPriolity == Defender()
                     .Deck
-                    .Where(_2=>_2.Hp.Current > 0)
-                    .Max(_2 => _2.AttackPriolity.Current)
+                    .Where(_2=>_2.Hp > 0)
+                    .Max(_2 => _2.AttackPriolity)
             )
             .Select(_ => _.Index)
             .ToList();
@@ -199,14 +246,14 @@ public class BattleDataUseCase : IEntityUseCase<BattleData>
     {
         var attacker = _battleData.PlayerList[_battleData.CurrentAttacker].AttackerIndex;
         var atk = _battleData.PlayerList[_battleData.CurrentAttacker].Deck[attacker].Attack;
-        _battleData.PlayerList[_battleData.CurrentDefencer].Deck[target].Hp.Current -= atk;
+        _battleData.PlayerList[_battleData.CurrentDefencer].Deck[target].Hp -= atk;
         if (_battleData.PlayerList[_battleData.CurrentDefencer].PlayerType == PlayerType.Enemy)
         {
-            if (_battleData.PlayerList[_battleData.CurrentDefencer].Deck[target].Hp.Current < 0)
+            if (_battleData.PlayerList[_battleData.CurrentDefencer].Deck[target].Hp < 0)
             {
                 return EnemyDestroyState.Gold;
             }
-            if (_battleData.PlayerList[_battleData.CurrentDefencer].Deck[target].Hp.Current == 0)
+            if (_battleData.PlayerList[_battleData.CurrentDefencer].Deck[target].Hp == 0)
             {
                 return EnemyDestroyState.Capture;
             }
@@ -345,7 +392,7 @@ public class BattleDataUseCase : IEntityUseCase<BattleData>
         {
             _battleData.PlayerList[i].Deck.RemoveAll(_ =>
             {
-                if (_.Hp.Current <= 0)
+                if (_.Hp <= 0)
                 {
                     removed.Add(_);
                     return true;
@@ -386,7 +433,7 @@ public class BattleDataUseCase : IEntityUseCase<BattleData>
                 BattleCardState state = BattleCardState.None;
                 var isAttack = attacker && _battleData.PlayerList[i].AttackerIndex == j;
                 var isTarget = defender && _target == j;
-                var isDead = _battleData.PlayerList[i].Deck[j].Hp.Current <= 0;
+                var isDead = _battleData.PlayerList[i].Deck[j].Hp <= 0;
                 if (isDead) state = BattleCardState.Dead;
                 if (_battleData.State == BattleState.Attack && isAttack) state = BattleCardState.Attack;
                 if (_battleData.State == BattleState.Attack && isTarget) state = BattleCardState.Damage;
@@ -411,7 +458,7 @@ public class BattleDataUseCase : IEntityUseCase<BattleData>
 
     public bool IsAlive(int playerIndex,int cardIndex)
     {
-        return _battleData.PlayerList[playerIndex].Deck[cardIndex].Hp.Current > 0;
+        return _battleData.PlayerList[playerIndex].Deck[cardIndex].Hp > 0;
     }
     public bool IsFirstTurn() => _battleData.Turn == 1;
     public bool IsAttackerIndexOut(int index) => _battleData.PlayerList[index].AttackerIndex >= _battleData.PlayerList[index].Deck.Count;
@@ -494,7 +541,7 @@ public class BattleDataUseCase : IEntityUseCase<BattleData>
     //生き残ったデッキ
     public List<BattleCard> GetRemainDecks()
     {
-        return GetOperationPlayer().Deck.Where(_ => _.Hp.Current > 0).ToList();
+        return GetOperationPlayer().Deck.Where(_ => _.Hp > 0).ToList();
     }
     public List<BattleCard> GetRemainStocks()
     {

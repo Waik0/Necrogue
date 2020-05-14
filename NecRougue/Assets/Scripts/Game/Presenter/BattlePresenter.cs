@@ -198,7 +198,7 @@ public class BattlePresenter
                     }
                     //Debug.Log(pdata.Deck[j].Name.ToString());
                     GUILayout.Label( pdata.Deck[j].Name.ToString() );
-                    GUILayout.Label($"<color=green>H: { pdata.Deck[j].Hp.Current,-3}</color> <color=red>A: { pdata.Deck[j].Attack,-3}</color>");
+                    GUILayout.Label($"<color=green>H: { pdata.Deck[j].Hp,-3}</color> <color=red>A: { pdata.Deck[j].Attack,-3}</color>");
                     foreach (var ability in pdata.Deck[j].AbilityList)
                     {
                         GUILayout.Label($"能力 : {ability.Name}");
