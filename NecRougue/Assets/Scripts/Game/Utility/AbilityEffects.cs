@@ -1,97 +1,193 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class AbilityEffectsArgument
 {
     public BattleDataUseCase BattleDataUseCase;
     public BattleProcessSequence BattleProcess;
-    public int PlayerIndex;
-    public int DeckIndex;
-    public int Level;
+    //能力発動をチェックする者
+    public int AbilityPlayerIndex;
+    public int AbilityDeckIndex;
+    //アクションを起こしたもの(攻撃、召喚など
+    public int ActionPlayerIndex = -1;
+    public int ActionDeckIndex = -1;
+    //防御者 Attack Defenceの時のみ使用
+    public int DefenderPlayerIndex = -1;
+    public int DefenderDeckIndex = -1;
+    //
+    public int Level;//能力レベル
+    public int Param1;
     public AbilityTimingType TimingType;
-    public bool IsMine = false;
+    //public bool IsMine = false;
+    //あとで入れるやつ
+    public List<BattleCard> TargetCards;
 }
 public static class AbilityEffects
 {
 
-    private static Dictionary<int, Func<AbilityEffectsArgument,bool>> EffectList = new Dictionary<int,  Func<AbilityEffectsArgument,bool>>()
+    private static Dictionary<AbilityEffectType, Func<AbilityEffectsArgument,bool>> EffectList = new Dictionary<AbilityEffectType,  Func<AbilityEffectsArgument,bool>>()
     {
-        {//ターン開始時: 隣接するモンスターは攻撃力+{Level}を得る
-            101,
+        {//
+            AbilityEffectType.None,
             abilityEffectsArgument =>
             {
-                if (abilityEffectsArgument.TimingType != AbilityTimingType.TurnStart)
+                return false;
+            }
+
+        },
+        {//モンスターは攻撃力+{Level}を得る
+            AbilityEffectType.PowerUp,
+            abilityEffectsArgument =>
+            {
+                foreach(var card in abilityEffectsArgument.TargetCards)
                 {
-                    return false;
+                    card.Attack+=abilityEffectsArgument.Level;
                 }
-                var left = abilityEffectsArgument.BattleDataUseCase
-                    .GetCardRef(abilityEffectsArgument.PlayerIndex,abilityEffectsArgument.DeckIndex - 1);
-                var right = abilityEffectsArgument.BattleDataUseCase
-                    .GetCardRef(abilityEffectsArgument.PlayerIndex,abilityEffectsArgument.DeckIndex + 1);
-                if (left != null) left.Attack+= abilityEffectsArgument.Level;
-                if (right != null) right.Attack+= abilityEffectsArgument.Level;
+
                 return true;
             }
             
         },
-        {//召喚時: Level/Levelの{param1:EnemyId}を1体召喚する。
-            102,
+        {// Level/Levelの{param1:EnemyId}を1体召喚する。
+            AbilityEffectType.Summon,
             abilityEffectsArgument =>
             {
-                if (abilityEffectsArgument.TimingType != AbilityTimingType.SummonOwn)
-                {
-                    return false;
-                }
-
-                if (!abilityEffectsArgument.IsMine)
-                {
-                    return false;
-                }
 
                 return true;
             }
-        },
-        {//{param1:RaceId}召喚時: {param1:RaceId}を召喚するたびに攻撃力+{Level}
-            103,
-            abilityEffectsArgument =>
-            {
-                if (abilityEffectsArgument.TimingType != AbilityTimingType.SummonRace)
-                {
-                    return false;
-                }
-                var own = abilityEffectsArgument.BattleDataUseCase
-                    .GetCardRef(abilityEffectsArgument.PlayerIndex,abilityEffectsArgument.DeckIndex );
-                if (own != null) own.Attack+= abilityEffectsArgument.Level;
-                return true;
-            }
-        },
-        {//召喚時: 味方の{param1:RaceId}1体に+1/+1を付与する
-            104,
-            abilityEffectsArgument =>
-            {
-                if (abilityEffectsArgument.TimingType != AbilityTimingType.SummonOwn)
-                {
-                    return false;
-                }
-                if (!abilityEffectsArgument.IsMine)
-                {
-                    return false;
-                }
-
-                return true;
-            }
-        },
+        }
     };
 
-    public static Func<AbilityEffectsArgument,bool> GetEffect(int id)
+    private static Dictionary<AbilityEffectConditionType, Func<AbilityEffectsArgument, bool>> AbilityConditions = 
+        new Dictionary<AbilityEffectConditionType, Func<AbilityEffectsArgument, bool>>()
     {
-        if (EffectList.ContainsKey(id))
-        {
-            return EffectList[id];
-        }
+            {
+                AbilityEffectConditionType.None,
+                arg =>
+                {
+                    return false;
+                }
 
-        return null;
+
+            },
+            {
+                AbilityEffectConditionType.Self,
+                arg =>
+                {
+                    return 
+                    arg.ActionDeckIndex == arg.AbilityDeckIndex &&
+                    arg.ActionPlayerIndex == arg.AbilityPlayerIndex;
+                    
+                }
+
+
+            },
+            {
+                AbilityEffectConditionType.Ally,
+                 arg =>
+                {
+                    return
+                    arg.ActionPlayerIndex == arg.AbilityPlayerIndex;
+
+                }
+
+            },
+            {//ActionCardの種族がId = param1のとき
+                AbilityEffectConditionType.AllyRace,
+                 arg =>
+                {
+                    return arg.ActionPlayerIndex == arg.AbilityPlayerIndex &&
+                    arg.BattleDataUseCase.GetRaceData(arg.ActionPlayerIndex,arg.ActionDeckIndex).Any(race =>race.Id == arg.Param1 );
+
+                }
+
+            },
+            {
+                AbilityEffectConditionType.Any,
+                 arg =>
+                {
+                    return true;
+
+                }
+
+            }
+    };
+    private static Dictionary<AbilityEffectTargetType, Func<AbilityEffectsArgument, List<BattleCard>>> AbilityTargets =
+        new Dictionary<AbilityEffectTargetType, Func<AbilityEffectsArgument, List<BattleCard>>>()
+    {
+            {//発動者の両隣
+                AbilityEffectTargetType.MySide,
+                arg =>
+                {
+                    var cards = new List<BattleCard>();
+                    if(arg.AbilityPlayerIndex == -1 || arg.AbilityDeckIndex == -1)
+                    {
+                        return cards;
+                    }
+                    var left =   arg.BattleDataUseCase
+                    .GetCardRef(arg.AbilityPlayerIndex,arg.AbilityDeckIndex - 1);
+                    var right =  arg.BattleDataUseCase
+                    .GetCardRef(arg.AbilityPlayerIndex,arg.AbilityDeckIndex + 1);
+                     if(left != null )cards.Add(left);
+                     if(right != null )cards.Add(right);
+                    return cards;
+                }
+
+            },
+            {
+                AbilityEffectTargetType.MySelf,
+                arg =>
+                {
+                    var cards = new List<BattleCard>();
+                    if(arg.AbilityPlayerIndex == -1 || arg.AbilityDeckIndex == -1)
+                    {
+                        return cards;
+                    }
+                    var self =   arg.BattleDataUseCase
+                    .GetCardRef(arg.AbilityPlayerIndex,arg.AbilityDeckIndex);
+                     if(self != null )cards.Add(self);
+                    return cards;
+                }
+
+            }
+    };
+
+    public static Func<AbilityEffectsArgument, bool> GetEffect(MstAbilityRecord ability)
+    {
+
+        var targetType = ability.targetType;
+        var conditionType = ability.conditionType;
+        var effectType = ability.effecyType;
+        var timingType = ability.timingType;
+       
+        var chooseTaregt = AbilityTargets[targetType];
+        var condition = AbilityConditions[conditionType];
+        var effect = EffectList[effectType];
+
+        bool Effect(AbilityEffectsArgument arg)
+        {
+            if (arg.TimingType != timingType)
+            {
+                return false;
+            }
+            if (!condition(arg))
+            {
+                return false;
+            }
+            var cards = chooseTaregt(arg);
+            if (cards.Count == 0)
+            {
+                return false;
+            }
+            arg.TargetCards = cards;
+            var result = effect(arg);
+
+            return result;
+        }
+        return Effect;
+       
     }
 }

@@ -85,6 +85,7 @@ public class CardData : IEntity,
     public int Attack;
     public int Hp;
     public int Defence;
+    public List<int> Race;
     public List<int> Abilities;
     public int Level;
 
@@ -107,6 +108,11 @@ public class CardData : IEntity,
         Defence = record.defence;
         Level = record.level;
         Rarity = record.rarity;
+        Race = new List<int>()
+        {
+            record.raceId1,
+            record.raceId2,
+        };
         Abilities = new List<int>()
         {
             record.abilityId1,
@@ -124,6 +130,7 @@ public class CardData : IEntity,
         Defence = entity.Defence.Max;
         Level = entity.Level;
         Rarity = entity.Rarity;
+        Race = entity.Race.ConvertAll(r=>r.Id);
         Abilities = entity.AbilityList.ConvertAll(a => a.Id);
 
     }
@@ -263,6 +270,7 @@ public class BattleCard :IEntity,
     public int Rarity;
     public int Level;
     public int Attack;
+    public List<RaceData> Race;
     public ValueSet Hp;
     public ValueSet Defence;
     public ValueSet AttackPriolity;
@@ -281,6 +289,15 @@ public class BattleCard :IEntity,
         Attack = entity.Attack;//new ValueSet(entity.Attack);
         Defence = new ValueSet(entity.Defence);
         AttackPriolity = new ValueSet(0);
+        Race = entity.Race.Where(id =>
+        {
+            var mst = MasterdataManager.Get<MstRaceRecord>(id);
+            return mst != null;
+        }).ToList().ConvertAll(id =>
+        {
+            var mst = MasterdataManager.Get<MstRaceRecord>(id);
+            return new RaceData().Generate(mst);
+        });
         AbilityList = entity.Abilities.Where(id =>
         {
             var mst = MasterdataManager.Get<MstAbilityRecord>(id);
@@ -304,6 +321,19 @@ public class BattleCard :IEntity,
         Attack = record.attack;// new ValueSet(record.attack);
         Defence = new ValueSet(record.defence);
         AttackPriolity = new ValueSet(0);
+        Race = new List<int>()
+        {
+            record.raceId1,
+            record.raceId2
+        }.Where(id =>
+        {
+            var mst = MasterdataManager.Get<MstRaceRecord>(id);
+            return mst != null;
+        }).ToList().ConvertAll(id =>
+        {
+            var mst = MasterdataManager.Get<MstRaceRecord>(id);
+            return new RaceData().Generate(mst);
+        });
         AbilityList = new List<int>()
         {
             record.abilityId1,
@@ -360,13 +390,13 @@ public class Ability : IConvertFromMasterRecord<MstAbilityRecord>,
 {
     public int Id;//AbilityEffectsから効果ひっぱったり
     public string Name;
-    public Func<AbilityEffectsArgument,bool> Effect;
+    //public Func<AbilityEffectsArgument,bool> Effect;
     //public AbilityTimingType TimingType;
     public void Convert(MstAbilityRecord record)
     {
         Name = record.name;
         Id = record.id;
-        Effect = AbilityEffects.GetEffect(Id);
+        //Effect = AbilityEffects.GetEffect(record);
     //    TimingType = record.timingType;
     }
 

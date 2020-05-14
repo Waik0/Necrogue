@@ -34,7 +34,7 @@ public class GameSequence : MonoBehaviour
 
     void Awake()
     {
-        
+        Application.targetFrameRate = 60;
         _statemachine = new Statemachine<State>();
         _statemachine.Init(this);
         _statemachine.Next(State.Init);

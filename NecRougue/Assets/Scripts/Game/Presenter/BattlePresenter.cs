@@ -149,10 +149,10 @@ public class BattlePresenter
                         time = 5;
                         break;
                     case BattleState.Attack:
-                        time = 120;
+                        time = 60;
                         break;
                     case BattleState.Ability:
-                        time = 250;
+                        time = 60;
                         break;
                     case BattleState.TurnEnd:
                         time = 30;

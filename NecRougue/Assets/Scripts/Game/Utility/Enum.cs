@@ -44,12 +44,13 @@ public enum AbilityTimingType
 /// <summary>
 /// アビリティ発動タイミングの行動を起こしたプレイヤーが自分か敵か味方か両方か
 /// </summary>
-public enum AbilityTimingTargetType
+public enum AbilityEffectConditionType
 {
     None,
     Self,//自分
     Ally,//味方
     Enemy,//敵
+    AllyRace,//味方種族
     Any,//だれでも
 }
 
@@ -59,17 +60,22 @@ public enum AbilityTimingTargetType
 public enum AbilityEffectTargetType
 {
     None,
-    Self,
-    Side,
-    Left,
+    MySelf,
+    MySide,
+    MyLeft,
+    DefenderSide,
+
+
 
 }
+
 public enum AbilityEffectType
 {
     None,
     PowerUp,
     Possession,
     Shield,
+    Summon
 
 }
 public enum BattleCommandType

@@ -223,6 +223,17 @@ public class BattleDataUseCase : IEntityUseCase<BattleData>
     public int AttackerDeckIndex() =>_battleData.PlayerList[_battleData.CurrentDefencer].AttackerIndex;
     public int DefenderPlayerIndex() => _battleData.CurrentDefencer;
     public int DefenderDeckIndex() => _target;
+    //種族
+    public List<RaceData> GetRaceData(int pid, int did)
+    {
+        if( pid >= 0 && _battleData.PlayerList.Count > pid ) {
+            if( did >= 0 && _battleData.PlayerList[pid].Deck.Count > did)
+            {
+                return _battleData.PlayerList[pid].Deck[did].Race;
+            }
+        }
+        return new List<RaceData>();
+    }
     public void SortPlayerOrderAndConfirmFirstAttacker()
     {
         _battleData.PlayerList = _battleData.PlayerList.OrderBy(_ => _.Speed).ThenBy(_=>_.PlayerType).ToList();
@@ -253,15 +264,15 @@ public class BattleDataUseCase : IEntityUseCase<BattleData>
             for (var k = 0; k < card.AbilityList.Count; k++)
             {
 
-                var isAbilityExecute = card.AbilityList[k].Effect(new AbilityEffectsArgument()
-                {
-                    BattleDataUseCase = this,
-                    DeckIndex = -1,
-                    PlayerIndex = -1,
-                    TimingType = AbilityTimingType.Dead,
-                    IsMine = true,
-                    Level = card.Level
-                });
+                                    //todo 実行速度に影響するようなら書き換え
+                var isAbilityExecute = AbilityEffects.GetEffect(
+                            MasterdataManager.Get<MstAbilityRecord>(card.AbilityList[k].Id))
+                            (new AbilityEffectsArgument()
+                            {
+                                BattleDataUseCase = this,
+                                TimingType = AbilityTimingType.Dead,
+                                Level = card.Level
+                            });
                 if (isAbilityExecute)
                 {
                     // _currentAbilityUser = PlayerType.Player;
@@ -275,7 +286,7 @@ public class BattleDataUseCase : IEntityUseCase<BattleData>
         }
     }
     //todo タイミング判定をEffects側に移す
-    public void ResolveAbilityAll(AbilityTimingType timingType, Action<BattleData> command, int playerIndex = -1, int deckIndex = -1)
+    public void ResolveAbilityAll(AbilityTimingType timingType, Action<BattleData> command,int p = -1,int d = -1)
     {
         for (var i = 0; i < _battleData.PlayerList.Count; i++)
         {
@@ -285,21 +296,31 @@ public class BattleDataUseCase : IEntityUseCase<BattleData>
                 {
 
                     {
-                        var isMine = true;
-                        //SummonとかAttackとかの時に自分の行動かどうか判定するための処理
-                        if (playerIndex != -1 && deckIndex != -1)
+                        var actionPlayerIndex = p;
+                        var actionDeckIndex = d;
+                        var defenderPlayerIndex = -1;
+                        var defenderDeckIndex = -1;
+                        if (
+                            timingType == AbilityTimingType.Attack ||
+                            timingType == AbilityTimingType.Defence)
                         {
-                            isMine = i == playerIndex && j == deckIndex;
+                            defenderPlayerIndex = DefenderPlayerIndex();
+                            defenderDeckIndex = DefenderDeckIndex();
                         }
 
-                    
-                        var isAbilityExecute = _battleData.PlayerList[i].Deck[j].AbilityList[k].Effect(new AbilityEffectsArgument()
+                    //todo 実行速度に影響するようなら書き換え
+                        var isAbilityExecute = AbilityEffects.GetEffect(
+                            MasterdataManager.Get<MstAbilityRecord>(_battleData.PlayerList[i].Deck[j].AbilityList[k].Id))
+                            (new AbilityEffectsArgument()
                         {
                             BattleDataUseCase = this,
-                            DeckIndex = j,
-                            PlayerIndex = i,
+                            AbilityDeckIndex = j,
+                            AbilityPlayerIndex = i,
+                            ActionPlayerIndex = actionPlayerIndex,
+                            ActionDeckIndex = actionDeckIndex,
+                            DefenderPlayerIndex = defenderPlayerIndex,
+                            DefenderDeckIndex = defenderDeckIndex,
                             TimingType = timingType,
-                            IsMine   = isMine,
                             Level = _battleData.PlayerList[i].Deck[j].Level
                         });
                         if (isAbilityExecute)
@@ -410,7 +431,7 @@ public class BattleDataUseCase : IEntityUseCase<BattleData>
     //防御側全滅判定
     public bool IsDefenderAllDead()
     {
-        return Defender().Deck.All(_ => _.Hp.Current <= 0);
+        return Defender().Deck.Count <= 0;//All(_ => _.Hp.Current <= 0);
     }
 
     public bool IsOutOfDeckRange(int playerIndex, int deckIndex)

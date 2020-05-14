@@ -143,7 +143,8 @@ public class DeckEditSequence : Sequence<bool>
             _summonArguments.DeckOrder);
         _battleDataUseCase.ResolveAbilityAll(AbilityTimingType.SummonRace,
             ss =>
-                _battlePresenter?.OnCommand(new BattleCommand().Generate(ss)));
+                _battlePresenter?.OnCommand(new BattleCommand().Generate(ss)),
+            _battleDataUseCase.GetOperationPlayerIndex());
         RemoveDeadAndInvokeAbility();
         _statemachine.Next(State.WaitForInput);
         yield return null;
