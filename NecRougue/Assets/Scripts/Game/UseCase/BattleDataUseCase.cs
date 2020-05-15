@@ -112,6 +112,10 @@ public class BattleDataUseCase : IEntityUseCase<BattleData>
             {
                 makeTriple = true;
                 var newId = set.Key + 1000;//IDに1000を足したIDから引く
+                if (null == MasterdataManager.Get<MstMonsterRecord>(newId))
+                {
+                    continue;
+                }
                 var newCard = new BattleCard().Generate(MasterdataManager.Get<MstMonsterRecord>(newId));
                 var currentCard = new BattleCard().Generate(MasterdataManager.Get<MstMonsterRecord>(set.Key));
                 var extAtk = 0;

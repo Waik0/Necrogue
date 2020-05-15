@@ -161,7 +161,7 @@ public static class AbilityEffects
 
         var targetType = ability.targetType;
         var conditionType = ability.conditionType;
-        var effectType = ability.effecyType;
+        var effectType = ability.effectType;
         var timingType = ability.timingType;
        
         var chooseTaregt = AbilityTargets[targetType];

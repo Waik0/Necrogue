@@ -242,6 +242,8 @@ public class GameSequence : MonoBehaviour
                 break;
             case State.Prepare:
                 break;
+            case State.Item:
+                break;
             default:
                 throw new ArgumentOutOfRangeException();
         }
@@ -271,6 +273,8 @@ public class GameSequence : MonoBehaviour
             case State.Init:
                 break;
             case State.Prepare:
+                break;
+            case State.Item:
                 break;
             default:
                 throw new ArgumentOutOfRangeException();

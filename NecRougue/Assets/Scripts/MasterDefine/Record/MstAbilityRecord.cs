@@ -15,7 +15,7 @@ public class MstAbilityRecord : IMasterRecord
     public AbilityTimingType timingType;
     public AbilityEffectConditionType conditionType;
     public AbilityEffectTargetType targetType;//実際に効果を発揮する対象
-    public AbilityEffectType effecyType;//
+    public AbilityEffectType effectType;//
     public int param1;//汎用的に使用するパラメーター
     public string description;
 }
