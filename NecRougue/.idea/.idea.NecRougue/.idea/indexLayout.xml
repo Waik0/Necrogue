@@ -25,6 +25,7 @@
       <Path>.idea</Path>
       <Path>.vs</Path>
       <Path>ExportedMasterDefine</Path>
+      <Path>ExportedMasterExcel</Path>
       <Path>Library</Path>
       <Path>Logs</Path>
       <Path>MasterDataConverter</Path>

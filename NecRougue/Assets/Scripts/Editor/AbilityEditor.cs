@@ -48,7 +48,7 @@ public class AbilityEditor : EditorWindow
             GUILayout.BeginHorizontal();
             if (changed)
             {
-                Debug.Log(changed);
+                //Debug.Log(changed);
                 if (_aet.ContainsKey(Record.effectType))
                          Record.description = _aet[Record.effectType](Record);
             }
@@ -290,7 +290,7 @@ public class AbilityEditor : EditorWindow
 
         }
 
-        var path = "Assets/Resources/" + (attributes[0] as MasterPath).Path +"_test.json";
+        var path = "Assets/Resources/" + (attributes[0] as MasterPath).Path;
         var json = MiniJSON.Json.Serialize(list);
         Debug.Log("Write Data : " + path);
         File.WriteAllText(path,json);
