@@ -57,7 +57,7 @@ public class AbilityEditor : EditorWindow
             //     if (_aet.ContainsKey(Record.effectType))
             //         Record.description = _aet[Record.effectType](Record);
             // }
-            GUILayout.Label(Record.description);
+            GUILayout.Label(String.Format(Record.description,Record.param1));
             GUILayout.EndHorizontal();
             GUILayout.EndVertical();
             
@@ -149,28 +149,54 @@ public class AbilityEditor : EditorWindow
         { AbilityEffectTargetType.None , a=>"無効"},
         { AbilityEffectTargetType.MySelf ,a=> "自分自身" },
         { AbilityEffectTargetType.MySide ,a=> "自分の両隣" },
-        { AbilityEffectTargetType.MyLeft , a=>"自分の左隣" }
+        { AbilityEffectTargetType.MyLeft , a=>"自分の左隣" },
+        { AbilityEffectTargetType.Action , a=>$"そのモンスター" },
+        { AbilityEffectTargetType.DefenderSide , a=>"攻撃を受けたモンスターの両隣"},
+        { AbilityEffectTargetType.AllyAll ,a=> "味方モンスターすべて" },
+        { AbilityEffectTargetType.EnemyAll ,a=> "敵モンスターすべて" },
+        { AbilityEffectTargetType.AllyLeftmost , a=>"味方の左端" },
+        { AbilityEffectTargetType.EnemyLeftmost , a=>$"敵の左端" },
+        { AbilityEffectTargetType.All , a=>$"すべて" },
+        //{ AbilityEffectTargetType.EnemyLeftmost , a=>$"敵の左端" },
     };
     public static Dictionary<AbilityEffectConditionType, Func<MstAbilityRecord,string>> _aect = new Dictionary<AbilityEffectConditionType, Func<MstAbilityRecord,string>>()
     {
         { AbilityEffectConditionType.None,a=>"無効" },
-        { AbilityEffectConditionType.Self,a=>"自分" },
-        { AbilityEffectConditionType.Ally,a=>"味方" },
+        { AbilityEffectConditionType.Self,a=>"このモンスター" },
+        { AbilityEffectConditionType.Ally,a=>"味方モンスター" },
+        { AbilityEffectConditionType.Enemy,a=>"敵モンスター" },
+        { AbilityEffectConditionType.AllyRace,a=>$"種族:{a.raceId}のモンスター" },
+        { AbilityEffectConditionType.Any,a=>"いずれかのモンスター" },
     };
     public static Dictionary<AbilityEffectType, Func<MstAbilityRecord,string>> _aet = new Dictionary<AbilityEffectType, Func<MstAbilityRecord,string>>()
     {
         { AbilityEffectType.None,a=>"無効" },
-        { AbilityEffectType.PowerUp,a=>$"{ATT(a)}、{AETT(a)}にAtk+{{0}}" },
-        { AbilityEffectType.Summon,a=>$"モンスター：{a.param1}を召喚" },
-        { AbilityEffectType.Shield,a=>$"聖なる盾を付与" },
-        
+        { AbilityEffectType.AtUp,a=>$"{ATT(a)}、{AETT(a)}にAtk + {a.param2}" },
+        { AbilityEffectType.Summon,a=>$"{ATT(a)}、{a.param1}を{a.param2}体召喚" },
+        { AbilityEffectType.Shield,a=>$"{ATT(a)}、{AETT(a)}に次のダメージを無効するシールドをつける" },
+        { AbilityEffectType.Blocker,a=>$"{ATT(a)}から、敵の攻撃が{AETT(a)}に集中するようになる" },
+        { AbilityEffectType.Revive,a=>$"{ATT(a)}、{AETT(a)}が一度だけ復活するようになる" },
+        { AbilityEffectType.Stun,a=>$"{ATT(a)}、{AETT(a)}をスタンさせる" },
+        { AbilityEffectType.ExtAttack,a=>$"{ATT(a)}、{AETT(a)}に{a.param1}ダメージを与える" },
+        { AbilityEffectType.AddAbility,a=>$"{ATT(a)}、{AETT(a)}に能力{a.param1}を与える" },
+        { AbilityEffectType.SummonRandom,a=>$"{ATT(a)}、モンスターをランダムに{a.param1}体召喚" },
+        { AbilityEffectType.HpUp,a=>$"{ATT(a)}、{AETT(a)}にHp + {a.param1}" },
+        { AbilityEffectType.AtHpUp,a=>$"{ATT(a)}、{AETT(a)}のHp + {a.param1},At + {a.param2}" },
+        { AbilityEffectType.Union,a=>$"{ATT(a)}、{AETT(a)}が存在すれば、そのモンスターに自分のHp、Atk、能力を上乗せし、自分は消滅する" },
     };
     public static Dictionary<AbilityTimingType, Func<MstAbilityRecord,string>> _att = new Dictionary<AbilityTimingType, Func<MstAbilityRecord,string>>()
     {
         { AbilityTimingType.None,a=>"無効" },
-        { AbilityTimingType.SummonOwn,a=>$"{AECT(a)}の召喚時" },
-        { AbilityTimingType.SummonRace,a=>$"{AECT(a)}の召喚時" },
-        { AbilityTimingType.BattleStart,a=>"バトル開始時" },
+        { AbilityTimingType.Summon,a=>$"{AECT(a)}を召喚した時" },
+        { AbilityTimingType.BattleStart,a=>"バトル開始した時" },
+        { AbilityTimingType.Attack,a=>$"{AECT(a)}が攻撃したあと" },
+        { AbilityTimingType.Defence,a=>$"{AECT(a)}が攻撃されたあと" },
+        //{ AbilityTimingType.ConfirmAttacker,a=>$"{AECT(a)}が攻撃する直前" },
+        { AbilityTimingType.ConfirmTargetAttack,a=>$"{AECT(a)}が攻撃する直前" },
+        { AbilityTimingType.ConfirmTargetDefence,a=>$"{AECT(a)}が攻撃される直前" },
+        { AbilityTimingType.Dead,a=>$"{AECT(a)}が倒された時" },
+        { AbilityTimingType.TurnEnd,a=>$"ターン終了時" },
+        { AbilityTimingType.TurnStart,a=>"ターン開始時" },
     };
     private void Load()
     {

@@ -122,7 +122,7 @@ public class BattleProcessSequence : Sequence<bool>
             _statemachine.Next(State.CheckAndIncrement);
             yield return null;
         }
-        ResolveAbilityAllCard(AbilityTimingType.ConfirmAttacker);
+        //ResolveAbilityAllCard(AbilityTimingType.ConfirmAttacker);
         _statemachine.Next(State.ConfirmTarget);
         yield return null;
     }

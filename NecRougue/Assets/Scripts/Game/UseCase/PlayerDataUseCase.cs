@@ -71,6 +71,11 @@ public class PlayerDataUseCase : IEntityUseCase<PlayerData>
         var mst = MasterdataManager.Get<MstMonsterRecord>(monsterId);
         AddStock(new CardData().Generate(mst));
     }
+    public void AddDeck(int monsterId)
+    {
+        var mst = MasterdataManager.Get<MstMonsterRecord>(monsterId);
+        _playerData.Deck.Add(new CardData().Generate(mst));
+    }
     public void AddStock(CardData card)
     {
         _playerData.Stock.Add(card);

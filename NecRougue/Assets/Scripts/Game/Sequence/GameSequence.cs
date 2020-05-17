@@ -23,7 +23,7 @@ public class GameSequence : MonoBehaviour
 
     //todo DI対応---
     [SerializeField] private MapSequence _mapSequence;
-    [SerializeField] private BattleSequence _battleSequence;
+    private BattleSequence _battleSequence = new BattleSequence();
     private ShopSequence _shopSequence = new ShopSequence();
     private PlayerDataUseCase _playerDataUseCase = new PlayerDataUseCase();
     private MapDataUseCase _mapDataUseCase = new MapDataUseCase();

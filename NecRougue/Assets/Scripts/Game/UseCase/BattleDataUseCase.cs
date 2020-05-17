@@ -83,6 +83,12 @@ public class BattleDataUseCase : IEntityUseCase<BattleData>
         GetOperationPlayer().Stock.RemoveAt(stockOrder);
         GetOperationPlayer().Deck.Insert(order, card);
     }
+
+    public void SummonDirect(int pIndex ,int dIndex,int id)
+    {
+        var card =  new BattleCard().Generate(MasterdataManager.Get<MstMonsterRecord>(id));
+        _battleData.PlayerList[pIndex].Deck.Insert(dIndex, card);
+    }
     public void AddCaptureCard(int id)
     {
         var card = new BattleCard().Generate(MasterdataManager.Get<MstMonsterRecord>(id));
@@ -125,14 +131,14 @@ public class BattleDataUseCase : IEntityUseCase<BattleData>
                 foreach (var set2 in GetOperationPlayer().Deck.Where(c => c.Id == set.Key))
                 {
                     extAtk += set2.Attack - currentCard.Attack;
-                    extDef += set2.Defence.Max - currentCard.Defence.Max;
+                    extDef += set2.Defence - currentCard.Defence;
                     extHp += Math.Max(set2.Hp - currentCard.Hp,0);
                     extPri += set2.AttackPriolity - currentCard.AttackPriolity;
 
                 }
                 newCard.Attack += Math.Max(extAtk, 0);
                 newCard.Hp += Math.Max(extHp,0);
-                newCard.Defence = new ValueSet(Math.Max(extDef, 0));
+                newCard.Defence = Math.Max(extDef, 0);
                 newCard.AttackPriolity += Math.Max(extPri, 0);
                 AddStock(newCard);
                 GetOperationPlayer().Deck.RemoveAll(_ => _.Id == set.Key);

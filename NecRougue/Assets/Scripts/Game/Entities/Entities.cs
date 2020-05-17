@@ -84,8 +84,6 @@ public class CardData : IEntity,
     public int Rarity;
     public int Attack;
     public int Hp;
-    public int Defence;
-    public int AttackPriority;
     public List<int> Race;
     public List<int> Abilities;
     public int Level;
@@ -106,8 +104,6 @@ public class CardData : IEntity,
         Name = record.name;
         Attack = record.attack;
         Hp = record.hp;
-        Defence = record.defence;
-        AttackPriority = record.priority;
         Level = record.level;
         Rarity = record.rarity;
         Race = new List<int>()
@@ -129,8 +125,7 @@ public class CardData : IEntity,
         Name = entity.Name;
         Attack = entity.Attack;//.Max;
         Hp = entity.Hp;
-        Defence = entity.Defence.Max;
-        AttackPriority = entity.AttackPriolity;
+
         Level = entity.Level;
         Rarity = entity.Rarity;
         Race = entity.Race.ConvertAll(r=>r.Id);
@@ -142,6 +137,7 @@ public class CardData : IEntity,
 public class EnemyData : IEntity
 {
     public int Id;
+    
 }
 //----------------------------------------------------------------------------------------------------------------------
 //Map
@@ -275,7 +271,7 @@ public class BattleCard :IEntity,
     public int Attack;
     public List<RaceData> Race;
     public int Hp;
-    public ValueSet Defence;
+    public int Defence;
     public int AttackPriolity;
     public List<Ability> AbilityList = new List<Ability>();//マスターから素材ひっぱったり AbilityEffectsから効果ひっぱったり
     public List<Disease> DiseaseList = new List<Disease>();//状態異常
@@ -291,8 +287,7 @@ public class BattleCard :IEntity,
         Rarity = entity.Rarity;
         Hp = entity.Hp;
         Attack = entity.Attack;//new ValueSet(entity.Attack);
-        Defence = new ValueSet(entity.Defence);
-        AttackPriolity = entity.AttackPriority;
+
         Race = entity.Race.Where(id =>
         {
             var mst = MasterdataManager.Get<MstRaceRecord>(id);
@@ -323,8 +318,6 @@ public class BattleCard :IEntity,
         Rarity = record.rarity;
         Hp = record.hp;
         Attack = record.attack;// new ValueSet(record.attack);
-        Defence = new ValueSet(record.defence);
-        AttackPriolity = record.priority;
         Race = new List<int>()
         {
             record.raceId1,

@@ -138,17 +138,17 @@ public class DeckEditSequence : Sequence<bool>
         _battleDataUseCase.Summon(_summonArguments.StockOrder, _summonArguments.DeckOrder);
         _battleDataUseCase.ChangeState(BattleState.Ability);
         _battleDataUseCase.ResolveAbilityAll(
-            AbilityTimingType.SummonOwn,
+            AbilityTimingType.Summon,
             ss =>
                 _battlePresenter?.OnCommand(new BattleCommand().Generate(ss)),
             _battleDataUseCase.GetOperationPlayerIndex(),
             _summonArguments.DeckOrder);
-        _battleDataUseCase.ResolveAbilityAll(
-            AbilityTimingType.SummonRace,
-            ss =>
-                _battlePresenter?.OnCommand(new BattleCommand().Generate(ss)),
-            _battleDataUseCase.GetOperationPlayerIndex(),
-            _summonArguments.DeckOrder);
+        // _battleDataUseCase.ResolveAbilityAll(
+        //     AbilityTimingType.SummonRace,
+        //     ss =>
+        //         _battlePresenter?.OnCommand(new BattleCommand().Generate(ss)),
+        //     _battleDataUseCase.GetOperationPlayerIndex(),
+        //     _summonArguments.DeckOrder);
         RemoveDeadAndInvokeAbility();
         if (_battleDataUseCase.CheckAndMakeTriple())
         {

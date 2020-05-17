@@ -39,12 +39,12 @@ public static class AbilityEffects
 
         },
         {//モンスターは攻撃力+{Level}を得る
-            AbilityEffectType.PowerUp,
+            AbilityEffectType.AtUp,
             abilityEffectsArgument =>
             {
                 foreach(var card in abilityEffectsArgument.TargetCards)
                 {
-                    card.Attack+=abilityEffectsArgument.Level;
+                    card.Attack += abilityEffectsArgument.Level * abilityEffectsArgument.Param1;
                 }
 
                 return true;
@@ -55,7 +55,12 @@ public static class AbilityEffects
             AbilityEffectType.Summon,
             abilityEffectsArgument =>
             {
-
+                abilityEffectsArgument.BattleDataUseCase
+                    .SummonDirect(
+                        abilityEffectsArgument.AbilityDeckIndex,
+                        abilityEffectsArgument.AbilityDeckIndex,
+                        abilityEffectsArgument.Param1);
+                
                 return true;
             }
         }

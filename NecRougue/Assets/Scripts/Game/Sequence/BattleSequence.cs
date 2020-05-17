@@ -15,7 +15,7 @@ public enum BattleResult
     Win,
     Lose,
 }
-public class BattleSequence : SequenceBehaviour<BattleResult>
+public class BattleSequence : Sequence<BattleResult>
 {
     public enum State
     {
@@ -71,7 +71,7 @@ public class BattleSequence : SequenceBehaviour<BattleResult>
         _battlePresenter.UpdateCommandProcess();
         return _result;
     }
-    private void Awake()
+    public BattleSequence()
     {
         _statemachine = new Statemachine<State>();
         _statemachine.Init(this);

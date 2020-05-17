@@ -527,6 +527,7 @@
         <e p="Scripts" t="Include">
           <e p="Boot.cs" t="Include" />
           <e p="Debug" t="Include">
+            <e p="BattleDebugManager.cs" t="Include" />
             <e p="DebugLog.cs" t="Include" />
             <e p="GameDebugManager.cs" t="Include" />
           </e>

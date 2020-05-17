@@ -29,8 +29,8 @@ public enum PlayerType
 public enum AbilityTimingType
 {
     None,
-    SummonOwn,//召喚時(自分)
-    SummonRace,//召喚時(種族)
+    Summon,//召喚時(自分)
+    //SummonRace,//召喚時(種族)
     BattleStart,
     TurnStart,
     ConfirmAttacker,
@@ -64,19 +64,34 @@ public enum AbilityEffectTargetType
     MySide,
     MyLeft,
     DefenderSide,
-
-
+    Action,//アクションしたモンスター
+    AllyAll,
+    EnemyAll,
+    AllyLeftmost,
+    EnemyLeftmost,
+    All,
+    
 
 }
 
 public enum AbilityEffectType
 {
     None,
-    PowerUp,
-    Possession,
-    Shield,
-    Summon
-
+    AtUp,
+    HpUp,
+    AtHpUp,
+    Union,//超電磁
+    Summon,//param1モンスターをparam2体召喚
+    SummonRandom,//Rarity:param1のモンスターランダム召喚
+    ExtAttack,
+    //自分の能力とする場合は、バトル開始時に自分に付与という形で実装
+    Blocker,//挑発
+    Revive,//よみがえりを付与
+    Shield,//聖なる盾付与
+    Stun,//攻撃時にスタンさせる能力付与
+    AddAbility,//能力を与える
+    
+    
 }
 public enum BattleCommandType
 {
