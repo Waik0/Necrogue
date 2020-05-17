@@ -451,10 +451,14 @@ public class AbilityEditor : EditorWindow
         {
             Record = new MstAbilityRecord()
             {
-                id = id
+                id = id,
+                description = "",
+                name = "",
             }
         });
     }
+
+    private Vector2 scr;
     private void OnGUI()
     {
         
@@ -473,11 +477,12 @@ public class AbilityEditor : EditorWindow
             UpdateDisp();
         }
 
+        scr = GUILayout.BeginScrollView(scr);
         foreach (var abilityDisp in _disps)
         {
             abilityDisp.View();
         }
-        
+        GUILayout.EndScrollView();
         if (GUILayout.Button("+"))
         {
             UpdateDisp();
