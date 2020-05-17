@@ -228,6 +228,7 @@ public class BattleProcessSequence : Sequence<bool>
             timingType,
             ss =>
                 OnCommand.Invoke(new BattleCommand().Generate(ss)));
+        RemoveDeadAndInvokeAbility();
     }
     private void ResolveAbility(AbilityTimingType timingType,int type,int index)
     {

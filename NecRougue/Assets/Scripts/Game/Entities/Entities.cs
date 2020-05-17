@@ -272,6 +272,8 @@ public class BattleCard :IEntity,
     public List<RaceData> Race;
     public int Hp;
     public int Defence;
+    public int Stun;
+    public int Revive;
     public int AttackPriolity;
     public List<Ability> AbilityList = new List<Ability>();//マスターから素材ひっぱったり AbilityEffectsから効果ひっぱったり
     public List<Disease> DiseaseList = new List<Disease>();//状態異常

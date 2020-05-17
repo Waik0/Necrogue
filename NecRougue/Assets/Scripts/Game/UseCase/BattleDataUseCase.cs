@@ -84,10 +84,16 @@ public class BattleDataUseCase : IEntityUseCase<BattleData>
         GetOperationPlayer().Deck.Insert(order, card);
     }
 
-    public void SummonDirect(int pIndex ,int dIndex,int id)
+    public bool SummonDirect(int pIndex ,int dIndex,int id)
     {
         var card =  new BattleCard().Generate(MasterdataManager.Get<MstMonsterRecord>(id));
-        _battleData.PlayerList[pIndex].Deck.Insert(dIndex, card);
+        if (_battleData.PlayerList[pIndex].Deck.Count < 8)
+        {
+            _battleData.PlayerList[pIndex].Deck.Insert(dIndex, card);
+            return true;
+        }
+
+        return false;
     }
     public void AddCaptureCard(int id)
     {
@@ -98,6 +104,11 @@ public class BattleDataUseCase : IEntityUseCase<BattleData>
     {
         
         GetOperationPlayer().Deck.RemoveAt(order);
+
+    }
+    public void ForceRemoveDeckCard(int pindex,int order)
+    {
+        _battleData.PlayerList[pindex].Deck.RemoveAt(order);
 
     }
     public bool CheckAndMakeTriple()
@@ -516,6 +527,16 @@ public class BattleDataUseCase : IEntityUseCase<BattleData>
         return _battleData.PlayerList[index];
     }
 
+    public BattleCard RandomCard(int player = -1)
+    {
+        if (player == -1)
+        {
+            player = Random.Range(0, _battleData.PlayerList.Count);
+        }
+
+        var deck = Random.Range(0, _battleData.PlayerList[player].Deck.Count);
+        return GetCardRef(player, deck);
+    }
 
 
 

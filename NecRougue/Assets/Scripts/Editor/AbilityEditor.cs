@@ -157,6 +157,10 @@ public class AbilityEditor : EditorWindow
         { AbilityEffectTargetType.AllyLeftmost , a=>"味方の左端" },
         { AbilityEffectTargetType.EnemyLeftmost , a=>$"敵の左端" },
         { AbilityEffectTargetType.All , a=>$"すべて" },
+        { AbilityEffectTargetType.Random , a=>$"いずれかのモンスター" },
+        { AbilityEffectTargetType.RandomAlly , a=>$"味方のいずれかのモンスター" },
+        { AbilityEffectTargetType.RandomEnemy , a=>$"敵のいずれかのモンスター" },
+        { AbilityEffectTargetType.Defender , a=>$"攻撃を受けたモンスター" },
         //{ AbilityEffectTargetType.EnemyLeftmost , a=>$"敵の左端" },
     };
     public static Dictionary<AbilityEffectConditionType, Func<MstAbilityRecord,string>> _aect = new Dictionary<AbilityEffectConditionType, Func<MstAbilityRecord,string>>()
