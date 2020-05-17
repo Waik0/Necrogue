@@ -33,7 +33,7 @@ public enum AbilityTimingType
     //SummonRace,//召喚時(種族)
     BattleStart = 20,
     TurnStart = 30,
-    ConfirmAttacker = 40,
+    //ConfirmAttacker = 40,
     ConfirmTargetAttack = 50,//ターゲットを決めたとき
     ConfirmTargetDefence = 60,//ターゲットにされた時
     Attack = 70,

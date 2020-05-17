@@ -377,6 +377,24 @@ public static class AbilityEffects
 
             }
     };
+
+    private static Dictionary<AbilityTimingType, Func<AbilityEffectConditionType, AbilityEffectsArgument, bool>>
+        AbilityTiming =
+            new Dictionary<AbilityTimingType, Func<AbilityEffectConditionType, AbilityEffectsArgument, bool>>()
+            {
+                {AbilityTimingType.BattleStart, (c, arg) => true},
+                {AbilityTimingType.TurnStart, (c, arg) => true},
+                {AbilityTimingType.TurnEnd, (c, arg) => true},
+                {AbilityTimingType.Summon, (c, arg) => AbilityConditions[c](arg)},
+                {AbilityTimingType.ConfirmTargetAttack, (c, arg) => AbilityConditions[c](arg)},
+                {AbilityTimingType.ConfirmTargetDefence, (c, arg) => AbilityConditions[c](arg)},
+                {AbilityTimingType.Attack, (c, arg) => AbilityConditions[c](arg)},
+                {AbilityTimingType.Defence, (c, arg) => AbilityConditions[c](arg)},
+                {AbilityTimingType.Dead, (c, arg) => AbilityConditions[c](arg)},
+                {AbilityTimingType.None, (c, arg) => false},
+
+            };
+    
     private static Dictionary<AbilityEffectTargetType, Func<AbilityEffectsArgument, List<BattleCard>>> AbilityTargets =
         new Dictionary<AbilityEffectTargetType, Func<AbilityEffectsArgument, List<BattleCard>>>()
     {
@@ -666,7 +684,7 @@ public static class AbilityEffects
         var timingType = ability.timingType;
        
         var chooseTaregt = AbilityTargets[targetType];
-        var condition = AbilityConditions[conditionType];
+        var condition = AbilityTiming[timingType];
         var effect = EffectList[effectType];
 
         bool Effect(AbilityEffectsArgument arg)
@@ -675,7 +693,8 @@ public static class AbilityEffects
             {
                 return false;
             }
-            if (!condition(arg))
+            
+            if (!condition(conditionType,arg))
             {
                 return false;
             }
