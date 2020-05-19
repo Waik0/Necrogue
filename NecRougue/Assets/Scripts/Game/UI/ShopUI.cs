@@ -11,7 +11,7 @@ public class ShopUI : IModalUI
     PlayerDataUseCase _playerDataUseCase;
 
     public Action<int> OnBuy;
-    public Action<int> OnSell;
+    public Action<long> OnSell;
     public Action OnEnd;
     public Action OnLevelUp;
     public Action OnReload;
@@ -36,9 +36,9 @@ public class ShopUI : IModalUI
     {
         OnBuy?.Invoke(order);
     }
-    void Sell(int order)
+    void Sell(long unique)
     {
-        OnSell?.Invoke(order);
+        OnSell?.Invoke(unique);
     }
     void End()
     {
@@ -100,16 +100,15 @@ public class ShopUI : IModalUI
         }
         GUILayout.EndHorizontal();
         GUILayout.BeginHorizontal();
-        for (var i = 0; i < _battleDataUseCase.GetOperationPlayer().Deck.Count; i++)
+        foreach (var battleCard in _battleDataUseCase.GetOperationPlayer().Deck)
         {
-          
             if (GUILayout.Button("売る", width))
             {
-                Sell(i);
+                Sell(battleCard.Unique);
             }
 
-            //GUILayout.EndVertical();
         }
+
         GUILayout.EndHorizontal();
     }
     public void DebugUI2()

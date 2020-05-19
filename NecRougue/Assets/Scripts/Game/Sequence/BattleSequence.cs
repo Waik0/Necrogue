@@ -189,6 +189,7 @@ public class BattleSequence : Sequence<BattleResult>
         yield return null;
     }
     #if DEBUG
+    private bool isAuto = false;
     public void DebugUI()
     {
         //GUILayout.Label("[ BATTLE ] STATE : "+ _statemachine.Current.ToString());
@@ -200,7 +201,7 @@ public class BattleSequence : Sequence<BattleResult>
                 break;
             case State.DeckPrepare:
                 
-                _battlePresenter.DebugUI();
+                _battlePresenter.DebugUI(isAuto);
                 _battleDeckEditSequence.DebugUI();
  
                 break;
@@ -218,6 +219,11 @@ public class BattleSequence : Sequence<BattleResult>
     }
     public void DebugUI2()
     {
+        var auto = isAuto ? "ON" : "OFF";
+        if (GUILayout.Button("オートモード : " + auto))
+        {
+            isAuto = !isAuto;
+        }
         switch (_statemachine.Current)
         {
             case State.Init:

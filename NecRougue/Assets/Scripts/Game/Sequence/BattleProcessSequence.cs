@@ -141,19 +141,21 @@ public class BattleProcessSequence : Sequence<bool>
             yield break;
         }
         ResolveAbility(AbilityTimingType.ConfirmTargetAttack,
-            _battleDataUseCase.AttackerPlayerIndex(),
-            _battleDataUseCase.AttackerDeckIndex());
+            _battleDataUseCase.GetCurrentAttackerCard().Unique,
+            _battleDataUseCase.GetCurrentDefenderCard().Unique);
         ResolveAbility(AbilityTimingType.ConfirmTargetDefence,
-            _battleDataUseCase.DefenderPlayerIndex(),
-            _battleDataUseCase.DefenderDeckIndex());
+            _battleDataUseCase.GetCurrentAttackerCard().Unique,
+            _battleDataUseCase.GetCurrentDefenderCard().Unique);
         _statemachine.Next(State.Attack);
         yield return null;
     }
     IEnumerator Attack()
     {
+        var attacker = _battleDataUseCase.GetCurrentAttackerCard().Unique;
+        var defender = _battleDataUseCase.GetCurrentDefenderCard().Unique;
         DebugLog.Function(this,2);
         _battleDataUseCase.ChangeState(BattleState.Attack);
-        var enemyState =_battleDataUseCase.Attack(_battleDataUseCase.DefenderDeckIndex());
+        var enemyState =_battleDataUseCase.Attack();
         switch (enemyState)
         {
             case EnemyDestroyState.None:
@@ -167,13 +169,14 @@ public class BattleProcessSequence : Sequence<bool>
                 break;
         }
         OnCommand.Invoke(new BattleCommand().Generate(_battleDataUseCase.GetSnapShot()));
+        //ここでDefenderが死ぬ可能性がある
         RemoveDeadAndInvokeAbility();
         ResolveAbility(AbilityTimingType.Attack,
-            _battleDataUseCase.AttackerPlayerIndex(),
-            _battleDataUseCase.AttackerDeckIndex());
+            attacker,
+            defender);
         ResolveAbility(AbilityTimingType.Defence,
-            _battleDataUseCase.DefenderPlayerIndex(),
-            _battleDataUseCase.DefenderDeckIndex());
+            attacker,
+            defender);
 
         _statemachine.Next(State.CheckAndIncrement);
         
@@ -230,15 +233,15 @@ public class BattleProcessSequence : Sequence<bool>
                 OnCommand.Invoke(new BattleCommand().Generate(ss)));
         RemoveDeadAndInvokeAbility();
     }
-    private void ResolveAbility(AbilityTimingType timingType,int type,int index)
+    private void ResolveAbility(AbilityTimingType timingType,long actionUnique,long defenderUnique = -1)
     {
         _battleDataUseCase.ChangeState(BattleState.Ability);
         _battleDataUseCase.ResolveAbilityAll(
             timingType,
             ss =>
                 OnCommand.Invoke(new BattleCommand().Generate(ss)),
-            type,
-            index);
+            actionUnique,
+            defenderUnique);
         RemoveDeadAndInvokeAbility();
     }
 

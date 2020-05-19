@@ -8,14 +8,19 @@ public class AbilityEffectsArgument
     public BattleDataUseCase BattleDataUseCase;
     public BattleProcessSequence BattleProcess;
     //能力発動をチェックする者
-    public int AbilityPlayerIndex;
-    public int AbilityDeckIndex;
+    public long AbilityCardUnique;
+    //public int AbilityPlayerIndex;
+    //public int AbilityDeckIndex;
     //アクションを起こしたもの(攻撃、召喚など
-    public int ActionPlayerIndex = -1;
-    public int ActionDeckIndex = -1;
+    public long ActionCardUnique;
+    //public int ActionPlayerIndex = -1;
+    //public int ActionDeckIndex = -1;
     //防御者 Attack Defenceの時のみ使用
-    public int DefenderPlayerIndex = -1;
-    public int DefenderDeckIndex = -1;
+    //public int DefenderPlayerIndex = -1;
+    //public int DefenderDeckIndex = -1;
+    public long DefenderCardUnique;
+    //死亡時の場合indexの取得方法が異なる
+    public bool isDeadEffect;
     //
     public int Level;//能力レベル
     public int Param1;
@@ -98,13 +103,22 @@ public static class AbilityEffects
                 //{
                     
                 //}
+                //index取得
+                var abilityCardIndex = 
+                    abilityEffectsArgument.
+                        BattleDataUseCase.GetIndex(abilityEffectsArgument.AbilityCardUnique);
+                if (abilityCardIndex.pIndex < 0 || abilityCardIndex.dIndex < 0)
+                {
+                    return false;
+                }
+                
                 for (int i = 0; i < abilityEffectsArgument.Param2; i++)
                 {
-
+                    
                     var summoned = abilityEffectsArgument.BattleDataUseCase
                         .SummonDirect(
-                            abilityEffectsArgument.AbilityPlayerIndex,
-                            abilityEffectsArgument.AbilityDeckIndex,
+                            abilityCardIndex.pIndex,
+                            abilityCardIndex.dIndex,
                             abilityEffectsArgument.Param1);
                     if (!summoned)
                     {
@@ -117,8 +131,8 @@ public static class AbilityEffects
                         AbilityTimingType.Summon,
                         ss =>
                             abilityEffectsArgument.BattleProcess?.OnCommand.Invoke(new BattleCommand().Generate(ss)),
-                        abilityEffectsArgument.AbilityPlayerIndex,
-                        abilityEffectsArgument.AbilityDeckIndex);
+                        abilityEffectsArgument.ActionCardUnique,
+                        abilityEffectsArgument.DefenderCardUnique);
                     //死亡したモンスターがいるかチェック
                     var removed = abilityEffectsArgument.BattleDataUseCase.RemoveDeadCard();
 
@@ -189,8 +203,11 @@ public static class AbilityEffects
             AbilityEffectType.Union,
             abilityEffectsArgument =>
             {
-                var union = abilityEffectsArgument.BattleDataUseCase.GetCardRef(abilityEffectsArgument.AbilityPlayerIndex,
-                    abilityEffectsArgument.AbilityDeckIndex);
+                var union = abilityEffectsArgument.BattleDataUseCase.GetCardRef(abilityEffectsArgument.AbilityCardUnique);
+                if (union == null)
+                {
+                    return false;
+                }
                 if (abilityEffectsArgument.TargetCards.Count <= 0)
                 {
                     return false;
@@ -205,8 +222,7 @@ public static class AbilityEffects
                     
                 }
                 //自分を削除
-                abilityEffectsArgument.BattleDataUseCase.ForceRemoveDeckCard(abilityEffectsArgument.AbilityPlayerIndex,
-                    abilityEffectsArgument.AbilityDeckIndex);
+                abilityEffectsArgument.BattleDataUseCase.ForceRemoveDeckCard(union.Unique);
 
                 return true;
             }
@@ -215,6 +231,15 @@ public static class AbilityEffects
             AbilityEffectType.SummonRandom,
             abilityEffectsArgument =>
             {
+                //index取得
+                var abilityCardIndex = 
+                    abilityEffectsArgument.
+                        BattleDataUseCase.GetIndex(abilityEffectsArgument.AbilityCardUnique);
+                if (abilityCardIndex.pIndex < 0 || abilityCardIndex.dIndex < 0)
+                {
+                    return false;
+                }
+
                 var records = MasterdataManager.Records<MstMonsterRecord>()
                     .Where(_=>_.rarity == abilityEffectsArgument.Param1).ToList();
                 if (records.Count <= 0)
@@ -226,8 +251,8 @@ public static class AbilityEffects
                     var id = records[UnityEngine.Random.Range(0, records.Count)].id;
                     var summoned = abilityEffectsArgument.BattleDataUseCase
                         .SummonDirect(
-                            abilityEffectsArgument.AbilityPlayerIndex,
-                            abilityEffectsArgument.AbilityDeckIndex,
+                            abilityCardIndex.pIndex,
+                            abilityCardIndex.dIndex,
                             id);
                     if (!summoned)
                     {
@@ -240,8 +265,8 @@ public static class AbilityEffects
                         AbilityTimingType.Summon,
                         ss =>
                             abilityEffectsArgument.BattleProcess?.OnCommand.Invoke(new BattleCommand().Generate(ss)),
-                        abilityEffectsArgument.AbilityPlayerIndex,
-                        abilityEffectsArgument.AbilityDeckIndex);
+                        abilityEffectsArgument.ActionCardUnique,
+                        abilityEffectsArgument.DefenderCardUnique);
                     //死亡したモンスターがいるかチェック
                     var removed = abilityEffectsArgument.BattleDataUseCase.RemoveDeadCard();
 
@@ -326,33 +351,25 @@ public static class AbilityEffects
             },
             {
                 AbilityEffectConditionType.Self,
-                arg =>
-                {
-                    return 
-                    arg.ActionDeckIndex == arg.AbilityDeckIndex &&
-                    arg.ActionPlayerIndex == arg.AbilityPlayerIndex;
-                    
-                }
-
-
+                arg => arg.ActionCardUnique == arg.AbilityCardUnique
             },
             {
                 AbilityEffectConditionType.Ally,
                  arg =>
-                {
-                    return
-                    arg.ActionPlayerIndex == arg.AbilityPlayerIndex && //味方サイド
-                    arg.ActionDeckIndex != arg.AbilityDeckIndex;//自分以外
-
-                }
+                 {
+                     var pIndex1 = arg.BattleDataUseCase.GetPlayerIndex(arg.AbilityCardUnique);
+                     var pIndex2 = arg.BattleDataUseCase.GetPlayerIndex(arg.ActionCardUnique);
+                     return pIndex1 == pIndex2;
+                 }
 
             },
             {
                 AbilityEffectConditionType.Enemy,
                 arg =>
                 {
-                    return
-                        arg.ActionPlayerIndex != arg.AbilityPlayerIndex; //敵サイド
+                    var pIndex1 = arg.BattleDataUseCase.GetPlayerIndex(arg.AbilityCardUnique);
+                    var pIndex2 = arg.BattleDataUseCase.GetPlayerIndex(arg.ActionCardUnique);
+                    return pIndex1 != pIndex2;
 
                 }
 
@@ -361,8 +378,11 @@ public static class AbilityEffects
                 AbilityEffectConditionType.AllyRace,
                  arg =>
                 {
-                    return arg.ActionPlayerIndex == arg.AbilityPlayerIndex &&
-                    arg.BattleDataUseCase.GetRaceData(arg.ActionPlayerIndex,arg.ActionDeckIndex).Any(race =>race.Id == arg.Param1 );
+                    var pIndex1 = arg.BattleDataUseCase.GetPlayerIndex(arg.AbilityCardUnique);
+                    var pIndex2 = arg.BattleDataUseCase.GetPlayerIndex(arg.ActionCardUnique);
+                    return pIndex1 == pIndex2 &&
+                           arg.BattleDataUseCase.GetRaceData(arg.ActionCardUnique)
+                               .Any(race => race.Id == arg.Param1);
 
                 }
 
@@ -403,14 +423,17 @@ public static class AbilityEffects
                 arg =>
                 {
                     var cards = new List<BattleCard>();
-                    if(arg.AbilityPlayerIndex == -1 || arg.AbilityDeckIndex == -1)
+                    var abilityCardIndex = 
+                        arg.
+                            BattleDataUseCase.GetIndex(arg.AbilityCardUnique);
+                    if (abilityCardIndex.pIndex < 0 || abilityCardIndex.dIndex < 0)
                     {
                         return cards;
                     }
                     var left =   arg.BattleDataUseCase
-                    .GetCardRef(arg.AbilityPlayerIndex,arg.AbilityDeckIndex - 1);
+                    .GetCardByIndex(abilityCardIndex.pIndex,abilityCardIndex.dIndex - 1);
                     var right =  arg.BattleDataUseCase
-                    .GetCardRef(arg.AbilityPlayerIndex,arg.AbilityDeckIndex + 1);
+                        .GetCardByIndex(abilityCardIndex.pIndex,abilityCardIndex.dIndex + 1);
                      if(left != null )cards.Add(left);
                      if(right != null )cards.Add(right);
                     return cards;
@@ -422,12 +445,8 @@ public static class AbilityEffects
                 arg =>
                 {
                     var cards = new List<BattleCard>();
-                    if(arg.AbilityPlayerIndex == -1 || arg.AbilityDeckIndex == -1)
-                    {
-                        return cards;
-                    }
-                    var self =   arg.BattleDataUseCase
-                    .GetCardRef(arg.AbilityPlayerIndex,arg.AbilityDeckIndex);
+
+                    var self = arg.BattleDataUseCase.GetCardRef(arg.AbilityCardUnique);
                      if(self != null )cards.Add(self);
                     return cards;
                 }
@@ -438,12 +457,15 @@ public static class AbilityEffects
                 arg =>
                 {
                     var cards = new List<BattleCard>();
-                    if(arg.AbilityPlayerIndex == -1 || arg.AbilityDeckIndex == -1)
+                    var abilityCardIndex = 
+                        arg.
+                            BattleDataUseCase.GetIndex(arg.AbilityCardUnique);
+                    if (abilityCardIndex.pIndex < 0 || abilityCardIndex.dIndex < 0)
                     {
                         return cards;
                     }
                     var left =   arg.BattleDataUseCase
-                        .GetCardRef(arg.AbilityPlayerIndex,arg.AbilityDeckIndex - 1);
+                        .GetCardByIndex(abilityCardIndex.pIndex ,abilityCardIndex.dIndex - 1);
                     if(left != null )cards.Add(left);
                     return cards;
                 }
@@ -454,15 +476,17 @@ public static class AbilityEffects
                 arg =>
                 {
                     var cards = new List<BattleCard>();
-                    if(arg.DefenderPlayerIndex == -1 || arg.DefenderDeckIndex == -1)
+                    var index = 
+                        arg.
+                            BattleDataUseCase.GetIndex(arg.DefenderCardUnique);
+                    if (index.pIndex < 0 || index.dIndex < 0)
                     {
-                        Debug.Log("Error : DefenderSide");
                         return cards;
                     }
                     var left =   arg.BattleDataUseCase
-                        .GetCardRef(arg.DefenderPlayerIndex,arg.DefenderDeckIndex - 1);
+                        .GetCardByIndex(index.pIndex,index.dIndex - 1);
                     var right =  arg.BattleDataUseCase
-                        .GetCardRef(arg.DefenderPlayerIndex,arg.DefenderDeckIndex + 1);
+                        .GetCardByIndex(index.pIndex,index.dIndex + 1);
                     if(left != null )cards.Add(left);
                     if(right != null )cards.Add(right);
                     return cards;
@@ -474,13 +498,7 @@ public static class AbilityEffects
                 arg =>
                 {
                     var cards = new List<BattleCard>();
-                    if(arg.ActionPlayerIndex == -1 || arg.ActionDeckIndex == -1)
-                    {
-                        UnityEngine.Debug.Log("Error : Action");
-                        return cards;
-                    }
-                    var self =   arg.BattleDataUseCase
-                        .GetCardRef(arg.ActionPlayerIndex,arg.ActionDeckIndex);
+                    var self = arg.BattleDataUseCase.GetCardRef(arg.ActionCardUnique);
                     if(self != null )cards.Add(self);
                     return cards;
                 }
@@ -491,20 +509,15 @@ public static class AbilityEffects
                 arg =>
                 {
                     var cards = new List<BattleCard>();
-                    if(arg.AbilityPlayerIndex == -1 || arg.AbilityDeckIndex == -1)
+                    var pIndex = arg.BattleDataUseCase.GetPlayerIndex(arg.AbilityCardUnique);
+                    for (int i = 0; i < arg.BattleDataUseCase.GetPlayer(pIndex).Deck.Count; i++)
                     {
-                        UnityEngine.Debug.Log("Error : AllyAll");
-                        return cards;
-                    }
-
-                    for (int i = 0; i < arg.BattleDataUseCase.GetPlayer(arg.AbilityPlayerIndex).Deck.Count; i++)
-                    {
-                        if (arg.AbilityDeckIndex == i)
+                        var card = arg.BattleDataUseCase.GetCardByIndex(pIndex, i);
+                        if (arg.AbilityCardUnique == card.Unique)
                         {
                             continue;
                         }
-                        var c = arg.BattleDataUseCase.GetCardRef(arg.AbilityPlayerIndex, i);
-                        if(c != null)cards.Add(c);
+                        if(card != null)cards.Add(card);
                     }
                     return cards;
                 }
@@ -515,29 +528,16 @@ public static class AbilityEffects
                 arg =>
                 {
                     var cards = new List<BattleCard>();
-                    if(arg.AbilityPlayerIndex == -1)
+                    var pType = arg.BattleDataUseCase.GetPlayerType(arg.AbilityCardUnique);
+                    foreach (var battlePlayerData in arg.BattleDataUseCase.GetPlayerList().Where(_=>_.PlayerType != pType))
                     {
-                        return cards;
-                    }
-
-                    var ptype = arg.BattleDataUseCase.GetPlayer(arg.AbilityPlayerIndex).PlayerType;
-                    for (int j = 0; j < arg.BattleDataUseCase.Data.PlayerList.Count; j++)
-                    {
-                        if (arg.BattleDataUseCase.Data.PlayerList[j].PlayerType == ptype)
+                        for (int i = 0; i < battlePlayerData.Deck.Count; i++)
                         {
-                            continue;
-                        }
-                        for (int i = 0; i < arg.BattleDataUseCase.GetPlayer(j).Deck.Count; i++)
-                        {
-                            if (arg.AbilityDeckIndex == i)
-                            {
-                                continue;
-                            }
-                            var c = arg.BattleDataUseCase.GetCardRef(arg.AbilityPlayerIndex, i);
-                            if(c != null)cards.Add(c);
+                            var card = battlePlayerData.Deck[i];
+                            if(card != null)cards.Add(card);
                         }
                     }
-
+                   
                     return cards;
                 }
             },
@@ -546,12 +546,8 @@ public static class AbilityEffects
                 arg =>
                 {
                     var cards = new List<BattleCard>();
-                    if(arg.AbilityPlayerIndex == -1)
-                    {
-                        return cards;
-                    }
-
-                    var card = arg.BattleDataUseCase.GetCardRef(arg.AbilityPlayerIndex, 0);
+                    var pIndex = arg.BattleDataUseCase.GetPlayerIndex(arg.AbilityCardUnique);
+                    var card = arg.BattleDataUseCase.GetCardByIndex(pIndex, 0);
                     if(card != null)cards.Add(card);
 
                     return cards;
@@ -563,23 +559,16 @@ public static class AbilityEffects
                 arg =>
                 {
                     var cards = new List<BattleCard>();
-                    if(arg.AbilityPlayerIndex == -1)
+                    var pType = arg.BattleDataUseCase.GetPlayerType(arg.AbilityCardUnique);
+                    foreach (var battlePlayerData in arg.BattleDataUseCase.GetPlayerList().Where(_=>_.PlayerType != pType))
                     {
-                        return cards;
-                    }
-                    var ptype = arg.BattleDataUseCase.GetPlayer(arg.AbilityPlayerIndex).PlayerType;
-                    for (int j = 0; j < arg.BattleDataUseCase.Data.PlayerList.Count; j++)
-                    {
-                        if (arg.BattleDataUseCase.Data.PlayerList[j].PlayerType == ptype)
+                        if (battlePlayerData.Deck.Count <= 0)
                         {
                             continue;
                         }
-                        var card = arg.BattleDataUseCase.GetCardRef(j, 0);
+                        var card = battlePlayerData.Deck[0];
                         if(card != null)cards.Add(card);
-
                     }
-
-                    
                     return cards;
                 }
  
@@ -605,11 +594,11 @@ public static class AbilityEffects
                     {
                         for (int i = 0; i < arg.BattleDataUseCase.GetPlayer(j).Deck.Count; i++)
                         {
-                            if (arg.AbilityDeckIndex == i)
+                            var c = arg.BattleDataUseCase.GetCardByIndex(j, i);
+                            if (arg.AbilityCardUnique == c.Unique)
                             {
                                 continue;
                             }
-                            var c = arg.BattleDataUseCase.GetCardRef(arg.AbilityPlayerIndex, i);
                             if(c != null)cards.Add(c);
                         }
                     }
@@ -623,13 +612,8 @@ public static class AbilityEffects
                 arg =>
                 {
                     var cards = new List<BattleCard>();
-                    if(arg.DefenderPlayerIndex == -1 || arg.DefenderDeckIndex == -1)
-                    {
-                        Debug.Log("Error : Defender");
-                        return cards;
-                    }
                     var self =   arg.BattleDataUseCase
-                        .GetCardRef(arg.DefenderPlayerIndex,arg.DefenderDeckIndex);
+                        .GetCardRef(arg.DefenderCardUnique);
                     if(self != null )cards.Add(self);
                     return cards;
                 }
@@ -641,11 +625,8 @@ public static class AbilityEffects
                 arg =>
                 {
                     var cards = new List<BattleCard>();
-                    if (arg.AbilityPlayerIndex == -1)
-                    {
-                        return cards;
-                    }
-                    var card = arg.BattleDataUseCase.RandomCard(arg.AbilityPlayerIndex);
+                    var pIndex = arg.BattleDataUseCase.GetPlayerIndex(arg.AbilityCardUnique);
+                    var card = arg.BattleDataUseCase.RandomCard(pIndex);
                     if(card!=null)cards.Add(card);
                     return cards;
                 }
@@ -657,7 +638,7 @@ public static class AbilityEffects
                 arg =>
                 {
                     var cards = new List<BattleCard>();
-                    var ptype = arg.BattleDataUseCase.GetPlayer(arg.AbilityPlayerIndex).PlayerType;
+                    var ptype = arg.BattleDataUseCase.GetPlayerType(arg.AbilityCardUnique);
                     for (int j = 0; j < arg.BattleDataUseCase.Data.PlayerList.Count; j++)
                     {
                         if (arg.BattleDataUseCase.Data.PlayerList[j].PlayerType == ptype)
@@ -686,9 +667,11 @@ public static class AbilityEffects
         var chooseTaregt = AbilityTargets[targetType];
         var condition = AbilityTiming[timingType];
         var effect = EffectList[effectType];
-
+        
         bool Effect(AbilityEffectsArgument arg)
         {
+            arg.Param1 = ability.param1;
+            arg.Param2 = ability.param2;
             if (arg.TimingType != timingType)
             {
                 return false;

@@ -30,6 +30,7 @@ public class BattleDataUseCase : IEntityUseCase<BattleData>
     {
         _battleData = new BattleData();
         _battleData.Turn = 0;
+        
         _battleData.PlayerList = new List<BattlePlayerData>();
         _battleData.GetCard = new List<BattleCard>();
     }
@@ -77,11 +78,13 @@ public class BattleDataUseCase : IEntityUseCase<BattleData>
     {
         _battleData.GetGold += gold;
     }
-    public void Summon(int stockOrder, int order)
+    //todo できればハッシュ使う方式
+    public BattleCard Summon(int stockOrder, int order)
     {
         var card = GetOperationPlayer().Stock[stockOrder];
         GetOperationPlayer().Stock.RemoveAt(stockOrder);
         GetOperationPlayer().Deck.Insert(order, card);
+        return card;
     }
 
     public bool SummonDirect(int pIndex ,int dIndex,int id)
@@ -95,22 +98,14 @@ public class BattleDataUseCase : IEntityUseCase<BattleData>
 
         return false;
     }
-    public void AddCaptureCard(int id)
-    {
-        var card = new BattleCard().Generate(MasterdataManager.Get<MstMonsterRecord>(id));
-        _battleData.GetCard.Add(card);
-    }
-    public void RemoveDeckCard(int order)
-    {
-        
-        GetOperationPlayer().Deck.RemoveAt(order);
 
-    }
-    public void ForceRemoveDeckCard(int pindex,int order)
-    {
-        _battleData.PlayerList[pindex].Deck.RemoveAt(order);
+    // public void RemoveDeckCard(int order)
+    // {
+    //     
+    //     GetOperationPlayer().Deck.RemoveAt(order);
+    //
+    // }
 
-    }
     public bool CheckAndMakeTriple()
     {
         var triple = new Dictionary<int,int>();
@@ -235,10 +230,10 @@ public class BattleDataUseCase : IEntityUseCase<BattleData>
             }
         }
     }
-    public bool IsDeadCurrentDefender()
-    {
-        return _battleData.PlayerList[DefenderPlayerIndex()].Deck[DefenderDeckIndex()].Hp <= 0;
-    }
+    //public bool IsDeadCurrentDefender()
+    //{
+    //    return _battleData.CurrentDefencer().Hp <= 0;
+    //}
     public bool ConfirmTarget()
     {
         var indexList = Defender()
@@ -263,42 +258,37 @@ public class BattleDataUseCase : IEntityUseCase<BattleData>
     }
     //倒したのが敵でゴールド入手した場合のみtrue
 
-    public EnemyDestroyState Attack(int target)
+    public EnemyDestroyState Attack()
     {
         var attacker = _battleData.PlayerList[_battleData.CurrentAttacker].AttackerIndex;
         var atk = _battleData.PlayerList[_battleData.CurrentAttacker].Deck[attacker].Attack;
-        _battleData.PlayerList[_battleData.CurrentDefencer].Deck[target].Hp -= atk;
+        _battleData.PlayerList[_battleData.CurrentDefencer].Deck[_target].Hp -= atk;
         if (_battleData.PlayerList[_battleData.CurrentDefencer].PlayerType == PlayerType.Enemy)
         {
-            if (_battleData.PlayerList[_battleData.CurrentDefencer].Deck[target].Hp < 0)
+            if (_battleData.PlayerList[_battleData.CurrentDefencer].Deck[_target].Hp < 0)
             {
                 return EnemyDestroyState.Gold;
             }
-            if (_battleData.PlayerList[_battleData.CurrentDefencer].Deck[target].Hp == 0)
+            if (_battleData.PlayerList[_battleData.CurrentDefencer].Deck[_target].Hp == 0)
             {
                 return EnemyDestroyState.Capture;
             }
         }
         return EnemyDestroyState.None;
     }
-    public BattleCard GetCurrentDefenderCard()
-    {
-        return _battleData.PlayerList[_battleData.CurrentDefencer].Deck[DefenderDeckIndex()];
-    }
-    public BattlePlayerData Attacker() => _battleData.PlayerList[_battleData.CurrentAttacker];
-    public BattlePlayerData Defender()=>_battleData.PlayerList[_battleData.CurrentDefencer];
-    public int AttackerPlayerIndex() =>_battleData.CurrentAttacker;
-    public int AttackerDeckIndex() =>_battleData.PlayerList[_battleData.CurrentDefencer].AttackerIndex;
-    public int DefenderPlayerIndex() => _battleData.CurrentDefencer;
-    public int DefenderDeckIndex() => _target;
+
     //種族
-    public List<RaceData> GetRaceData(int pid, int did)
+    public List<RaceData> GetRaceData(long unique)
     {
-        if( pid >= 0 && _battleData.PlayerList.Count > pid ) {
-            if( did >= 0 && _battleData.PlayerList[pid].Deck.Count > did)
+        for (var i = 0; i < _battleData.PlayerList.Count; i++)
+        {
+            var card = _battleData.PlayerList[i].Deck.FirstOrDefault(_=>_.Unique == unique);
+            if (card == null)
             {
-                return _battleData.PlayerList[pid].Deck[did].Race;
+                continue;
             }
+
+            return card.Race;
         }
         return new List<RaceData>();
     }
@@ -339,7 +329,8 @@ public class BattleDataUseCase : IEntityUseCase<BattleData>
                             {
                                 BattleDataUseCase = this,
                                 TimingType = AbilityTimingType.Dead,
-                                Level = card.Level
+                                Level = card.Level,
+                                AbilityCardUnique = card.Unique,
                             });
                 if (isAbilityExecute)
                 {
@@ -353,77 +344,317 @@ public class BattleDataUseCase : IEntityUseCase<BattleData>
             }
         }
     }
-    //todo タイミング判定をEffects側に移す
-    public void ResolveAbilityAll(AbilityTimingType timingType, Action<BattleData> command,int p = -1,int d = -1)
+
+    public void ResolveAbilityAll(AbilityTimingType timingType, Action<BattleData> command,long action = -1,long defender = -1)
     {
+        var execAbilities = new List<(int, AbilityEffectsArgument)>();
+        foreach (var battlePlayerData in _battleData.PlayerList)
+        {
+            foreach (var battleCard in battlePlayerData.Deck)
+            {
+                foreach (var ability in battleCard.AbilityList)
+                {
+                    execAbilities.Add((ability.Id,
+                            new AbilityEffectsArgument()
+                            {
+                                BattleDataUseCase = this,
+                                AbilityCardUnique = battleCard.Unique,
+                                ActionCardUnique = action,
+                                DefenderCardUnique = defender,
+                                TimingType = timingType,
+                                Level = battleCard.Level
+                            }
+                            ));
+                }
+            }
+        }
+        foreach (var execAbility in execAbilities)
+        {
+            var isAbilityExecute = AbilityEffects.GetEffect(
+                MasterdataManager.Get<MstAbilityRecord>(execAbility.Item1))
+            (execAbility.Item2);
+        }
+        // for (var i = 0; i < _battleData.PlayerList.Count; i++)
+        // {
+        //     for (var j = 0; j < _battleData.PlayerList[i].Deck.Count; j++)
+        //     {
+        //         for (var k = 0; k < _battleData.PlayerList[i].Deck[j].AbilityList.Count; k++)
+        //         {
+        //
+        //             {
+        //                 var actionPlayerIndex = p;
+        //                 var actionDeckIndex = d;
+        //                 var defenderPlayerIndex = -1;
+        //                 var defenderDeckIndex = -1;
+        //                 if (
+        //                     timingType == AbilityTimingType.Attack ||
+        //                     timingType == AbilityTimingType.Defence)
+        //                 {
+        //                     defenderPlayerIndex = DefenderPlayerIndex();
+        //                     defenderDeckIndex = DefenderDeckIndex();
+        //                 }
+        //
+        //             //todo 実行速度に影響するようなら書き換え
+        //                 var isAbilityExecute = AbilityEffects.GetEffect(
+        //                     MasterdataManager.Get<MstAbilityRecord>(_battleData.PlayerList[i].Deck[j].AbilityList[k].Id))
+        //                     (new AbilityEffectsArgument()
+        //                 {
+        //                     BattleDataUseCase = this,
+        //                     AbilityCardUnique = 
+        //                     AbilityDeckIndex = j,
+        //                     AbilityPlayerIndex = i,
+        //                     ActionPlayerIndex = actionPlayerIndex,
+        //                     ActionDeckIndex = actionDeckIndex,
+        //                     DefenderPlayerIndex = defenderPlayerIndex,
+        //                     DefenderDeckIndex = defenderDeckIndex,
+        //                     TimingType = timingType,
+        //                     Level = _battleData.PlayerList[i].Deck[j].Level
+        //                 });
+        //                 if (isAbilityExecute)
+        //                 {
+        //                     _battleData.PlayerList[i].Deck[j].UseAbilityBefore = true;
+        //                     // _currentAbilityUser = PlayerType.Player;
+        //                     // _currentAbilityTimingType = timingType;
+        //                     // _currentAbilityUserCard = j;
+        //                     command(GetSnapShot());
+        //                     
+        //                 }
+        //                
+        //             }
+        //         }
+        //     }
+        // }
+    }
+    //----------------------------------------------------------------------------------------------------------------------
+    // プレイヤー系
+    //----------------------------------------------------------------------------------------------------------------------
+    //----------------------------------------------------------------------------------------------------------------------
+    // PlayerTypeから取得
+    public List<BattlePlayerData> GetPlayerList()
+    {
+        return _battleData.PlayerList;
+    }
+    public BattlePlayerData GetPlayerRef(PlayerType type)
+    {
+        return _battleData.PlayerList.FirstOrDefault(_ => _.PlayerType == type);
+    }
+    public BattlePlayerData Attacker() => _battleData.PlayerList[_battleData.CurrentAttacker];
+    public BattlePlayerData Defender()=>_battleData.PlayerList[_battleData.CurrentDefencer];
+    //----------------------------------------------------------------------------------------------------------------------
+    // カード系
+    //----------------------------------------------------------------------------------------------------------------------
+    //----------------------------------------------------------------------------------------------------------------------
+    // Uniqueから取得
+    //UniqueからIndex取得
+    public int GetDeckIndex(int pIndex,long unique)
+    {
+        if (_battleData.PlayerList.Count <= pIndex || pIndex < 0)
+        {
+            return -1;
+        }
+
+        for (var i = 0; i < _battleData.PlayerList[pIndex].Deck.Count; i++)
+        {
+            if (_battleData.PlayerList[pIndex].Deck[i].Unique == unique)
+            {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
+    public int GetPlayerIndex(long unique)
+    {
+        for (var i = 0; i < _battleData.PlayerList.Count; i++)
+        {
+            var found = _battleData.PlayerList[i].Deck.Any(_ => _.Unique == unique);
+            if (found)
+            {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+    //死亡プールの中から死亡時のデッキの場所を取得
+    public int GetDeadPlayerIndex(long unique)
+    {
+        for (var i = 0; i < _battleData.PlayerList.Count; i++)
+        {
+            var found = _battleData.PlayerList[i].Dead.Any(_ => _.Item3.Unique == unique);
+            if (found)
+            {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+    public int GetDeadDeckIndex(int pIndex,long unique)
+    {
+        if (_battleData.PlayerList.Count <= pIndex || pIndex < 0)
+        {
+            return -1;
+        }
+        for (var i = 0; i < _battleData.PlayerList[pIndex].Deck.Count; i++)
+        {
+            if (_battleData.PlayerList[pIndex].Dead[i].Item3.Unique == unique)
+            {
+                return _battleData.PlayerList[pIndex].Dead[i].Item2;
+            }
+        }
+
+        return -1;
+    }
+    //死亡プールまたはデッキからインデックスを取得
+    public (bool isDead, int pIndex, int dIndex) GetIndex(long unique)
+    {
+        
         for (var i = 0; i < _battleData.PlayerList.Count; i++)
         {
             for (var j = 0; j < _battleData.PlayerList[i].Deck.Count; j++)
             {
-                for (var k = 0; k < _battleData.PlayerList[i].Deck[j].AbilityList.Count; k++)
+                var found = _battleData.PlayerList[i].Deck[j].Unique == unique;
+                if (found)
                 {
+                    return (false,i,j);
+                }
+            }
 
-                    {
-                        var actionPlayerIndex = p;
-                        var actionDeckIndex = d;
-                        var defenderPlayerIndex = -1;
-                        var defenderDeckIndex = -1;
-                        if (
-                            timingType == AbilityTimingType.Attack ||
-                            timingType == AbilityTimingType.Defence)
-                        {
-                            defenderPlayerIndex = DefenderPlayerIndex();
-                            defenderDeckIndex = DefenderDeckIndex();
-                        }
-
-                    //todo 実行速度に影響するようなら書き換え
-                        var isAbilityExecute = AbilityEffects.GetEffect(
-                            MasterdataManager.Get<MstAbilityRecord>(_battleData.PlayerList[i].Deck[j].AbilityList[k].Id))
-                            (new AbilityEffectsArgument()
-                        {
-                            BattleDataUseCase = this,
-                            AbilityDeckIndex = j,
-                            AbilityPlayerIndex = i,
-                            ActionPlayerIndex = actionPlayerIndex,
-                            ActionDeckIndex = actionDeckIndex,
-                            DefenderPlayerIndex = defenderPlayerIndex,
-                            DefenderDeckIndex = defenderDeckIndex,
-                            TimingType = timingType,
-                            Level = _battleData.PlayerList[i].Deck[j].Level
-                        });
-                        if (isAbilityExecute)
-                        {
-                            _battleData.PlayerList[i].Deck[j].UseAbilityBefore = true;
-                            // _currentAbilityUser = PlayerType.Player;
-                            // _currentAbilityTimingType = timingType;
-                            // _currentAbilityUserCard = j;
-                            command(GetSnapShot());
-                            
-                        }
-                       
-                    }
+            for (var j = 0; j < _battleData.PlayerList[i].Dead.Count; j++)
+            {
+                var found = _battleData.PlayerList[i].Dead[j].Item3.Unique == unique;
+                if (found)
+                {
+                    return (true,_battleData.PlayerList[i].Dead[j].Item1,_battleData.PlayerList[i].Dead[j].Item2);
                 }
             }
         }
+
+        return (false, -1, -1);
     }
+    
+    //カードをデッキ内に所持しているプレイヤーのタイプ
+    public PlayerType GetPlayerType(long unique)
+    {
+        for (var i = 0; i < _battleData.PlayerList.Count; i++)
+        {
+            var found = _battleData.PlayerList[i].Deck.Any(_ => _.Unique == unique);
+            if (found)
+            {
+                return _battleData.PlayerList[i].PlayerType;
+            }
+        }
+
+        return PlayerType.None;
+    }
+    //uniqueでカード取得
+    public BattleCard GetCardRef(long unique)
+    {
+        foreach (var battlePlayerData in _battleData.PlayerList)
+        {
+            var card = battlePlayerData.Deck.FirstOrDefault(_ => _.Unique == unique);
+            if (card != null)
+            {
+                return card;
+            }
+        }
+
+        return null;
+    }public BattleCard GetCardByIndex(int pIndex,int dIndex)
+    {
+        if (IsOutOfDeckRange(pIndex, dIndex))
+        {
+            return null;
+        }
+        return _battleData.PlayerList[pIndex].Deck[dIndex];
+    }
+    //----------------------------------------------------------------------------------------------------------------------
+    // 引数無し取得
+    //ターゲットを決めていないと取得できない。
+    //todo タイミング強制的に限定
+    public BattleCard GetCurrentDefenderCard()
+    {
+        return _battleData.PlayerList[_battleData.CurrentDefencer].Deck[_target];
+    }
+    //Attackerが確定してからでないとIndexOutOfRangeになる可能性がある。
+    //todo タイミング強制的に限定
+    public BattleCard GetCurrentAttackerCard()
+    {
+        var index = _battleData.PlayerList[_battleData.CurrentAttacker].AttackerIndex;
+        return _battleData.PlayerList[_battleData.CurrentAttacker].Deck[index];
+    }
+    
+    //----------------------------------------------------------------------------------------------------------------------
+    // キャプチャ
+    public void AddCaptureCard(int id)
+    {
+        var card = new BattleCard().Generate(MasterdataManager.Get<MstMonsterRecord>(id));
+        _battleData.GetCard.Add(card);
+    }
+    //----------------------------------------------------------------------------------------------------------------------
+    // デッキから削除
+    
     public List<BattleCard> RemoveDeadCard()
     {
         var removed = new List<BattleCard>();
         for (var i = 0; i < _battleData.PlayerList.Count; i++)
         {
-            _battleData.PlayerList[i].Deck.RemoveAll(_ =>
+            for (var j = _battleData.PlayerList[i].Deck.Count - 1; j >= 0; j--)
             {
-                if (_.Hp <= 0)
+                if (_battleData.PlayerList[i].Deck[j].Hp <= 0)
                 {
-                    removed.Add(_);
-                    return true;
+                    var pIndex = i;
+                    var dIndex = j;
+                    var remove = _battleData.PlayerList[i].Deck[j];
+                    removed.Add(remove);
+                    _battleData.PlayerList[i].Dead.Add((pIndex,dIndex,remove));
+                    _battleData.PlayerList[i].Deck.RemoveAt(j);
+                    
                 }
-                return false;
-            });
-
+            }
         }
         return removed;
     }
+    //ショップなどで売ったときなど、操作キャラの所持カードを削除
+    public bool RemoveOperationPlayerDeckCard(long unique)
+    {
+        var card = GetOperationPlayer().Deck.FirstOrDefault(_ => _.Unique == unique);
+        if (card == null)
+        {
+            return false;
+        }
+        GetOperationPlayer().Deck.Remove(card);
+        return true;
+        
+
+    }
+    //超電磁など、死亡以外での削除
+    public bool ForceRemoveDeckCard(long unique)
+    {
+        for (var i = 0; i < _battleData.PlayerList.Count; i++)
+        {
+            for (var j = _battleData.PlayerList[i].Deck.Count - 1; j >= 0; j--)
+            {
+                if (_battleData.PlayerList[i].Deck[j].Unique == unique)
+                {
+                    _battleData.PlayerList[i].Dead.Add((i,j,_battleData.PlayerList[i].Deck[j]));
+                    _battleData.PlayerList[i].Deck.RemoveAt(j);
+                    return true;
+                }
+                
+
+            }
+            
+        }
+        
+        return false;
+
+    }
+    //書き換え
+    //判定
+
     public void ConfirmWinner(PlayerType type)
     {
         DebugLog.Function(this,2);
@@ -481,7 +712,7 @@ public class BattleDataUseCase : IEntityUseCase<BattleData>
     {
         return _battleData.PlayerList[playerIndex].Deck[cardIndex].Hp > 0;
     }
-    public bool IsFirstTurn() => _battleData.Turn == 1;
+    public bool IsFirstTurn() => _battleData.Turn == 0;
     public bool IsAttackerIndexOut(int index) => _battleData.PlayerList[index].AttackerIndex >= _battleData.PlayerList[index].Deck.Count;
 
     public bool IsAllAttackEnd()
@@ -535,7 +766,7 @@ public class BattleDataUseCase : IEntityUseCase<BattleData>
         }
 
         var deck = Random.Range(0, _battleData.PlayerList[player].Deck.Count);
-        return GetCardRef(player, deck);
+        return GetCardByIndex(player, deck);
     }
 
 
@@ -596,13 +827,6 @@ public class BattleDataUseCase : IEntityUseCase<BattleData>
     //----------------------------------------------------------------------------------------------------------------------
     // 値取得(参照)
     //----------------------------------------------------------------------------------------------------------------------
-    public BattleCard GetCardRef(int playerIndex,int deckIndex)
-    {
-        if (IsOutOfDeckRange(playerIndex, deckIndex))
-        {
-            return null;
-        }
-        return _battleData.PlayerList[playerIndex].Deck[deckIndex];
-    }
+
 
 }

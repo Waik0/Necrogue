@@ -86,11 +86,21 @@ public class BattlePresenter
 
     private class BattleViewAnimator
     {
+        private BattleData _snapShotBefore; 
         private BattleData _snapShot; 
         private bool _isEnd = false;
         public void SetSnapShot(BattleData ss)
         {
             _isEnd = false;
+            if (_snapShot != null)
+            {
+                _snapShotBefore = _snapShot.DeepCopy();
+            }
+            else
+            {
+                _snapShotBefore = ss;
+            }
+
             _snapShot = ss;
         }
 
@@ -135,48 +145,57 @@ public class BattlePresenter
                 return;
                 
             }
-            //演出自動進行処理
-            if (time <= 0 && !_isEnd)
-            {//初回のみ呼ばれるはず
-                switch (_snapShot.State)
-                {
-                    case BattleState.None:
-                        break;
-                    case BattleState.DeckPrepare:
-                        time = 5;
-                        break;
-                    case BattleState.TurnStart:
-                        time = 5;
-                        break;
-                    case BattleState.Attack:
-                        time = 60;
-                        break;
-                    case BattleState.Ability:
-                        time = 60;
-                        break;
-                    case BattleState.TurnEnd:
-                        time = 30;
-                        break;
-                    case BattleState.Sell:
-                        time = 2;
-                        break;
-                    case BattleState.End:
-                        time = 5;
-                        break;
-                }
-                //time = 100;
-            }
-            time--;
-            //デクリメントで0以下になった時のみよばれる
-            if(time <= 0)
+
+            if (auto)
             {
-                _isEnd = true;
+                //演出自動進行処理
+                if (time <= 0 && !_isEnd)
+                {
+                    //初回のみ呼ばれるはず
+                    switch (_snapShot.State)
+                    {
+                        case BattleState.None:
+                            break;
+                        case BattleState.DeckPrepare:
+                            time = 5;
+                            break;
+                        case BattleState.TurnStart:
+                            time = 30;
+                            break;
+                        case BattleState.Attack:
+                            time = 90;
+                            break;
+                        case BattleState.Ability:
+                            time = 90;
+                            break;
+                        case BattleState.TurnEnd:
+                            time = 30;
+                            break;
+                        case BattleState.Sell:
+                            time = 2;
+                            break;
+                        case BattleState.End:
+                            time = 90;
+                            break;
+                    }
+
+                    //time = 100;
+                }
+
+                time--;
+                //デクリメントで0以下になった時のみよばれる
+                if (time <= 0)
+                {
+                    _isEnd = true;
+                }
             }
+
             GUILayout.BeginVertical();
            
             for (var i = _snapShot.PlayerList.Count - 1; i >= 0; i--)
             {
                 var pdata = _snapShot.PlayerList[i];
+                var pdataBefore = _snapShotBefore.PlayerList[i];
                 GUILayout.Label(pdata.PlayerType.ToString());
                 GUILayout.BeginHorizontal(height);
                 if (pdata.Deck.Count == 0)
@@ -185,6 +204,17 @@ public class BattlePresenter
                 }
                 for (int j = 0; j < pdata.Deck.Count; j++)
                 { 
+                    //差分撮る
+                    //todo 固有IDで追跡
+                    var atkDiff = 0;
+                    var hpDiff = 0;
+                    var unique = pdata.Deck[j].Unique;
+                    var before = pdataBefore.Deck.FirstOrDefault(_ => _.Unique == unique);
+                    if (before != null)
+                    {
+                        atkDiff = pdata.Deck[j].Attack - before.Attack;
+                        hpDiff = pdata.Deck[j].Hp - before.Hp;
+                    }
                     GUILayout.BeginVertical("box", width, height);
                     DebugCardView(pdata.Deck[j]);
                     if(pdata.Deck[j] == null)
@@ -198,7 +228,17 @@ public class BattlePresenter
                     }
                     //Debug.Log(pdata.Deck[j].Name.ToString());
                     GUILayout.Label( pdata.Deck[j].Name.ToString() );
-                    GUILayout.Label($"<color=green>H: { pdata.Deck[j].Hp,-3}</color> <color=red>A: { pdata.Deck[j].Attack,-3}</color>");
+                    GUILayout.Label(pdata.Deck[j].Unique.ToString());
+                    GUILayout.BeginHorizontal();
+                    if (atkDiff > 0 || hpDiff > 0)
+                    {
+                        GUILayout.Label($"<color=yellow>+{atkDiff,-2}/ {hpDiff,-2}</color>");
+
+                       
+                    }
+                    GUILayout.Label($" ");
+                    GUILayout.EndHorizontal();
+                    GUILayout.Label($"<color=red>{ pdata.Deck[j].Attack,-2}</color>/ <color=green>{ pdata.Deck[j].Hp,-2}</color> ");
                     foreach (var ability in pdata.Deck[j].AbilityList)
                     {
                         GUILayout.Label($"能力 : {ability.Name}");

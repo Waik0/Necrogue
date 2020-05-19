@@ -135,14 +135,13 @@ public class DeckEditSequence : Sequence<bool>
     {
         DebugLog.Function(this, 2);
  
-        _battleDataUseCase.Summon(_summonArguments.StockOrder, _summonArguments.DeckOrder);
+        var card = _battleDataUseCase.Summon(_summonArguments.StockOrder, _summonArguments.DeckOrder);
         _battleDataUseCase.ChangeState(BattleState.Ability);
         _battleDataUseCase.ResolveAbilityAll(
             AbilityTimingType.Summon,
             ss =>
                 _battlePresenter?.OnCommand(new BattleCommand().Generate(ss)),
-            _battleDataUseCase.GetOperationPlayerIndex(),
-            _summonArguments.DeckOrder);
+            card.Unique);
         // _battleDataUseCase.ResolveAbilityAll(
         //     AbilityTimingType.SummonRace,
         //     ss =>

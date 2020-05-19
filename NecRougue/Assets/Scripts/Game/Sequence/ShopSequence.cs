@@ -130,17 +130,18 @@ public class ShopSequence : Sequence<bool>
 
 
     }
-    void Sell(int order)
+    void Sell(long unique)
     {
-        var card = _battleDataUseCase.GetOperationPlayer().Deck[order];
+        var card = _battleDataUseCase.GetCardRef(unique);
         var price = 1;
         _playerDataUseCase.AddGold(price);
-        _battleDataUseCase.RemoveDeckCard(order);
+        _battleDataUseCase.RemoveOperationPlayerDeckCard(unique);
         _battleDataUseCase.ChangeState(BattleState.Sell);
         _battlePresenter?.OnCommand(new BattleCommand().Generate(_battleDataUseCase.GetSnapShot()));
         _deckEditSequence.ResetSelected();
     }
 #if DEBUG
+    private bool isAuto;
     public void DebugUI()
     {
         switch (_statemachine.Current)
@@ -149,7 +150,7 @@ public class ShopSequence : Sequence<bool>
                 break;
             case State.WaitForInput:
                 _shopUI.DebugUI();
-                _battlePresenter.DebugUI();
+                _battlePresenter.DebugUI(isAuto);
                 _deckEditSequence.DebugUI();
               
                 break;
@@ -161,6 +162,11 @@ public class ShopSequence : Sequence<bool>
     }
     public void DebugUI2()
     {
+        var auto = isAuto ? "ON" : "OFF";
+        if (GUILayout.Button("オートモード : " + auto,GUILayout.Height(Screen.height/5)))
+        {
+            isAuto = !isAuto;
+        }
         _battlePresenter.DebugUI2();
         _shopUI.DebugUI2();
     }

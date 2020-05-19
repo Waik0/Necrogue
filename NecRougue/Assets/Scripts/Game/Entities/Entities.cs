@@ -177,7 +177,6 @@ public class MapNode : IEntity,IConvertFromMasterRecord<MstMapNodeRecord>
 public class BattleData : IEntity,
     IDeepCopyable
 {
-
     public int Turn;
     public int CurrentAttacker;
     public int CurrentDefencer;
@@ -202,6 +201,7 @@ public class BattlePlayerData : IEntity,
     public int AttackerIndex;
     public List<BattleCard> Deck;// = new List<BattleCard>();//モンスターカード 順番も関係ある
     public List<BattleCard> Stock;//操作キャラ以外はnull
+    public List<(int,int,BattleCard)> Dead;//死亡キャラ
     public int Speed;
     //public bool IsAttackIndexOut => AttackerIndex >= Deck.Count;
     public void ResetAttackIndex()
@@ -215,6 +215,7 @@ public class BattlePlayerData : IEntity,
         CharaId = entity.CharaId;
         Deck = entity.Deck.ConvertAll(card => new BattleCard().Generate(card));
         Stock = entity.Stock.ConvertAll(card => new BattleCard().Generate(card));
+        Dead = new List<(int,int,BattleCard)>();
         AttackerIndex = 0;
         
     }
@@ -243,6 +244,7 @@ public class BattlePlayerData : IEntity,
             var mst = MasterdataManager.Get<MstMonsterRecord>(id);
             return new BattleCard().Generate(mst);
         });
+        Dead = new List<(int,int,BattleCard)>();
     }
 
     public BattlePlayerData Generate(PlayerData entity)
@@ -264,6 +266,8 @@ public class BattleCard :IEntity,
     IConvertFromMasterRecord<MstMonsterRecord>,
     IGenerateFromMasterRecord<BattleCard,MstMonsterRecord>
 {
+    private static long UniqueHashKey = 0;
+    public long Unique;//固有ハッシュ
     public int Id;//マスターから素材引っ張る用
     public string Name;
     public int Rarity;
@@ -283,6 +287,8 @@ public class BattleCard :IEntity,
 
     public void Convert(CardData entity)
     {
+        UniqueHashKey++;
+        Unique = UniqueHashKey;
         Id = entity.Id;
         Name = entity.Name;
         Level = entity.Level;
@@ -309,11 +315,14 @@ public class BattleCard :IEntity,
             return new Ability().Generate(mst);
         });
         DiseaseList = new List<Disease>();//todo
+        
     }
 
 
     public void Convert(MstMonsterRecord record)
     {
+        UniqueHashKey++;
+        Unique = UniqueHashKey;
         Id = record.id;
         Name = record.name;
         Level = record.level;
@@ -349,6 +358,7 @@ public class BattleCard :IEntity,
             return new Ability().Generate(mst);
         });
         DiseaseList = new List<Disease>();//todo
+       
     }
     public BattleCard Generate(CardData entity)
     {

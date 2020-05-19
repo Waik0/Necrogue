@@ -28,17 +28,37 @@ public class AbilityEditor : EditorWindow
             }
             GUILayout.BeginVertical();
             GUILayout.BeginHorizontal();
+            var changed = false;
             Record.name = GUILayout.TextField(Record.name,GUILayout.Width(100));
             try
             {
+                var before = Record.param1;
                 Record.param1 = int.Parse(GUILayout.TextField(Record.param1.ToString(), GUILayout.Width(30)));
+                if (before != Record.param1)
+                {
+                    changed = true;
+                }
             }
             catch (Exception e)
             {
                 Record.param1 = 0;
+                changed = true;
             }
-
-            var changed = false;
+            try
+            {
+                var before = Record.param2;
+                Record.param2 = int.Parse(GUILayout.TextField(Record.param2.ToString(), GUILayout.Width(30)));
+                if (before != Record.param1)
+                {
+                    changed = true;
+                }
+            }
+            catch (Exception e)
+            {
+                Record.param2 = 0;
+                changed = true;
+            }
+          
             changed |= ViewTimingType<AbilityTimingType>(ref Record.timingType);
             changed |= ViewTimingType<AbilityEffectConditionType>(ref Record.conditionType);
             changed |= ViewTimingType<AbilityEffectTargetType>(ref Record.targetType);
@@ -175,7 +195,7 @@ public class AbilityEditor : EditorWindow
     public static Dictionary<AbilityEffectType, Func<MstAbilityRecord,string>> _aet = new Dictionary<AbilityEffectType, Func<MstAbilityRecord,string>>()
     {
         { AbilityEffectType.None,a=>"無効" },
-        { AbilityEffectType.AtUp,a=>$"{ATT(a)}、{AETT(a)}にAtk + {a.param2}" },
+        { AbilityEffectType.AtUp,a=>$"{ATT(a)}、{AETT(a)}にAtk + {a.param1}" },
         { AbilityEffectType.Summon,a=>$"{ATT(a)}、{a.param1}を{a.param2}体召喚" },
         { AbilityEffectType.Shield,a=>$"{ATT(a)}、{AETT(a)}に次のダメージを無効するシールドをつける" },
         { AbilityEffectType.Blocker,a=>$"{ATT(a)}から、敵の攻撃が{AETT(a)}に集中するようになる" },
