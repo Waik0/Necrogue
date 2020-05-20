@@ -72,7 +72,7 @@ public class GameSequence : MonoBehaviour
     IEnumerator Prepare()
     {
         DebugLog.Function(this);
-        _mapDataUseCase.CreateMap(0,10);
+        _mapDataUseCase.CreateMap(0,50);
         _statemachine.Next(State.Map);
         yield return null;
     }
