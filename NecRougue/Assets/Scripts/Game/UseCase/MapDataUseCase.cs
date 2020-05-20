@@ -70,9 +70,15 @@ public class MapDataUseCase : IEntityUseCase<MapData>
         {
             var nodePerDepth = Random.Range(2, 4);
             var currentNodes = new List<int>();
+            var target = records.Where(_ => _.minDepth <= i && i <= _.maxDepth).ToList();
+            if (target.Count <= 0)
+            {
+                continue;
+            }
             for (int j = 0; j < nodePerDepth; j++)
             {
-                var data = records[Random.Range(0, records.Length)].Convert();
+                
+                var data = target[Random.Range(0, target.Count)].Convert();
                 data.Depth = i;
                 data.SerialNumber = serial;
                 data.LinkNodeSerial = new List<int>();
