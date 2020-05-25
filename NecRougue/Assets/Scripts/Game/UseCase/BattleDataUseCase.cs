@@ -276,7 +276,43 @@ public class BattleDataUseCase : IEntityUseCase<BattleData>
         }
         return EnemyDestroyState.None;
     }
-
+    public EnemyDestroyState AttackEach()
+    {
+        var ret = EnemyDestroyState.None;
+        var attacker = _battleData.PlayerList[_battleData.CurrentAttacker].AttackerIndex;
+        var atk = _battleData.PlayerList[_battleData.CurrentAttacker].Deck[attacker].Attack;
+        _battleData.PlayerList[_battleData.CurrentDefencer].Deck[_target].Hp -= atk;
+        if (_battleData.PlayerList[_battleData.CurrentDefencer].PlayerType == PlayerType.Enemy)
+        {
+            if (_battleData.PlayerList[_battleData.CurrentDefencer].Deck[_target].Hp < 0)
+            {
+                ret = EnemyDestroyState.Gold;
+            }
+            if (_battleData.PlayerList[_battleData.CurrentDefencer].Deck[_target].Hp == 0)
+            {
+                ret = EnemyDestroyState.Capture;
+            }
+        }
+        //反撃
+        var attacker2 = _target;
+        var defender2 = _battleData.PlayerList[_battleData.CurrentAttacker].AttackerIndex;
+        var atk2 =  _battleData.PlayerList[_battleData.CurrentDefencer].Deck[_target].Attack;
+        
+        _battleData.PlayerList[_battleData.CurrentAttacker].Deck[defender2].Hp -= atk2;
+        if (_battleData.PlayerList[_battleData.CurrentAttacker].PlayerType == PlayerType.Enemy)
+        {
+            if (_battleData.PlayerList[_battleData.CurrentAttacker].Deck[defender2].Hp < 0)
+            {
+                ret = EnemyDestroyState.Gold;
+            }
+            if (_battleData.PlayerList[_battleData.CurrentAttacker].Deck[defender2].Hp == 0)
+            {
+                ret = EnemyDestroyState.Capture;
+            }
+        }
+        
+        return ret;
+    }
     //種族
     public List<RaceData> GetRaceData(long unique)
     {
@@ -329,7 +365,7 @@ public class BattleDataUseCase : IEntityUseCase<BattleData>
                             {
                                 BattleDataUseCase = this,
                                 TimingType = AbilityTimingType.Dead,
-                                Level = card.Level,
+                                //Level = card.Level,
                                 AbilityCardUnique = card.Unique,
                             });
                 if (isAbilityExecute)
@@ -362,7 +398,7 @@ public class BattleDataUseCase : IEntityUseCase<BattleData>
                                 ActionCardUnique = action,
                                 DefenderCardUnique = defender,
                                 TimingType = timingType,
-                                Level = battleCard.Level
+                                //Level = battleCard.Grade
                             }
                             ));
                 }
@@ -727,12 +763,25 @@ public class BattleDataUseCase : IEntityUseCase<BattleData>
         //.ForEach(_ => );
     }
     
-    //防御側全滅判定
-    public bool IsDefenderAllDead()
+    //全滅判定
+    public PlayerType CheckWinner()
     {
-        return Defender().Deck.Count <= 0;//All(_ => _.Hp.Current <= 0);
-    }
+        var winner = PlayerType.None;
+        var loser = new List<PlayerType>();
+        foreach (var battlePlayerData in _battleData.PlayerList)
+        {
+            if (battlePlayerData.Deck.Count <= 0)
+            {
+                loser.Add(battlePlayerData.PlayerType);
+            }
+        }
 
+        if (loser.Count > 0)
+        {
+            winner = loser.Contains(PlayerType.Player) ? PlayerType.Enemy : PlayerType.Player;
+        }
+        return winner;
+    }
     public bool IsOutOfDeckRange(int playerIndex, int deckIndex)
     {
         var isPlayerIndexOut = playerIndex < 0 ||  _battleData.PlayerList.Count <= playerIndex;

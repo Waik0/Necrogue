@@ -7,8 +7,8 @@ using UnityEngine;
 
 public class MapSequence : SequenceBehaviour<int>
 {
-    [SerializeField] private MapUI _mapUi;
-    [SerializeField] private ButtonUI _settingButton;
+    private MapUI _mapUi = new MapUI();
+    private ButtonUI _settingButton;
     public enum State
     {
         Init,
@@ -25,7 +25,7 @@ public class MapSequence : SequenceBehaviour<int>
         _mapDataUseCase = map;
         _mapUi.Inject(_mapDataUseCase);
     }
-    void Awake()
+    public MapSequence()
     {
         _statemachine = new Statemachine<State>();
         _statemachine.Init(this);
@@ -36,7 +36,11 @@ public class MapSequence : SequenceBehaviour<int>
         _result = -1;
         _statemachine.Next(State.Init);
     }
-
+    public override int UpdateSequence()
+    {
+        _statemachine.Update();
+        return _result;
+    }
    
     private IEnumerator Init()
     {
@@ -70,11 +74,7 @@ public class MapSequence : SequenceBehaviour<int>
     {
         yield return null;
     }
-    public override int UpdateSequence()
-    {
-        _statemachine.Update();
-        return _result;
-    }
+
 #if DEBUG 
     public void DebugUI()
     {

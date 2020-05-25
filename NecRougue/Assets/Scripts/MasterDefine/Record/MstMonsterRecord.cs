@@ -13,8 +13,8 @@ public class MstMonsterRecord : IMasterRecord
 
     public int id;
     public string name;
-    public int rarity;
-    public int level;
+    public int rarity;//出現率
+    public int grade;//ショップランク
     public int attack;
     public int hp;
     //public int defence;//聖なる盾

@@ -79,6 +79,9 @@ public class BattleSequence : Sequence<BattleResult>
     public override void ResetSequence()
     {
         _statemachine.Next(State.Init);
+        
+        
+        
         _battleDataUseCase.ResetData();
         _battlePresenter.Reset();
         _battleProcess.ResetSequence();

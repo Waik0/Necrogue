@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MapUI : MonoBehaviour, IModalUI
+public class MapUI :  IModalUI
 {
     private MapDataUseCase _mapRef;
     private int _selectedMap;

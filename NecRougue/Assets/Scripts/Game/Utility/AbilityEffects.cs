@@ -22,7 +22,7 @@ public class AbilityEffectsArgument
     //死亡時の場合indexの取得方法が異なる
     public bool isDeadEffect;
     //
-    public int Level;//能力レベル
+    public int Level = 1;//能力レベル
     public int Param1;
     public int Param2; 
     public AbilityTimingType TimingType;
@@ -241,7 +241,7 @@ public static class AbilityEffects
                 }
 
                 var records = MasterdataManager.Records<MstMonsterRecord>()
-                    .Where(_=>_.rarity == abilityEffectsArgument.Param1).ToList();
+                    .Where(_=>_.grade == abilityEffectsArgument.Param1).ToList();
                 if (records.Count <= 0)
                 {
                     return false;

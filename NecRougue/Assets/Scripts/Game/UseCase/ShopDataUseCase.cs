@@ -28,7 +28,7 @@ public class ShopDataUseCase : IEntityUseCase<ShopData>
         for(var i = 0;i < count; i++)
         {
             var records = MasterdataManager.Records<MstMonsterRecord>();
-            var targets = records.Where(_ => _.rarity <= shopLevel && _.rarity >= shopLevel - 2).ToList();
+            var targets = records.Where(_ => _.grade <= shopLevel && _.grade >= shopLevel - 2).ToList();
             if(targets.Count <= 0)
             {
                 continue;

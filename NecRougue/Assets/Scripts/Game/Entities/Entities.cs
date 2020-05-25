@@ -86,7 +86,7 @@ public class CardData : IEntity,
     public int Hp;
     public List<int> Race;
     public List<int> Abilities;
-    public int Level;
+    public int Grade;
 
     public CardData Generate(MstMonsterRecord record)
     {
@@ -104,7 +104,7 @@ public class CardData : IEntity,
         Name = record.name;
         Attack = record.attack;
         Hp = record.hp;
-        Level = record.level;
+        Grade = record.grade;
         Rarity = record.rarity;
         Race = new List<int>()
         {
@@ -126,7 +126,7 @@ public class CardData : IEntity,
         Attack = entity.Attack;//.Max;
         Hp = entity.Hp;
 
-        Level = entity.Level;
+        Grade = entity.Grade;
         Rarity = entity.Rarity;
         Race = entity.Race.ConvertAll(r=>r.Id);
         Abilities = entity.AbilityList.ConvertAll(a => a.Id);
@@ -271,7 +271,7 @@ public class BattleCard :IEntity,
     public int Id;//マスターから素材引っ張る用
     public string Name;
     public int Rarity;
-    public int Level;
+    public int Grade;
     public int Attack;
     public List<RaceData> Race;
     public int Hp;
@@ -282,6 +282,7 @@ public class BattleCard :IEntity,
     public List<Ability> AbilityList = new List<Ability>();//マスターから素材ひっぱったり AbilityEffectsから効果ひっぱったり
     public List<Disease> DiseaseList = new List<Disease>();//状態異常
     public bool UseAbilityBefore;
+    
     //view用
     public BattleCardState State;
 
@@ -291,7 +292,7 @@ public class BattleCard :IEntity,
         Unique = UniqueHashKey;
         Id = entity.Id;
         Name = entity.Name;
-        Level = entity.Level;
+        Grade = entity.Grade;
         Rarity = entity.Rarity;
         Hp = entity.Hp;
         Attack = entity.Attack;//new ValueSet(entity.Attack);
@@ -325,7 +326,7 @@ public class BattleCard :IEntity,
         Unique = UniqueHashKey;
         Id = record.id;
         Name = record.name;
-        Level = record.level;
+        Grade = record.grade;
         Rarity = record.rarity;
         Hp = record.hp;
         Attack = record.attack;// new ValueSet(record.attack);

@@ -155,7 +155,8 @@ public class BattleProcessSequence : Sequence<bool>
         var defender = _battleDataUseCase.GetCurrentDefenderCard().Unique;
         DebugLog.Function(this,2);
         _battleDataUseCase.ChangeState(BattleState.Attack);
-        var enemyState =_battleDataUseCase.Attack();
+        //反撃あり
+        var enemyState =_battleDataUseCase.AttackEach();
         switch (enemyState)
         {
             case EnemyDestroyState.None:
@@ -189,10 +190,10 @@ public class BattleProcessSequence : Sequence<bool>
         var end = false;
 
         //全滅判定
-        if (_battleDataUseCase.IsDefenderAllDead())
+        if (_battleDataUseCase.CheckWinner()!= PlayerType.None)
         {
             end = true;
-            _battleDataUseCase.ConfirmWinner(_battleDataUseCase.Attacker().PlayerType);
+            _battleDataUseCase.ConfirmWinner(_battleDataUseCase.CheckWinner());
             
         }
         //攻撃者変更

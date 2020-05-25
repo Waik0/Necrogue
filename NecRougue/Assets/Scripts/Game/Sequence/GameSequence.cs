@@ -6,7 +6,7 @@ using UnityEngine;
 using Toast;
 using System.Text.RegularExpressions;
 
-public class GameSequence : MonoBehaviour
+public class GameSequence : Sequence<bool>
 {
     public enum State
     {
@@ -22,23 +22,43 @@ public class GameSequence : MonoBehaviour
     }
 
     //todo DI対応---
-    [SerializeField] private MapSequence _mapSequence;
+    private MapSequence _mapSequence = new MapSequence();
     private BattleSequence _battleSequence = new BattleSequence();
     private ShopSequence _shopSequence = new ShopSequence();
+    private EventSequence _eventSequence = new EventSequence();
     private PlayerDataUseCase _playerDataUseCase = new PlayerDataUseCase();
     private MapDataUseCase _mapDataUseCase = new MapDataUseCase();
     private EnemyDataUseCase _enemyDataUseCase = new EnemyDataUseCase();
-  
+
     //---
     private Statemachine<State> _statemachine;
 
-    void Awake()
+    public GameSequence()
     {
-        Application.targetFrameRate = 60;
         _statemachine = new Statemachine<State>();
         _statemachine.Init(this);
         _statemachine.Next(State.Init);
     }
+    public void Inject()
+    {
+        _mapSequence.Inject(_mapDataUseCase);
+        _battleSequence.Inject(_playerDataUseCase,_enemyDataUseCase);
+        _shopSequence.Inject(_playerDataUseCase,_mapDataUseCase);
+
+
+    }
+    
+    public override void ResetSequence()
+    {
+        _statemachine.Next(State.Init);
+    }
+
+    public override bool UpdateSequence()
+    {
+        _statemachine.Update();
+        return true;
+    }
+
     //----------------------------------------------------------------------------------------------------------------------
     //sequence
     //----------------------------------------------------------------------------------------------------------------------
@@ -48,9 +68,7 @@ public class GameSequence : MonoBehaviour
 
         DebugLog.Function(this);
         _playerDataUseCase.MakePlayerDataFromMaster(101);
-        _mapSequence.Inject(_mapDataUseCase);
-        _battleSequence.Inject(_playerDataUseCase,_enemyDataUseCase);
-        _shopSequence.Inject(_playerDataUseCase,_mapDataUseCase);
+
         _statemachine.Next(State.FirstStock);
         yield return null;
     }
@@ -58,6 +76,11 @@ public class GameSequence : MonoBehaviour
     IEnumerator FirstStock()
     {
         DebugLog.Function(this);
+        _eventSequence.ResetSequence();
+        while (_eventSequence.UpdateSequence())
+        {
+            yield return null;
+        }
         _playerDataUseCase.AddStock(101);
         _playerDataUseCase.AddStock(101);
         _playerDataUseCase.AddStock(101);
@@ -170,12 +193,7 @@ public class GameSequence : MonoBehaviour
         }
         return State.Map;
     }
-    
-    // Update is called once per frame
-    void Update()
-    {
-        _statemachine.Update();
-    }
+
 
 
 #if DEBUG
@@ -184,7 +202,7 @@ public class GameSequence : MonoBehaviour
     private Vector2 debug;
     public static Vector2 logscr;
     private Font font = null;
-    void OnGUI()
+    public void DebugUI()
     {
         if (font == null)
         {
@@ -193,8 +211,7 @@ public class GameSequence : MonoBehaviour
         }
 
         //float zoom = Screen.width / 480f;
-        GUI.skin.label.fontSize =  Screen.width / 64;
-        GUI.skin.button.fontSize = Screen.width / 64;
+
         //Matrix4x4 Translation = Matrix4x4.TRS(new Vector3(0,0,0),Quaternion.identity,Vector3.one);
         //Matrix4x4 Scale = Matrix4x4.Scale(new Vector3(zoom, zoom, 1.0f));
 
@@ -209,14 +226,14 @@ public class GameSequence : MonoBehaviour
         GUILayout.EndScrollView();
         //GUILayout.EndHorizontal();
         debug = GUILayout.BeginScrollView(debug);
-        DebugUI();
+        DebugUI1();
         GUILayout.EndScrollView();
         GUILayout.BeginVertical("box", GUILayout.Width(Screen.width / 8));
         DebugUI2();
         GUILayout.EndVertical();
         GUILayout.EndHorizontal();
     }
-    void DebugUI()
+    void DebugUI1()
     {
         //GUILayout.Label("[ GAME ] STATE : " +_statemachine.Current.ToString());
 
@@ -283,7 +300,6 @@ public class GameSequence : MonoBehaviour
 #else
 
 #endif
-
 }
 public class GameLogger
 {
