@@ -77,7 +77,7 @@ public class GameSequence : Sequence<bool>
     {
         DebugLog.Function(this);
         _eventSequence.ResetSequence();
-        while (_eventSequence.UpdateSequence())
+        //while (_eventSequence.UpdateSequence())
         {
             yield return null;
         }
