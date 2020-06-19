@@ -23,7 +23,7 @@ public class FirstCardEventPresenter
         var ids = new List<CardData>();
         for (int i = 0; i < 3; i++)
         {
-            ids.Add(_firstCardEventUseCase.GetRandomFirstCardId());
+            ids.Add(_firstCardEventUseCase.GetRandomFirstCardId(_currentGetNum==0?3:-1));
         }
         Debug.Log("TEst");
         _ids = ids.ToArray();
@@ -58,6 +58,7 @@ public class FirstCardEventUseCase
         var cards = MasterdataManager.Records<MstMonsterRecord>().Where(_ => _.grade == 0).ToList();
         if (rarity != -1)
         {
+            Debug.Log("Key");
             cards = cards.Where(_ => _.rarity == rarity).ToList();
         }
         return new CardData().Generate(cards[Random.Range(0, cards.Count)]);
