@@ -5,7 +5,7 @@ using System.Linq;
 using Toast;
 using UnityEngine;
 
-public class MapSequence : SequenceBehaviour<int>
+public class MapSequence : Sequence<int>
 {
     private MapUI _mapUi = new MapUI();
     private ButtonUI _settingButton;

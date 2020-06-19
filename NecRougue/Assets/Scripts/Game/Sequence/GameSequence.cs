@@ -25,7 +25,7 @@ public class GameSequence : Sequence<bool>
     private MapSequence _mapSequence = new MapSequence();
     private BattleSequence _battleSequence = new BattleSequence();
     private ShopSequence _shopSequence = new ShopSequence();
-    private EventSequence _eventSequence = new EventSequence();
+    private EventRootSequence _eventSequence;
     private PlayerDataUseCase _playerDataUseCase = new PlayerDataUseCase();
     private MapDataUseCase _mapDataUseCase = new MapDataUseCase();
     private EnemyDataUseCase _enemyDataUseCase = new EnemyDataUseCase();
@@ -76,15 +76,14 @@ public class GameSequence : Sequence<bool>
     IEnumerator FirstStock()
     {
         DebugLog.Function(this);
+        _eventSequence = new EventRootSequence(GameEventType.FirstCard);
+        _eventSequence.Inject(_playerDataUseCase);
         _eventSequence.ResetSequence();
-        //while (_eventSequence.UpdateSequence())
+        while (_eventSequence.UpdateSequence())
         {
             yield return null;
         }
-        _playerDataUseCase.AddStock(101);
-        _playerDataUseCase.AddStock(101);
-        _playerDataUseCase.AddStock(101);
-        _playerDataUseCase.AddStock(102);
+
         _statemachine.Next(State.Prepare);
         yield return null;
     }
@@ -243,6 +242,7 @@ public class GameSequence : Sequence<bool>
                 _mapSequence.DebugUI();
                 break;
             case State.FirstStock:
+                _eventSequence.DebugUI1();
                 break;
             case State.Battle:
                 _battleSequence.DebugUI();
