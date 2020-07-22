@@ -5,5 +5,7 @@ using UnityEngine;
 public class RetroGraphicsSprite : ScriptableObject
 {
     public int Stride;
+    public Vector2Int SingleSize;
     public byte[] Buffer;
+    
 }

@@ -6,9 +6,10 @@
     }
     SubShader
     {
+        Tags {"Queue"="Transparent" "IgnoreProjector"="True" "RenderType"="Transparent"}
         // No culling or depth
         Cull Off ZWrite Off ZTest Always
-
+        Blend SrcAlpha OneMinusSrcAlpha 
         Pass
         {
             CGPROGRAM
@@ -41,6 +42,7 @@
             fixed4 frag (v2f i) : SV_Target
             {
                 //return col;
+                //return float4(0,0,0,0);
 				return _Colors[(int)(tex2D(_MainTex, i.uv).r * 256)];
             }
             ENDCG

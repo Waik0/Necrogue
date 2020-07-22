@@ -32,8 +32,49 @@ public class RetroGraphicsFont : ScriptableObject
     public int Stride;
     public FontSet[] Glyphs;
 
-    public Dictionary<char, FontRect> Deploy()
+    public DeployRetroGraphicsFont Deploy()
     {
-        return null;
+        var ret = new Dictionary<char,FontRect>();
+        foreach (var fontSet in Glyphs)
+        {
+            if (ret.ContainsKey(fontSet.Key)) continue;
+            ret.Add(fontSet.Key,fontSet.Rect);
+        }
+        return new DeployRetroGraphicsFont(Stride,Buffer,ret);
+    }
+}
+
+public class DeployRetroGraphicsFont
+{
+    private Dictionary<char, FontRect> _glyph;
+    private bool[] _buffer;
+    private int _stride;
+    private int _ymax;
+    public DeployRetroGraphicsFont(int Stride ,bool[] Buffer, Dictionary<char, FontRect> Glyph)
+    {
+        _stride = Stride;
+        _glyph = Glyph;
+        _buffer = Buffer;
+        //反転用
+        _ymax = _buffer.Length / _stride;
+    }
+
+    public (int stx, int sty) TryGetBuffer(char key,out bool[] data)
+    {
+        data = null;
+        if (_glyph.ContainsKey(key))
+        {
+            var g = _glyph[key];
+            data = new bool[(g.eX - g.sX) * (g.eY - g.sY)];
+            for (int i = 0; i < (g.eX - g.sX) * (g.eY - g.sY); i++)
+            {
+                var inverseY = _stride * (_ymax - g.eY); 
+                var ind = g.sX + inverseY + (i / (g.eX - g.sX)) * _stride + i % (g.eX - g.sX);
+                data[i] = _buffer[ind];
+            }
+            return ((g.eX - g.sX),(g.eY - g.sY));
+        }
+
+        return (-1, -1);
     }
 }

@@ -10,11 +10,14 @@ public class RetroGraphicsSpriteTest : MonoBehaviour
     [SerializeField] private RetroScreenRenderer _renderer;
 
     [SerializeField] private RetroGraphicsSprite _sprite;
+
+    [SerializeField] private RetroGraphicsFont _font;
     // Start is called before the first frame update
     void Start()
     {
         Application.targetFrameRate = 60;
-        _renderer.SetClearBuffer(true);
+        _renderer.SetClearBuffer(true,RetroScreenRenderer.LayerList.Sprite);
+        _renderer.DrawText(0,0,100,"てすとてきすとあいうえtおかきくけこさしすせそあいうえおかきくけこさしすせそ");
     }
 
     private List<TestBall> tests = new List<TestBall>();
@@ -22,6 +25,7 @@ public class RetroGraphicsSpriteTest : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+       
         if (1f / Time.deltaTime > 60)
         {
             tests.Add(new TestBall(_sprite, _renderer));
@@ -60,9 +64,9 @@ public class TestBall
     public void Update()
     {
         time+=0.1f;
-        pos.x = center.x + (int)(Mathf.Sin(time*Mathf.PI) * 15);
-        pos.y = center.y + (int)(Mathf.Cos(time*Mathf.PI) * 15);
-        Renderer.DrawSprite(Sprite,pos);
+        pos.x = center.x; //+ (int)(Mathf.Sin(time*Mathf.PI) * 15);
+        pos.y = center.y;//+ (int)(Mathf.Cos(time*Mathf.PI) * 15);
+        Renderer.DrawSprite(Sprite,pos,(int)(time % 4));
     }
     
 }

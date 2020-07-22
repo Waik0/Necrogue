@@ -451,7 +451,7 @@ namespace Toast.Masterdata.Editor
 
             }
 
-            var path = "Assets/Resources/" + (attributes[0] as MasterPath).Path;
+            var path = "Assets/" + (attributes[0] as MasterPath).Path;
             //desc
             Attribute[] dsc = Attribute.GetCustomAttributes(t, typeof(MasterDescription));
             Description = "";
@@ -560,7 +560,7 @@ namespace Toast.Masterdata.Editor
 
             }
 
-            var path = "Assets/Resources/" + (attributes[0] as MasterPath).Path;
+            var path = "Assets/" + (attributes[0] as MasterPath).Path;
             var json = MiniJSON.Json.Serialize(list);
             Debug.Log("Write Data : " + path);
             File.WriteAllText(path,json);

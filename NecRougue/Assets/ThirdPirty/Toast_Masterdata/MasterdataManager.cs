@@ -171,6 +171,7 @@ public class MasterTable<T> where T : class, IMasterRecord
 #endif
 #if true
         var ext = Regex.Match(path, "[^.]+$").Value;
+        path = Regex.Replace(path, "(.*)Resources/", "");
         path = Regex.Replace(path, "." + ext + "$", "");
         path = Regex.Replace(path, "^/", "");
         Debug.Log("[Master] load from resources : " + path);
