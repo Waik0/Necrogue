@@ -76,7 +76,7 @@ namespace Toast.Masterdata.Editor
         private MenuData Menu { get; set; }
         TableData Table { get; set; }
 
-        [MenuItem("Toast/MasterdataEditor")]
+        //[MenuItem("Toast/MasterdataEditor")]
         static void Open()
         {
             var window = CreateInstance<MasterdataEditor>();

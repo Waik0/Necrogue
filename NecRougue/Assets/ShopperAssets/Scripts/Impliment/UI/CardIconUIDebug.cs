@@ -6,35 +6,33 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
-public class CardIconUI : MonoBehaviour
+public class CardIconUIDebug : ICardIconUI
 {
-    private static string _selectedGuid;
-    public static string SelectedGuid => _selectedGuid;
-    
     [SerializeField] private Image _icon;
     [SerializeField] private Button _button;
-    public void SetCard(CardModel card)
+    [SerializeField] private Text _debug;
+    public override void SetCard(CardModel card)
     {
         _icon.sprite = null;
+        _debug.text = card.Name;
     }
-    
-    public string CardGUID;
-    public Action<string> OnClickOnce;
-    public Action<string> OnClickTwice;
     
     public void Awake()
     {
         _button.onClick.AddListener(() =>
         {
-            if (_selectedGuid != CardGUID)
+            if (!IsSelected)
             {
-                _selectedGuid = CardGUID;
-                OnClickOnce?.Invoke(CardGUID);
+                _selectedUnique = Unique;
+                OnSelected?.Invoke(Unique);
             }
             else
             {
-                OnClickTwice?.Invoke(CardGUID);
+                OnExecuted?.Invoke(Unique);
+                _selectedUnique = "";
             }
         });
     }
+
+  
 }

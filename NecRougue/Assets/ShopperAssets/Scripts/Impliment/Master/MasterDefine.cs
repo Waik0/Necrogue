@@ -23,18 +23,9 @@ namespace ShopperAssets.Scripts.Master
         public int Attack;
         public int Defence;
         public int Hp;
-        public int AbilityId1;
-        public int AbilityId2;
-        public int AbilityId3;
-        public int AbilityId4;
-        public int AbilityParam1_1;
-        public int AbilityParam1_2;
-        public int AbilityParam2_1;
-        public int AbilityParam2_2;
-        public int AbilityParam3_1;
-        public int AbilityParam3_2;
-        public int AbilityParam4_1;
-        public int AbilityParam4_2;
+        public int[] AbilityId;
+        public int[] AbilityParam1;
+        public int[] AbilityParam2;
     }
     [MasterPath("ShopperAssets/Masterdata/Resources/mst_card.json"),Serializable]
     public class ShMstCardRecord : IMasterRecord
@@ -46,17 +37,8 @@ namespace ShopperAssets.Scripts.Master
         public int Rarity;//100枚当たり何枚入るか
         public string Name;
         public string Description;
-        public int AbilityId1;
-        public int AbilityId2;
-        public int AbilityId3;
-        public int AbilityId4;
-        public int AbilityParam1_1;
-        public int AbilityParam1_2;
-        public int AbilityParam2_1;
-        public int AbilityParam2_2;
-        public int AbilityParam3_1;
-        public int AbilityParam3_2;
-        public int AbilityParam4_1;
-        public int AbilityParam4_2;
+        public int[] AbilityId;
+        public int[] AbilityParam1;
+        public int[] AbilityParam2;
     }
 }

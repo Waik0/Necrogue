@@ -24,6 +24,7 @@ namespace ShopperAssets.Scripts.Game
             DebugLog.Function(this);
             yield return null;
             _gamePresenter.Reset();
+            _gamePresenter.DrawMax();
             NextState(State.Menu);
         }
         /// <summary>

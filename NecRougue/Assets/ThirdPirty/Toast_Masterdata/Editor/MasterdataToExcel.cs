@@ -18,7 +18,7 @@ public class MasterdataToExcel : EditorWindow
         set => _log += value + "\n";
     }
 
-    [MenuItem("Toast/MasterdataExport")]
+    //[MenuItem("Toast/MasterdataExport")]
     static void Open()
     {
         var window = CreateInstance<MasterdataToExcel>();

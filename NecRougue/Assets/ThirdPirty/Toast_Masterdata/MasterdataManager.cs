@@ -177,7 +177,9 @@ public class MasterTable<T> where T : class, IMasterRecord
         Debug.Log("[Master] load from resources : " + path);
 
         string text = Resources.Load<TextAsset>(path).ToString();
-        Records = JsonUtility.FromJson<Master<T>>("{\"Records\":" + text + "}");
+        //var data = JsonUtility.FromJson<MasterRoot<T>>( text );
+        Records = JsonUtility.FromJson<Master<T>>(text);
+        //Records = JsonUtility.FromJson<Master<T>>("{\"Records\":" + text + "}");
         if (Records == null)
         {
             Records = new Master<T>() { Records = new T[0] };
@@ -203,6 +205,25 @@ public class MasterPath : Attribute
         Path = path;
     }
 }
+
+// [Serializable]
+// public class MasterMeta
+// {
+//     public MasterColumType[] Colums;
+// }
+//
+// [SerializeField]
+// public class MasterColumType
+// {
+//     public string Name;
+//     public string Type;
+// }
+// [Serializable]
+// public class MasterRoot<T> where T : class, IMasterRecord
+// {
+//     public MasterMeta Meta;
+//     public T[] Records;
+// }
 [Serializable]
 public class Master<T> where T : class, IMasterRecord
 {

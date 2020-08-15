@@ -1,1 +1,1 @@
-[{"id":"0"}]
+{"Meta":{"Enums":{"AbilityResolver+AbilityTiming":{"0":"Get","1":"Use","2":"Trash","3":"EndTurn"},"AbilityResolver+AbilityCommands":{"0":"GetCard","1":"AttackEnemy","2":"Coin","3":"AttackDeck","4":"Remove"}},"Fields":{"id":"System.Int32","Name":"System.String","Description":"System.String","Timing":"AbilityResolver+AbilityTiming","Command":"AbilityResolver+AbilityCommands"}},"Records":[{"id":"101","Name":"Ab_101","Description":"WhenUse_GetCoin","Timing":"1","Command":"2"},{"id":"102","Name":"Ab_102","Description":"WhenUse_Attack","Timing":"1","Command":"1"}]}

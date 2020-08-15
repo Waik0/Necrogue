@@ -546,8 +546,9 @@ namespace Toast.Masterdata.Editor
                 var dic = new Dictionary<string, string>();
                 foreach (var d in Data)
                 {
+                
                     dic.Add(d.Key, d.Value.Data[i]);
-
+                    
                 }
                 list.Add(dic);
             }
