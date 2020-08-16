@@ -14,6 +14,18 @@ public class DeckUI : MonoBehaviour
 
     [SerializeField] private Text _deckNum;
     [SerializeField] private Text _trashNum;
+
+    public void ResetUI()
+    {
+        
+        foreach (Transform o in _hand.transform)
+        {
+            Destroy(o.gameObject);
+        }
+
+        _trashNum.text = "";
+        _deckNum.text = "";
+    }
     public void SetHandAll(List<CardModel> cards,Action<string> onClick,Action<string> onUse)
     {
         foreach (Transform o in _hand.transform)

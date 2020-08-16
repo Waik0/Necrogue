@@ -62,9 +62,11 @@ namespace ShopperAssets.Scripts.Game
         public int Attack;
         public int Defence;
         public int Rank;
+        public string GUID;
         public List<AbilityModel> Abilities;
         public void Convert(ShMstEnemyRecord record)
         {
+            GUID = Guid.NewGuid().ToString();
             Id = record.id;
             Name = record.Name;
             Description = record.Description;
@@ -81,7 +83,7 @@ namespace ShopperAssets.Scripts.Game
                 if(record.AbilityParam1.Length > i)
                     Abilities[i].AbilityParam1 = record.AbilityParam1[i];
                 if(record.AbilityParam2.Length > i)
-                    Abilities[i].AbilityParam2 = record.AbilityParam2[i * 2 + 1];
+                    Abilities[i].AbilityParam2 = record.AbilityParam2[i];
             }
         }
 

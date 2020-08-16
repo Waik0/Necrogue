@@ -14,7 +14,7 @@ namespace ShopperAssets.Scripts.Interface.Game
         int HandMax { get; }
         void Reset();
         bool TrashToDeckAll();
-        
+        void HandToTrashAll();
         void AddHand(CardModel card);
         void AddCoin(int c);
         void PayCoin(int c);

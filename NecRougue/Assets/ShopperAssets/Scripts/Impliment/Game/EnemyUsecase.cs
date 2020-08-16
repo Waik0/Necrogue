@@ -1,9 +1,11 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using ShopperAssets.Scripts.Game;
 using ShopperAssets.Scripts.Master;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class EnemyUsecase : IEnemyUsecase
 {
@@ -16,17 +18,15 @@ public class EnemyUsecase : IEnemyUsecase
         1
     };
 
-    public List<EnemyModel> Deck { get; private set; }
     public List<EnemyModel> Field { get;  private set; }
     public int Level { get;  private set; }
-    public int EnemyCount { get; private set;  }
+    public int EnemyCount { get; private set; } = 4;
 
     public void Reset()
     {
         //EnemyDeckCreate();
         FieldInit();
-        Level = 0;
-        EnemyCount = 3;
+        Level = 0; 
     }
 
     private void FieldInit()
@@ -38,29 +38,40 @@ public class EnemyUsecase : IEnemyUsecase
             Field.Add(null);
         }
     }
-        
-    private void EnemyDeckCreate()
-    {
-        var enemies = MasterdataManager.Records<ShMstEnemyRecord>();
-        List<ShMstEnemyRecord> _candidate;
-        var targetRank = 0;
-        foreach (var c in RankCounts)
-        {
-            _candidate = enemies.Where(_ => _.Rank == targetRank).ToList();
-            for (int i = 0; i < _candidate.Count && i < c; i++)
-            {
-                if (_candidate.Count > 0)
-                {
-                    var target = _candidate[UnityEngine.Random.Range(0, _candidate.Count)];
-                    Deck.Add(new EnemyModel().Generate(target));
-                }
-            }
-            targetRank++;
-        }
-        Debug.Log("Enemy:"+Deck.Count);
 
+    public int GetFieldOwnIndex(string guid)
+    {
+
+        try
+        {
+            return Field.FindIndex(_ => _!=null && _.GUID == guid);
+        }
+        catch (Exception e)
+        { 
+            Debug.LogError(e);
+            return -1;
+        }
+       
     }
 
+    public int EnemyTurn(int index)
+    {
+        if (Field.Count <= index || Field[index] == null)
+            return -1;
+        return Random.Range(0, Field[index].Abilities.Count);
+        
+    }
+
+    public void CheckDead()
+    {
+        for (var i = 0; i < Field.Count; i++)
+        {
+            if (Field[i] != null && Field[i].Hp <= 0)
+            {
+                Field[i] = null;
+            }
+        }
+    }
     public void MoveForward()
     {
         if (Field.Count > 0)
@@ -72,24 +83,40 @@ public class EnemyUsecase : IEnemyUsecase
         }
         if (Field.Count < EnemyCount)
         {
-            var enemies = MasterdataManager.Records<ShMstEnemyRecord>()
-                .Where(_ => _.Rank == Level).ToList();
-
-            if (enemies.Count > 0)
+            if (Field[Field.Count - 1] == null)
             {
-                var pop = new EnemyModel().Generate(enemies[Random.Range(0,enemies.Count)]);
-                Field.Add(pop);
+                var enemies = MasterdataManager.Records<ShMstEnemyRecord>()
+                    .Where(_ => _.Rank == Level).ToList();
+
+                if (enemies.Count > 0)
+                {
+                    var pop = new EnemyModel().Generate(enemies[Random.Range(0, enemies.Count)]);
+                    Field.Add(pop);
+                }
             }
-          
-                
+            else
+            {
+                Field.Add(null);
+            }
+
+
+        }
+
+        if (Field.Count >= EnemyCount)
+        {
+            Debug.Log($"Enemy 3:{Field[3]} 2:{Field[2]}1:{Field[1]}0:{Field[0]}");
         }
     }
 
     public void Damage(int range, int attack)
     {
+        Debug.Log($"Attack Atk:{attack} , Range:{range}");
         if (Field.Count > range && range >= 0)
         {
-            Field[range].Hp -= Mathf.Max(0,attack - Field[range].Defence);
+            if (Field[range] != null)
+            {
+                Field[range].Hp -= Mathf.Max(0, attack - Field[range].Defence);
+            }
         }
     }
 }

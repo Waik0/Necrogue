@@ -10,6 +10,17 @@ public class ShopUI : MonoBehaviour
     [SerializeField] private ICardIconUI _cardIconUiPrefab;
     [SerializeField] private Text _coin;
     [SerializeField] private GridLayoutGroup _shop;
+
+    public void ResetUI()
+    {
+        foreach (Transform o in _shop.transform)
+        {
+            Destroy(o.gameObject);
+        }
+
+        _coin.text = "";
+    }
+
     public void AddShop(CardModel cards,Action<string> onBuy)
     {
         

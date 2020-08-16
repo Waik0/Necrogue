@@ -5,30 +5,55 @@ using System.Linq;
 using ShopperAssets.Scripts.Interface.Game;
 using Toast;
 using UnityEngine;
+using UnityEngine.Events;
 using Zenject;
 
 namespace ShopperAssets.Scripts.Game
 {
     public class GamePresenter
-    {
-        [Inject] private IEnemyUsecase _enemyUseCase;
-        [Inject] private IPlayerUsecase _playerUseCase;
-        [Inject] private IShopUsecase _shopUsecase;
-        [Inject] private AbilityResolver _ability;
+    { 
+        private IEnemyUsecase _enemyUseCase;
+        private IPlayerUsecase _playerUseCase; 
+        private IShopUsecase _shopUsecase;
+        private AbilityResolver _ability;
         private GameView _gameView;
+        public UnityEvent OnGameClear = new UnityEvent();
+        public UnityEvent OnGameOver = new UnityEvent();
         public bool IsEndTurn;
-        public GamePresenter(GameView gameView)
+        public int EnemyCount => _enemyUseCase.EnemyCount;
+        public GamePresenter(
+            GameView gameView,
+            AbilityResolver ability,
+            IShopUsecase shopUsecase,
+            IEnemyUsecase enemyUsecase,
+            IPlayerUsecase playerUsecase)
         {
+            _ability = ability;
             _gameView = gameView;
+            _enemyUseCase = enemyUsecase;
+            _playerUseCase = playerUsecase;
+            _shopUsecase = shopUsecase;
             Init();
         }
-
         void Init()
         {
             DebugLog.Function(this);
             _gameView.EndTurnButton.onClick.AddListener(() => IsEndTurn = true);
+            _ability.OnAbilityResolved.AddListener(CheckResolveAbility);
         }
 
+     
+        void CheckResolveAbility()
+        {
+            //敵死亡チェック
+            _enemyUseCase.CheckDead();
+            _gameView.EnemyUI.SetEnemies(_enemyUseCase.Field);
+            //死亡チェック
+            if (_playerUseCase.PlayerCharacter.Hp <= 0) 
+            {//復活不可能であれば
+                OnGameOver.Invoke();
+            }
+        }
         CardModel FindCard(string guid)
         {
             var c = _playerUseCase.Hand.Find(_ => _.GUID == guid);
@@ -95,9 +120,15 @@ namespace ShopperAssets.Scripts.Game
             //UI更新
             UpdateUI();
         }
-     
 
-
+        public void EnemyTurn(int index)
+        {
+            if (_enemyUseCase.Field.Count <= index || _enemyUseCase.Field[index] == null)
+                return;
+            var abilityIndex = _enemyUseCase.EnemyTurn(index);
+            _ability.UseAbility(_enemyUseCase.Field[index],abilityIndex);
+        }
+        
         public void UpdateShop()
         {
             _shopUsecase.SupplyGoods();
@@ -109,8 +140,12 @@ namespace ShopperAssets.Scripts.Game
             _playerUseCase.Reset();
             _enemyUseCase.Reset();
             _shopUsecase.Reset();
+            ResetUI();
         }
-
+        public void ResetUI()
+        {
+            _gameView.ResetUI();
+        }
         private void UpdateUI()
         {
             _gameView.CardIconUI.ResetCard();
@@ -125,7 +160,15 @@ namespace ShopperAssets.Scripts.Game
         {
             //倒されてたら敵前進
             _enemyUseCase.MoveForward();
+            _gameView.EnemyUI.SetEnemies(_enemyUseCase.Field);
             
+        }
+        /// <summary>
+        /// 手札全捨て
+        /// </summary>
+        public void TrashAllHand()
+        {
+            _playerUseCase.HandToTrashAll();
         }
         /// <summary>
         /// 手札最大まで引く
@@ -139,7 +182,6 @@ namespace ShopperAssets.Scripts.Game
         }
         
         
-  
         
     }
 }

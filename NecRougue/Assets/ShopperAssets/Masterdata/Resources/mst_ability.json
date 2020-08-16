@@ -1,1 +1,59 @@
-{"Meta":{"Enums":{"AbilityResolver+AbilityTiming":{"0":"Get","1":"Use","2":"Trash","3":"EndTurn"},"AbilityResolver+AbilityCommands":{"0":"GetCard","1":"AttackEnemy","2":"Coin","3":"AttackDeck","4":"Remove"}},"Fields":{"id":"System.Int32","Name":"System.String","Description":"System.String","Timing":"AbilityResolver+AbilityTiming","Command":"AbilityResolver+AbilityCommands"}},"Records":[{"id":"101","Name":"Ab_101","Description":"WhenUse_GetCoin","Timing":"1","Command":"2"},{"id":"102","Name":"Ab_102","Description":"WhenUse_Attack","Timing":"1","Command":"1"}]}
+{
+    "Meta": {
+        "Enums": {
+            "AbilityResolver+AbilityTiming": {
+                "1": "Get",
+                "2": "Use",
+                "3": "Trash",
+                "4": "PlayerCounter",
+                "101": "EnemyCounter",
+                "102": "EnemyTurn",
+                "201": "EndTurn"
+            },
+            "AbilityResolver+AbilityCommands": {
+                "1": "GetCard",
+                "2": "AttackEnemy",
+                "3": "Coin",
+                "4": "AttackDeck",
+                "5": "Stun",
+                "6": "Wall",
+                "7": "Revive",
+                "101": "AttackPlayer",
+                "102": "Curse",
+                "103": "DropTwo",
+                "104": "Buff",
+                "201": "Remove"
+            }
+        },
+        "Fields": {
+            "id": "System.Int32",
+            "Name": "System.String",
+            "Description": "System.String",
+            "Timing": "AbilityResolver+AbilityTiming",
+            "Command": "AbilityResolver+AbilityCommands"
+        }
+    },
+    "Records": [
+        {
+            "id": "101",
+            "Name": "Ab_101",
+            "Description": "WhenUse_GetCoin",
+            "Timing": "2",
+            "Command": "3"
+        },
+        {
+            "id": "102",
+            "Name": "Ab_102",
+            "Description": "WhenUse_Attack",
+            "Timing": "2",
+            "Command": "2"
+        },
+        {
+            "id": "201",
+            "Name": "Ab_201",
+            "Description": "",
+            "Timing": "102",
+            "Command": "101"
+        }
+    ]
+}

@@ -54,6 +54,12 @@ public class PlayerUsecase : IPlayerUsecase
         return Deck.Count > 0;
     }
 
+    public void HandToTrashAll()
+    {
+        Trash.AddRange(Hand);
+        Hand.RemoveAll(_ => true);
+    }
+
     public void AddHand(CardModel card)
     {
         Hand.Add(card);

@@ -551,6 +551,7 @@
                 <e p="CardIconUI.cs" t="Include" />
                 <e p="CardIconUIDebug.cs" t="Include" />
                 <e p="DeckUI.cs" t="Include" />
+                <e p="EnemyUI.cs" t="Include" />
                 <e p="EnemyUINode.cs" t="Include" />
                 <e p="PlayerUI.cs" t="Include" />
                 <e p="ShopUI.cs" t="Include" />

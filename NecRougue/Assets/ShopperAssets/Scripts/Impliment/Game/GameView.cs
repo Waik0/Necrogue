@@ -11,9 +11,23 @@ public class GameView : MonoBehaviour
     [SerializeField] private PlayerUI _playerUi;
     [SerializeField] private Button _endTurnButton;
     [SerializeField] private CardIconUI _cardIconUi;
+    [SerializeField] private EnemyUI _enemyUi;
     public DeckUI DeckUI => _deckUi;
     public ShopUI ShopUI => _shopUi;
     public PlayerUI PlayerUI => _playerUi;
     public CardIconUI CardIconUI => _cardIconUi;
     public Button EndTurnButton => _endTurnButton;
+    public EnemyUI EnemyUI => _enemyUi;
+
+    public void Awake()
+    {
+        //GetComponent<Canvas>().worldCamera = Camera.main;
+    }
+    public void ResetUI()
+    {
+        ShopUI.ResetUI();
+        EnemyUI.ResetUI();
+        PlayerUI.ResetUI();
+        DeckUI.ResetUI();
+    }
 }

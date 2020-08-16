@@ -10,8 +10,12 @@ public interface IEnemyUsecase
      int EnemyCount { get; }
      
     void Reset();
+
+    void CheckDead();
     void MoveForward();
-    
+
+    int GetFieldOwnIndex(string guid);
+    int EnemyTurn(int index);
     void Damage(int range,int attack);
 }
 

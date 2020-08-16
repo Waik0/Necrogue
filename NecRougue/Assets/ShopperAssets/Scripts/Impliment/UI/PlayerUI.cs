@@ -10,6 +10,11 @@ public class PlayerUI : MonoBehaviour
     [SerializeField] private Text _hp = default;
     [SerializeField] private Text _at = default;
 
+    public void ResetUI()
+    {
+        _hp.text = $"";
+        _at.text = $"";
+    }
     public void SetStatus(CharacterModel player)
     {
         _hp.text = $"HP : {player.Hp}";
