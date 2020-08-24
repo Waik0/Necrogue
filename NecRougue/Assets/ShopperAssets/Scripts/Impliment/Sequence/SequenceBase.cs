@@ -36,6 +36,8 @@ public class SequenceBase<T,T2> where T : struct where T2 : class
         Initialize();
     }
 
+    public T CurrentState => _statemachine.Current;
+
     /// <summary>
     /// 終了 戻り値設定
     /// </summary>

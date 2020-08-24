@@ -7,11 +7,11 @@ using Random = UnityEngine.Random;
 
 public class RetroGraphicsSpriteTest : MonoBehaviour
 {
-    [SerializeField] private RetroScreenRenderer _renderer;
+    [SerializeField] private RetroScreenRenderer _renderer = default;
 
-    [SerializeField] private RetroGraphicsSprite _sprite;
+    [SerializeField] private RetroGraphicsSprite _sprite = default;
 
-    [SerializeField] private RetroGraphicsFont _font;
+    [SerializeField] private RetroGraphicsFont _font = default;
     // Start is called before the first frame update
     void Start()
     {

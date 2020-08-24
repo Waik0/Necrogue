@@ -74,3 +74,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _gameViewPrefab: {fileID: 7645558192751848589, guid: c295d36bd5421cc49b494b4a8a2f1c80, type: 3}
+  _textDialogView: {fileID: 714257304973989445, guid: 5210ad95c1420974c97c5b645770a4c6, type: 3}

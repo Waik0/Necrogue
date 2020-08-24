@@ -4,6 +4,7 @@ using ShopperAssets.Scripts.Game;
 using ShopperAssets.Scripts.Interface.Game;
 using ShopperAssets.Scripts.Master;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class PlayerUsecase : IPlayerUsecase
 {
@@ -13,7 +14,8 @@ public class PlayerUsecase : IPlayerUsecase
     public List<CardModel> Trash { get; private set; }
 
     public List<CardModel> Removed { get; private set; }
-    public CharacterModel PlayerCharacter { get; private set; }
+    public PlayerModel PlayerCharacter { get; private set; }
+    public UnityEvent OnDamaged { get; } = new UnityEvent();
     public int Coin { get; private set; }
     public int HandMax { get; private set; }
     public void Reset()
@@ -22,13 +24,16 @@ public class PlayerUsecase : IPlayerUsecase
         Hand = new List<CardModel>();
         Trash = new List<CardModel>();
         Coin = 0;
-        HandMax = 2;
-        
-        PlayerCharacter = new CharacterModel()
+        HandMax = 4;
+
+        PlayerCharacter = new PlayerModel()
         {
-            Attack = 0,
-            Defence =  0,
-            Hp = 5,
+            Chara = new CharacterModel()
+            {
+                Attack = 0,
+                Defence = 0,
+                Hp = 5,
+            }
         };
         SetFirstDeck();
     }
@@ -37,12 +42,17 @@ public class PlayerUsecase : IPlayerUsecase
     {
         var coin = MasterdataManager.Get<ShMstCardRecord>(101);
         var hot = MasterdataManager.Get<ShMstCardRecord>(102);
+        
+        Deck.Add(new CardModel().Generate(coin));
         Deck.Add(new CardModel().Generate(coin));
         Deck.Add(new CardModel().Generate(coin));
         Deck.Add(new CardModel().Generate(coin));
         Deck.Add(new CardModel().Generate(hot));
         Deck.Add(new CardModel().Generate(hot));
-        Deck.Add(new CardModel().Generate(coin));
+        Deck.Add(new CardModel().Generate(hot));
+        Deck.Add(new CardModel().Generate(hot));
+        Deck = Deck.Shuffle();
+    
     }
 
     public bool TrashToDeckAll()
@@ -50,7 +60,7 @@ public class PlayerUsecase : IPlayerUsecase
         
         Deck.AddRange(Trash);
         Trash.RemoveAll(_ => true);
-        Deck.Shuffle();
+        Deck = Deck.Shuffle();
         return Deck.Count > 0;
     }
 
@@ -67,12 +77,18 @@ public class PlayerUsecase : IPlayerUsecase
 
     public void AddCoin(int c)
     {
-        Coin++;    
+        Debug.Log("AddCoin");
+        Coin += c;    
     }
 
     public void PayCoin(int c)
     {
         Coin -= c;
+    }
+
+    public void AddWall(int num)
+    {
+        PlayerCharacter.Chara.Shield += num;
     }
 
     public CardModel GetHand(string guid)
@@ -102,6 +118,17 @@ public class PlayerUsecase : IPlayerUsecase
         return target;
     }
 
+    public CardModel ReverseHand(string guid)
+    {
+        var target = Trash.Find(_ => _.GUID == guid);
+        if (target != null)
+        {
+            Trash.Remove(target);
+            Hand.Add(target);
+        }
+        return target;
+    }
+
     public CardModel Draw()
     {
         if (Deck.Count > 0)
@@ -118,6 +145,16 @@ public class PlayerUsecase : IPlayerUsecase
 
     public void Damage(int attack)
     {
-        PlayerCharacter.Hp -= Mathf.Max(0,attack - PlayerCharacter.Defence);
+        var dmg = Mathf.Max(0, attack - PlayerCharacter.Chara.Defence);
+        if (PlayerCharacter.Chara.Shield > 0)
+        {
+            var shieldNum = PlayerCharacter.Chara.Shield;
+            var remainDmg = Mathf.Max(0,dmg - shieldNum);
+            var remainSld = Mathf.Max(0, shieldNum - dmg);
+            PlayerCharacter.Chara.Shield = remainSld;
+            dmg = remainDmg;
+        }
+        PlayerCharacter.Chara.Hp -= dmg;
+        OnDamaged?.Invoke();
     }
 }

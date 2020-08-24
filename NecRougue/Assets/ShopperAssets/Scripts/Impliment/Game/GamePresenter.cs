@@ -10,49 +10,80 @@ using Zenject;
 
 namespace ShopperAssets.Scripts.Game
 {
+    public class CardEvent : UnityEvent<string>{}
     public class GamePresenter
     { 
         private IEnemyUsecase _enemyUseCase;
         private IPlayerUsecase _playerUseCase; 
         private IShopUsecase _shopUsecase;
-        private AbilityResolver _ability;
+        private GameInputController _inputController;
         private GameView _gameView;
         public UnityEvent OnGameClear = new UnityEvent();
         public UnityEvent OnGameOver = new UnityEvent();
-        public bool IsEndTurn;
         public int EnemyCount => _enemyUseCase.EnemyCount;
         public GamePresenter(
             GameView gameView,
-            AbilityResolver ability,
             IShopUsecase shopUsecase,
             IEnemyUsecase enemyUsecase,
-            IPlayerUsecase playerUsecase)
+            IPlayerUsecase playerUsecase,
+            GameInputController inputController)
         {
-            _ability = ability;
             _gameView = gameView;
             _enemyUseCase = enemyUsecase;
             _playerUseCase = playerUsecase;
             _shopUsecase = shopUsecase;
+            _inputController = inputController;
             Init();
         }
         void Init()
         {
             DebugLog.Function(this);
-            _gameView.EndTurnButton.onClick.AddListener(() => IsEndTurn = true);
-            _ability.OnAbilityResolved.AddListener(CheckResolveAbility);
+            
+            _enemyUseCase.OnDamaged.AddListener(CheckEnemyDead);
+            _playerUseCase.OnDamaged.AddListener( CheckPlayerDead);
+         
         }
 
-     
-        void CheckResolveAbility()
+        void CheckEnemyDead()
         {
             //敵死亡チェック
             _enemyUseCase.CheckDead();
             _gameView.EnemyUI.SetEnemies(_enemyUseCase.Field);
+        }
+
+        void CheckPlayerDead()
+        {
             //死亡チェック
-            if (_playerUseCase.PlayerCharacter.Hp <= 0) 
+            if (_playerUseCase.PlayerCharacter.Chara.Hp <= 0) 
             {//復活不可能であれば
                 OnGameOver.Invoke();
             }
+        }
+
+        public int HandCount()
+        {
+            return _playerUseCase.Hand.Count;
+        }
+        public CardModel PopHand(string guid)
+        {
+            return _playerUseCase.DropHand(guid);
+        }
+
+        public void ReverseToHand(string guid)
+        {
+            _playerUseCase.ReverseHand(guid);
+        }
+
+        public List<CardModel> AllHand() => _playerUseCase.Hand;
+        public CardModel FindHand(string guid)
+        {
+            var c = _playerUseCase.Hand.Find(_ => _.GUID == guid);
+            return c;
+        }
+        public CardModel FindTrash(string guid)
+        {
+            var c = _playerUseCase.Trash.Find(_ => _.GUID == guid);
+            return c;
         }
         CardModel FindCard(string guid)
         {
@@ -63,50 +94,52 @@ namespace ShopperAssets.Scripts.Game
             if (c == null) c = _playerUseCase.Removed.Find(_ => _.GUID == guid);
             return c;
         }
-        void OnClickCard(string guid)
+        public void SelectCard(string guid)
         {
-            //詳細を出す
             Debug.Log("Selected:"+guid);
+        }
+
+        public void DeselectCard(string guid)
+        {
+            
+        }
+        public void DeselectCardAll()
+        {
+            
+        }
+        /// <summary>
+        /// 詳細を表示
+        /// </summary>
+        /// <param name="guid"></param>
+        public void ViewCardInfo(string guid)
+        {
             var c = FindCard(guid);
             _gameView.CardIconUI.ResetCard();
             if (c != null)
             {
                 _gameView.CardIconUI.SetCard(c);
             }
-        }
-        /// <summary>
-        /// 手札の効果発動
-        /// </summary>
-        /// <param name="guid"></param>
-        public void UseCard(string guid)
-        {
-            Debug.Log("Use:"+ guid);
-            var target = _playerUseCase.GetHand(guid);
-            if (target != null)
-            {
-                _ability.UseAbility(AbilityResolver.AbilityTiming.Use, target);
-                //手札に残ってたらすてる
-                var pop = _playerUseCase.DropHand(guid);
-                if (pop != null)
-                {
-                    _ability.UseAbility(AbilityResolver.AbilityTiming.Trash, pop);
-                }
-                
-            }
             
-           
-            //UI更新
-            UpdateUI();
         }
 
-     
 
-        public void BuyCard(string guid)
+        public void ShopLevelUp()
+        {
+            if (_shopUsecase.GetUpgradeGoodsLevelPrice() > _playerUseCase.Coin)
+            {
+                Debug.Log("CantLevelUp");
+                return;
+            }
+
+            _shopUsecase.UpgradeGoodsLevel();
+        }
+
+        public bool BuyCard(string guid)
         {
             if (_shopUsecase.GetPrice(guid) > _playerUseCase.Coin)
             {
                 Debug.Log("CantBuy");
-                return;
+                return false;
             }
 
             _playerUseCase.PayCoin( _shopUsecase.GetPrice(guid) );
@@ -115,46 +148,45 @@ namespace ShopperAssets.Scripts.Game
             if (goods != null)
             {
                 _playerUseCase.AddHand(goods);
-                _ability.UseAbility(AbilityResolver.AbilityTiming.Get, goods);
             }
-            //UI更新
-            UpdateUI();
+
+            return true;
         }
 
-        public void EnemyTurn(int index)
+        public int EnemyTurn(int index)
         {
             if (_enemyUseCase.Field.Count <= index || _enemyUseCase.Field[index] == null)
-                return;
+                return -1;
             var abilityIndex = _enemyUseCase.EnemyTurn(index);
-            _ability.UseAbility(_enemyUseCase.Field[index],abilityIndex);
+            return abilityIndex;
         }
-        
-        public void UpdateShop()
+        public EnemyModel FieldEnemy(int index)
         {
-            _shopUsecase.SupplyGoods();
-            //UI更新
-            UpdateUI();
+            if (_enemyUseCase.Field.Count <= index || _enemyUseCase.Field[index] == null)
+                return null;
+            return _enemyUseCase.Field[index];
         }
         public void Reset()
         {
             _playerUseCase.Reset();
             _enemyUseCase.Reset();
             _shopUsecase.Reset();
-            ResetUI();
         }
-        public void ResetUI()
+        public void UpdateShop()
         {
-            _gameView.ResetUI();
+            _shopUsecase.SupplyGoods();
+            
         }
-        private void UpdateUI()
+        //
+        public void UpdateUI()
         {
             _gameView.CardIconUI.ResetCard();
-            _gameView.ShopUI.SetShopAll(_shopUsecase.Goods,OnClickCard,BuyCard);
+            _gameView.ShopUI.SetShopAll(_shopUsecase.Goods);
             _gameView.ShopUI.SetCoin(_playerUseCase.Coin);
-            _gameView.DeckUI.SetHandAll(_playerUseCase.Hand,OnClickCard,UseCard);
+            _gameView.DeckUI.SetHandAll(_playerUseCase.Hand);
             _gameView.DeckUI.SetDeck(_playerUseCase.Deck.Count);
             _gameView.DeckUI.SetTrash(_playerUseCase.Trash.Count);
-            _gameView.PlayerUI.SetStatus(_playerUseCase.PlayerCharacter);
+            _gameView.PlayerUI.SetStatus(_playerUseCase.PlayerCharacter.Chara);
         }
         public void UpdateEnemy()
         {
@@ -163,6 +195,7 @@ namespace ShopperAssets.Scripts.Game
             _gameView.EnemyUI.SetEnemies(_enemyUseCase.Field);
             
         }
+
         /// <summary>
         /// 手札全捨て
         /// </summary>
@@ -170,6 +203,7 @@ namespace ShopperAssets.Scripts.Game
         {
             _playerUseCase.HandToTrashAll();
         }
+
         /// <summary>
         /// 手札最大まで引く
         /// </summary>
@@ -188,8 +222,9 @@ namespace ShopperAssets.Scripts.Game
 
 public static class ListExtensions
 {
-    public static void Shuffle<T>(this List<T> list)
+    public static List<T> Shuffle<T>(this List<T> list)
     {
-        list = list.OrderBy(i => Guid.NewGuid()).ToList();
+        Debug.Log(Guid.NewGuid());
+        return list.OrderBy(i => Guid.NewGuid()).ToList();
     }
 }

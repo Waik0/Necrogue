@@ -206,3 +206,23 @@ namespace Toast
     }
 
 }
+
+public class WaitForSecondsInStatemachine : CustomYieldInstruction
+{
+    public override bool keepWaiting
+    {
+        get
+        {
+            _current += Time.deltaTime;
+            return _sec > _current;
+        }
+    }
+
+    private float _current = 0;
+    private float _sec = 0;
+    public WaitForSecondsInStatemachine(float sec)
+    {
+        _sec = sec;
+    }
+    
+}

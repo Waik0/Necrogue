@@ -12,6 +12,7 @@ public interface IShopUsecase
     
     void Reset();
     void SupplyGoods(); //商品補給
+    int GetUpgradeGoodsLevelPrice();
     void UpgradeGoodsLevel(); //商品ランクアップ
     void UpgradeGoodsNum(); //陳列数アップ
     CardModel Buy(string guid);//購入

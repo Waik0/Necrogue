@@ -13,6 +13,7 @@ namespace ShopperAssets.Scripts.Game
 
     {
         public List<AbilityModel> Abilities;
+        public List<ConditionModel> Conditions;
         public int Id;
         public int Rank;
         public int Price;
@@ -31,14 +32,29 @@ namespace ShopperAssets.Scripts.Game
                 .Where(_=>MasterdataManager.Get<ShMstAbilityRecord>(_)!=null)
                 .ToList().ConvertAll<AbilityModel>(id =>
                 new AbilityModel().Generate(MasterdataManager.Get<ShMstAbilityRecord>(id)));
-            
-            for (var i = 0; i < Abilities.Count; i++)
+            Conditions = new List<ConditionModel>();
+            foreach (var ab in record.AbilityId)
             {
-                if(record.AbilityParam1.Length > i)
-                    Abilities[i].AbilityParam1 = record.AbilityParam1[i];
-                if(record.AbilityParam2.Length > i)
-                    Abilities[i].AbilityParam2 = record.AbilityParam2[i];
+                var mst = MasterdataManager.Get<ShMstAbilityRecord>(ab);
+                var d = new ConditionModel()
+                {
+                    Condition = mst.Condition,
+                    ConditionParam = record.ConditionParam,
+                    Timing = mst.Timing
+                };
+                if (Conditions.Find(_=>_.Condition == d.Condition) == null)
+                {
+                    Conditions.Add(d);
+                }
             }
+            // for (var i = 0; i < Abilities.Count; i++)
+            // {
+            //     if(record.AbilityParam1.Length > i)
+            //         Abilities[i].AbilityParam1 = record.AbilityParam1[i];
+            //     if(record.AbilityParam2.Length > i)
+            //         Abilities[i].AbilityParam2 = record.AbilityParam2[i];
+            //     if(record.ConditionParam.)
+            // }
         }
 
         public CardModel Generate(ShMstCardRecord record)
@@ -48,21 +64,17 @@ namespace ShopperAssets.Scripts.Game
         }
     }
 
-    public class EnemyDeckModel
-    {
 
-    }
     public class EnemyModel: IConvertFromMasterRecord<ShMstEnemyRecord>,IGenerateFromMasterRecord<EnemyModel,ShMstEnemyRecord>
 
     {
         public int Id;
         public string Name;
         public string Description;
-        public int Hp;
-        public int Attack;
-        public int Defence;
+        public CharacterModel Model;
         public int Rank;
         public string GUID;
+        public bool Stun;
         public List<AbilityModel> Abilities;
         public void Convert(ShMstEnemyRecord record)
         {
@@ -70,21 +82,14 @@ namespace ShopperAssets.Scripts.Game
             Id = record.id;
             Name = record.Name;
             Description = record.Description;
-            Hp = record.Hp;
-            Attack = record.Attack;
-            Defence = record.Defence;
+            Model = new CharacterModel();
+            Model.Hp = record.Hp;
+            Model.Attack = record.Attack;
+            Model.Defence = record.Defence;
             Abilities = record.AbilityId
                 .Where(_=>MasterdataManager.Get<ShMstAbilityRecord>(_)!=null)
                 .ToList().ConvertAll<AbilityModel>(id =>
                     new AbilityModel().Generate(MasterdataManager.Get<ShMstAbilityRecord>(id)));
-            
-            for (var i = 0; i < Abilities.Count; i++)
-            {
-                if(record.AbilityParam1.Length > i)
-                    Abilities[i].AbilityParam1 = record.AbilityParam1[i];
-                if(record.AbilityParam2.Length > i)
-                    Abilities[i].AbilityParam2 = record.AbilityParam2[i];
-            }
         }
 
         public EnemyModel Generate(ShMstEnemyRecord record)
@@ -93,22 +98,39 @@ namespace ShopperAssets.Scripts.Game
             return this;
         }
     }
+
+    public class PlayerModel
+    {
+        public CharacterModel Chara;
+        public int Exp;
+    }
     public class CharacterModel
     {
         public int Hp;
         public int Attack;
         public int Defence;
+        public int Shield;
+        public bool Stun;
     }
 
+    public class ConditionModel
+    {
+        public AbilityUseCase.AbilityTiming Timing;
+        public int ConditionParam;
+        public AbilityUseCase.AbilityCondition Condition;
+    }
     public class AbilityModel : IConvertFromMasterRecord<ShMstAbilityRecord>,IGenerateFromMasterRecord<AbilityModel,ShMstAbilityRecord>
     {
         public int Id;
         public string Name;
         public string Description;
-        public AbilityResolver.AbilityCommands Command;
-        public AbilityResolver.AbilityTiming Timing;
+        public AbilityUseCase.AbilityCommands Command;
+        public AbilityUseCase.AbilityTiming Timing;
+        public AbilityUseCase.AbilityCondition Condition;
         public int AbilityParam1;
         public int AbilityParam2;
+        public int PlayerMotionId;
+        public int EnemyMotionId;
         public void Convert(ShMstAbilityRecord record)
         {
             Id = record.id;
@@ -116,6 +138,13 @@ namespace ShopperAssets.Scripts.Game
             Description = record.Description;
             Command = record.Command;
             Timing = record.Timing;
+            AbilityParam1 = record.AbilityParam1;
+            AbilityParam2 = record.AbilityParam2;
+            Condition = record.Condition;
+            
+            PlayerMotionId = record.PlayerMotionId;
+            EnemyMotionId = record.EnemyMotionId;
+
         }
 
         public AbilityModel Generate(ShMstAbilityRecord record)

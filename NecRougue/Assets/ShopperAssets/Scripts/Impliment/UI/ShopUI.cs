@@ -10,7 +10,16 @@ public class ShopUI : MonoBehaviour
     [SerializeField] private ICardIconUI _cardIconUiPrefab;
     [SerializeField] private Text _coin;
     [SerializeField] private GridLayoutGroup _shop;
+    [SerializeField] private Button _shopLevelUpButton;
 
+    public Action<string> OnClick;
+    public Action<string> OnBuy;
+
+    public void SetAction(Action<string> onClick, Action<string> onBuy)
+    {
+        OnClick = onClick;
+        OnBuy = onBuy;
+    }
     public void ResetUI()
     {
         foreach (Transform o in _shop.transform)
@@ -28,9 +37,9 @@ public class ShopUI : MonoBehaviour
 
     public void SetCoin(int coin)
     {
-        _coin.text = $"coin:{coin}";
+        _coin.text = $"x {coin}";
     }
-    public void SetShopAll(List<CardModel> cards,Action<string> onClick,Action<string> onBuy)
+    public void SetShopAll(List<CardModel> cards)
     {
         foreach (Transform o in _shop.transform)
         {
@@ -42,13 +51,10 @@ public class ShopUI : MonoBehaviour
             var cardicon = Instantiate(_cardIconUiPrefab, _shop.transform);
             cardicon.SetCard(cardModel);
             cardicon.Unique = cardModel.GUID;
-            cardicon.OnSelected = onClick;
-            cardicon.OnExecuted = onBuy;
+            cardicon.OnSelected = OnClick;
+            cardicon.OnExecuted = OnBuy;
         }
     }
     // Update is called once per frame
-    void Update()
-    {
-        
-    }
+
 }

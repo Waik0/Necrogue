@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using ShopperAssets.Scripts.Game;
 using ShopperAssets.Scripts.Master;
 using UnityEngine;
@@ -11,25 +12,34 @@ public class ShopUsecase : IShopUsecase
     public int Level { get; private set; }
     public int MaxGoodsNum { get; private set; }
     public List<CardModel> Goods { get; private set; }
-
     public void Reset()
     {
         Level = 0;
-        MaxGoodsNum = 2;
+        MaxGoodsNum = 3;
         Goods = new List<CardModel>();
+       
     }
 
     public void SupplyGoods()
     {
         var cards = MasterdataManager.Records<ShMstCardRecord>();
-        var ind = Random.Range(0, cards.Length);
+       
         while (Goods.Count < MaxGoodsNum)
         {
-            Goods.Add(new CardModel().Generate(cards[ind]));
+            var candidates = cards.ToList().ConvertAll(_=>_.id).ToList();
+            //candidates.ToList().RemoveAll(id => Goods.Any(goods => goods.Id == id));
+            Debug.Log($"Candidate:{candidates.Count}");
+            var ind = Random.Range(0, candidates.Count);
+            var card = MasterdataManager.Get<ShMstCardRecord>(candidates[ind]);
+            Goods.Add(new CardModel().Generate(card));
             Debug.Log("GoodsAdd");
         }
     }
 
+    public int GetUpgradeGoodsLevelPrice()
+    {
+        return Level * 10;
+    }
     public void UpgradeGoodsLevel()
     {
         if (Level < ShopLevelMax) Level++;

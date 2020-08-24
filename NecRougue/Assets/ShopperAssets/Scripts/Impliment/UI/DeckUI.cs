@@ -14,7 +14,13 @@ public class DeckUI : MonoBehaviour
 
     [SerializeField] private Text _deckNum;
     [SerializeField] private Text _trashNum;
-
+    public Action<string> OnClick;
+    public Action<string> OnUse;
+    public void SetAction(Action<string> onClick, Action<string> onBuy)
+    {
+        OnClick = onClick;
+        OnUse = onBuy;
+    }
     public void ResetUI()
     {
         
@@ -26,7 +32,7 @@ public class DeckUI : MonoBehaviour
         _trashNum.text = "";
         _deckNum.text = "";
     }
-    public void SetHandAll(List<CardModel> cards,Action<string> onClick,Action<string> onUse)
+    public void SetHandAll(List<CardModel> cards)
     {
         foreach (Transform o in _hand.transform)
         {
@@ -38,8 +44,8 @@ public class DeckUI : MonoBehaviour
             var cardicon = Instantiate(_cardIconUiPrefab, _hand.transform);
             cardicon.SetCard(cardModel);
             cardicon.Unique = cardModel.GUID;
-            cardicon.OnSelected = onClick;
-            cardicon.OnExecuted = onUse;
+            cardicon.OnSelected = OnClick;
+            cardicon.OnExecuted = OnUse;
         }
     }
 

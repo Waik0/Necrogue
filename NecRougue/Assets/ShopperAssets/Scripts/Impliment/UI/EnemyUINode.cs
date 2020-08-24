@@ -13,14 +13,14 @@ public class EnemyUINode : MonoBehaviour
     public void SetEnemy(EnemyModel enemyModel)
     {
         _model = enemyModel;
-        _maxHp = enemyModel.Hp;
+        _maxHp = enemyModel.Model.Hp;
     }
     
     //ダメージ監視
     void Update()
     {
         if (_model == null) return;
-        _hp.value = _model.Hp / _maxHp;
+        _hp.value = _model.Model.Hp / _maxHp;
     }
     
 }

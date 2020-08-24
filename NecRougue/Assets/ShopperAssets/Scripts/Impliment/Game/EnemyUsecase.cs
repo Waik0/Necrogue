@@ -5,6 +5,7 @@ using System.Linq;
 using ShopperAssets.Scripts.Game;
 using ShopperAssets.Scripts.Master;
 using UnityEngine;
+using UnityEngine.Events;
 using Random = UnityEngine.Random;
 
 public class EnemyUsecase : IEnemyUsecase
@@ -21,6 +22,7 @@ public class EnemyUsecase : IEnemyUsecase
     public List<EnemyModel> Field { get;  private set; }
     public int Level { get;  private set; }
     public int EnemyCount { get; private set; } = 4;
+    public UnityEvent OnDamaged { get; } = new UnityEvent();
 
     public void Reset()
     {
@@ -54,10 +56,26 @@ public class EnemyUsecase : IEnemyUsecase
        
     }
 
+    public string GetGUIDFromIndex(int index)
+    {
+        if (Field.Count > index && index >= 0 && Field[index] != null)
+        {
+            return Field[index].GUID;
+        }
+
+        return "";
+    }
+
     public int EnemyTurn(int index)
     {
         if (Field.Count <= index || Field[index] == null)
             return -1;
+        //スタンしてたらスキップ
+        if (Field[index].Stun)
+        {
+            Field[index].Stun = false;
+            return -1;
+        }
         return Random.Range(0, Field[index].Abilities.Count);
         
     }
@@ -66,7 +84,7 @@ public class EnemyUsecase : IEnemyUsecase
     {
         for (var i = 0; i < Field.Count; i++)
         {
-            if (Field[i] != null && Field[i].Hp <= 0)
+            if (Field[i] != null && Field[i].Model.Hp <= 0)
             {
                 Field[i] = null;
             }
@@ -76,7 +94,7 @@ public class EnemyUsecase : IEnemyUsecase
     {
         if (Field.Count > 0)
         {
-            if (Field[0] == null || Field[0].Hp < 0)
+            if (Field[0] == null || Field[0].Model.Hp < 0)
             {
                 Field.RemoveAt(0);
             }
@@ -115,8 +133,50 @@ public class EnemyUsecase : IEnemyUsecase
         {
             if (Field[range] != null)
             {
-                Field[range].Hp -= Mathf.Max(0, attack - Field[range].Defence);
+                
+                var dmg = Mathf.Max(0, attack - Field[range].Model.Defence);
+                if (Field[range].Model.Shield > 0)
+                {
+                    var shieldNum = Field[range].Model.Shield;
+                    var remainDmg = Mathf.Max(0,dmg - shieldNum);
+                    var remainSld = Mathf.Max(0, shieldNum - dmg);
+                    Field[range].Model.Shield = remainSld;
+                    dmg = remainDmg;
+                }
+                Field[range].Model.Hp -= dmg;
+                OnDamaged.Invoke();
             }
         }
+        
+    }
+
+    public bool Stun(string guid)
+    {
+        var t = Field.Find(_ => _!=null && _.GUID == guid);
+        if (t != null)
+        {
+            t.Stun = true;
+            return true;
+        }
+
+        return false;
+    }
+
+    public bool Stun(int range)
+    {
+        if (Field.Count <= range)
+        {
+            return false;
+        }
+        
+
+        var t = Field[range];
+        if (t != null)
+        {
+            t.Stun = true;
+            return true;
+        }
+
+        return false;
     }
 }

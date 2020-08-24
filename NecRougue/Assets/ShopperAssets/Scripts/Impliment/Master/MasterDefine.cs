@@ -9,8 +9,14 @@ namespace ShopperAssets.Scripts.Master
         public int id;
         public string Name;
         public string Description;
-        public AbilityResolver.AbilityTiming Timing;
-        public AbilityResolver.AbilityCommands Command;
+        public AbilityUseCase.AbilityCondition Condition;
+        public AbilityUseCase.AbilityTiming Timing;
+        public AbilityUseCase.AbilityCommands Command; //複合効果を考えて配列に
+        public int AbilityParam1;
+        public int AbilityParam2;
+        public int PlayerMotionId;
+        public int EnemyMotionId;
+        
     }
     [MasterPath("ShopperAssets/Masterdata/Resources/mst_enemy.json"),Serializable]
     public class ShMstEnemyRecord : IMasterRecord
@@ -24,8 +30,7 @@ namespace ShopperAssets.Scripts.Master
         public int Defence;
         public int Hp;
         public int[] AbilityId;
-        public int[] AbilityParam1;
-        public int[] AbilityParam2;
+
     }
     [MasterPath("ShopperAssets/Masterdata/Resources/mst_card.json"),Serializable]
     public class ShMstCardRecord : IMasterRecord
@@ -38,7 +43,9 @@ namespace ShopperAssets.Scripts.Master
         public string Name;
         public string Description;
         public int[] AbilityId;
-        public int[] AbilityParam1;
-        public int[] AbilityParam2;
+        public int ConditionParam;
+        //public int[] AbilityParam1;
+        //public int[] AbilityParam2;
+        //public int[] ConditionParam;
     }
 }
