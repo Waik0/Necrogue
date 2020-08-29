@@ -90,8 +90,6 @@ namespace ShopperAssets.Scripts.Game
 
                 yield return null;
             }
-            
-            yield return null;
         }
 
         IEnumerator UseCard()

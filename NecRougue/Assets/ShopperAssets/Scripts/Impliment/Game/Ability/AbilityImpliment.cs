@@ -52,26 +52,38 @@ public class AbilityImpliment
     }
 
 //攻撃
-// 攻撃力 param1 * max( 1 , condition) 範囲 param2    
+// 攻撃力 param1 * max( 1 , condition) 範囲 param2 攻撃回数 param3 回
     public AbilityCommandResponseModel PlayerAttackEnemy(AbilityCommandRequestModel req)
     {
-        _enemyUseCase.Damage(req.AbilityModel.AbilityParam2, req.AbilityModel.AbilityParam1);
+        var animation = new List<AbilityPerformanceParams>();
+        var length = req.Response?.Targets.GUIDs?.Length ?? 0;
+        var num = Mathf.Max(1, req.AbilityModel.AbilityParam3);
+        for (int i = 0; i < num; i++)
+        {
+            var actions = new List<(string, int)>();
+            var damages = new List<(string, int)>();
+            for (int j = 0; j < req.AbilityModel.AbilityParam2; j++)
+            {
+                var dmg = _enemyUseCase.Damage(j,
+                    req.AbilityModel.AbilityParam1 * Mathf.Max(1, length));
+                actions.Add((_enemyUseCase.GetGUIDFromIndex(j),req.AbilityModel.EnemyMotionId));
+                damages.Add((_enemyUseCase.GetGUIDFromIndex(j),dmg));
+            }
+
+            animation.Add(new AbilityPerformanceParams()
+            {
+                PlayerAction = req.AbilityModel.PlayerMotionId,
+                EnemyAction = actions,
+                EnemyDamage = damages
+            });
+        }
+       
         return new AbilityCommandResponseModel()
         {
+            AbilityPerformanceParams = animation
         };
     }
 
-//攻撃力 param1 * max( 1 , condition)  全体攻撃   
-    public AbilityCommandResponseModel PlayerAttackAllEnemy(AbilityCommandRequestModel req)
-    {
-        return null;
-    }
-
-// 攻撃力 ( param1 ) 攻撃回数 param2 回 連続攻撃   
-    public AbilityCommandResponseModel PlayerAttackCombo(AbilityCommandRequestModel req)
-    {
-        return null;
-    }
 
 // 攻撃力 ( param1 ) 攻撃回数 condition 回 連続攻撃   
     public AbilityCommandResponseModel PlayerAttackComboFromCondition(AbilityCommandRequestModel req)
@@ -98,9 +110,6 @@ public class AbilityImpliment
         _playerUseCase.AddCoin(req.AbilityModel.AbilityParam1);
         return new AbilityCommandResponseModel()
         {
-            AbilityPerformanceParams = new AbilityPerformanceParams()
-            {
-            }
         };
     }
 
@@ -119,7 +128,9 @@ public class AbilityImpliment
     {
         for (var i = 0; i < req.AbilityModel.AbilityParam1; i++)
         {
-            _playerUseCase.Draw();
+            if (_playerUseCase.Draw() == null)
+                if (!_playerUseCase.TrashToDeckAll())
+                    break;
         }
 
         return null;
@@ -129,7 +140,12 @@ public class AbilityImpliment
     public AbilityCommandResponseModel DrawFromCondition(AbilityCommandRequestModel req)
     {
         if(req.Response?.Targets.GUIDs != null) 
-            _playerUseCase.Draw();
+            for (var i = 0; i < req.Response.Targets.GUIDs.Length; i++)
+            {
+                if (_playerUseCase.Draw() == null)
+                    if (!_playerUseCase.TrashToDeckAll())
+                        break;
+            }
         return null;
     }
 
@@ -137,6 +153,24 @@ public class AbilityImpliment
 //手札捨てる param1 枚   
     public AbilityCommandResponseModel Drop(AbilityCommandRequestModel req)
     {
+        var trashes = new List<string>();
+        for (var i = 0; i < req.AbilityModel.AbilityParam1; i++)
+        {
+            var c = _playerUseCase.DropHandRandom();
+            if (c != null)
+            {
+                trashes.Add(c.Name);
+            }
+        }
+
+        return new AbilityCommandResponseModel()
+        {
+            NextResolveAbility = trashes.ConvertAll(_ => new NextResolveAbility()
+            {
+                Next = (_, GUIDType.Trash),
+                Timing = AbilityUseCase.AbilityTiming.Trash
+            })
+        };
         return null;
     }
 
@@ -170,6 +204,8 @@ public class AbilityImpliment
 //このターンの攻撃力を param1 * max( 1 , condition) 上げる 連続攻撃向き   
     public AbilityCommandResponseModel BuffTurn(AbilityCommandRequestModel req)
     {
+        var length = req.Response?.Targets.GUIDs?.Length ?? 0;
+        _playerUseCase.AddAttackByTurn(req.AbilityModel.AbilityParam1 * Mathf.Max(1,length));
         return null;
     }
 
@@ -193,16 +229,19 @@ public class AbilityImpliment
 
         return new AbilityCommandResponseModel()
         {
-            AbilityPerformanceParams = new AbilityPerformanceParams()
+            AbilityPerformanceParams = new List<AbilityPerformanceParams>(){new AbilityPerformanceParams()
             {
                 PlayerAction = req.AbilityModel.PlayerMotionId
-            }
+            }}
         };
     }
 
 //param1 * condition ダメージを一定量無効化   
     public AbilityCommandResponseModel WallFromCondition(AbilityCommandRequestModel req)
     {
+        var length = req.Response?.Targets.GUIDs?.Length ?? 0;
+        var wall = Mathf.Max(1, req.AbilityModel.AbilityParam1) * length;
+        _playerUseCase.AddWall(wall);
         return null;
     }
 
@@ -210,7 +249,15 @@ public class AbilityImpliment
 //次の攻撃を無効化   
     public AbilityCommandResponseModel Barrier(AbilityCommandRequestModel req)
     {
-        return null;
+        _playerUseCase.AddBarrier();
+
+        return new AbilityCommandResponseModel()
+        {
+            AbilityPerformanceParams = new List<AbilityPerformanceParams>(){new AbilityPerformanceParams()
+            {
+                PlayerAction = req.AbilityModel.PlayerMotionId
+            }}
+        };
     }
 
 //気絶
@@ -246,11 +293,11 @@ public class AbilityImpliment
 
         return new AbilityCommandResponseModel()
         {
-            AbilityPerformanceParams = new AbilityPerformanceParams()
+            AbilityPerformanceParams = new List<AbilityPerformanceParams>(){new AbilityPerformanceParams()
             {
                 EnemyAction = stunEnemies.ConvertAll(_ => (_, req.AbilityModel.EnemyMotionId)).ToList(),
                 PlayerAction = req.AbilityModel.PlayerMotionId
-            }
+            }}
         };
     }
 
@@ -264,13 +311,17 @@ public class AbilityImpliment
 //param1 * max( 1 , condition) 回復   
     public AbilityCommandResponseModel Heal(AbilityCommandRequestModel req)
     {
+        var length = req.Response?.Targets.GUIDs?.Length ?? 0;
+        _playerUseCase.Heal(req.AbilityModel.AbilityParam1 * Mathf.Max(1,length));
         return null;
     }
 
 //射程
-//射程を伸ばす   
+//射程を伸ばす param1 * max( 1 , condition) 
     public AbilityCommandResponseModel AddRange(AbilityCommandRequestModel req)
     {
+        var length = req.Response?.Targets.GUIDs?.Length ?? 0;
+        _playerUseCase.AddRange(req.AbilityModel.AbilityParam1* Mathf.Max(1,length));
         return null;
     }
 
@@ -327,9 +378,31 @@ public class AbilityImpliment
     }
 
 //DropFromEnemy = 1003, //param1枚すてさせる
+    public AbilityCommandResponseModel DropFromEnemy(AbilityCommandRequestModel req)
+    {
+        var trashes = new List<string>();
+        for (var i = 0; i < req.AbilityModel.AbilityParam1; i++)
+        {
+            var c = _playerUseCase.DropHandRandom();
+            if (c != null)
+            {
+                trashes.Add(c.Name);
+            }
+        }
+
+        return new AbilityCommandResponseModel()
+        {
+            NextResolveAbility = trashes.ConvertAll(_ => new NextResolveAbility()
+            {
+                Next = (_, GUIDType.Trash),
+                Timing = AbilityUseCase.AbilityTiming.Trash
+            })
+        };
+    }
 //前方の敵を強化   
     public AbilityCommandResponseModel BuffEnemy(AbilityCommandRequestModel req)
     {
+        //req.AbilityModel.AbilityParam1
         return null;
     }
 

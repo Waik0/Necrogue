@@ -126,9 +126,10 @@ public class EnemyUsecase : IEnemyUsecase
         }
     }
 
-    public void Damage(int range, int attack)
+    public int Damage(int range, int attack)
     {
         Debug.Log($"Attack Atk:{attack} , Range:{range}");
+        var actualDamage = 0;
         if (Field.Count > range && range >= 0)
         {
             if (Field[range] != null)
@@ -143,11 +144,15 @@ public class EnemyUsecase : IEnemyUsecase
                     Field[range].Model.Shield = remainSld;
                     dmg = remainDmg;
                 }
+
+                actualDamage = dmg;
                 Field[range].Model.Hp -= dmg;
                 OnDamaged.Invoke();
             }
         }
-        
+
+        return actualDamage;
+
     }
 
     public bool Stun(string guid)

@@ -5,12 +5,13 @@ using ShopperAssets.Scripts.Interface.Game;
 using ShopperAssets.Scripts.Master;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.SocialPlatforms;
 
 public class PlayerUsecase : IPlayerUsecase
 {
     public List<CardModel> Deck { get; private set; }
     public List<CardModel> Hand { get; private set; }
-
+    public List<CardModel> Action { get; private set; }
     public List<CardModel> Trash { get; private set; }
 
     public List<CardModel> Removed { get; private set; }
@@ -18,14 +19,18 @@ public class PlayerUsecase : IPlayerUsecase
     public UnityEvent OnDamaged { get; } = new UnityEvent();
     public int Coin { get; private set; }
     public int HandMax { get; private set; }
+    public int RangeByTurn { get; private set; }
+    public int AttackByTurn { get; private set; }
     public void Reset()
     {
         Deck = new List<CardModel>();
         Hand = new List<CardModel>();
         Trash = new List<CardModel>();
+        Action = new List<CardModel>();
         Coin = 0;
         HandMax = 4;
-
+        RangeByTurn = 0;
+        AttackByTurn = 0;
         PlayerCharacter = new PlayerModel()
         {
             Chara = new CharacterModel()
@@ -91,6 +96,11 @@ public class PlayerUsecase : IPlayerUsecase
         PlayerCharacter.Chara.Shield += num;
     }
 
+    public void AddBarrier()
+    {
+        PlayerCharacter.Chara.Barrier = true;
+    }
+
     public CardModel GetHand(string guid)
     {
         return Hand.Find(_ => _.GUID == guid);
@@ -116,6 +126,23 @@ public class PlayerUsecase : IPlayerUsecase
             Trash.Add(target);
         }
         return target;
+    }
+
+    public CardModel DropHandRandom()
+    {
+        if (Hand.Count > 0)
+        {
+            var target = Hand[Random.Range(0, Hand.Count)];
+            if (target != null)
+            {
+                Hand.Remove(target);
+                Trash.Add(target);
+                return target;
+            }
+        }
+
+        return null;
+
     }
 
     public CardModel ReverseHand(string guid)
@@ -145,6 +172,11 @@ public class PlayerUsecase : IPlayerUsecase
 
     public void Damage(int attack)
     {
+        if (PlayerCharacter.Chara.Barrier)
+        {
+            PlayerCharacter.Chara.Barrier = false;
+            return;
+        }
         var dmg = Mathf.Max(0, attack - PlayerCharacter.Chara.Defence);
         if (PlayerCharacter.Chara.Shield > 0)
         {
@@ -156,5 +188,35 @@ public class PlayerUsecase : IPlayerUsecase
         }
         PlayerCharacter.Chara.Hp -= dmg;
         OnDamaged?.Invoke();
+    }
+
+    public void Heal(int add)
+    {
+        PlayerCharacter.Chara.Hp += add;
+    }
+
+    public void AddRange(int range)
+    {
+        RangeByTurn += range;
+    }
+
+    public void ResetRange()
+    {
+        RangeByTurn = 0;
+    }
+
+    public void AddAttackByTurn(int atk)
+    {
+        AttackByTurn += atk;
+    }
+
+    public void ResetAttackByTurn()
+    {
+        AttackByTurn = 0;
+    }
+
+    public void AddAttackByAttack(int atk)
+    {
+        throw new System.NotImplementedException();
     }
 }

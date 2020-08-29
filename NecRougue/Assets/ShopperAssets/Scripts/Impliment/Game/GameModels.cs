@@ -111,6 +111,8 @@ namespace ShopperAssets.Scripts.Game
         public int Defence;
         public int Shield;
         public bool Stun;
+        public int Poison;
+        public bool Barrier;
     }
 
     public class ConditionModel
@@ -129,6 +131,7 @@ namespace ShopperAssets.Scripts.Game
         public AbilityUseCase.AbilityCondition Condition;
         public int AbilityParam1;
         public int AbilityParam2;
+        public int AbilityParam3;
         public int PlayerMotionId;
         public int EnemyMotionId;
         public void Convert(ShMstAbilityRecord record)
@@ -140,6 +143,7 @@ namespace ShopperAssets.Scripts.Game
             Timing = record.Timing;
             AbilityParam1 = record.AbilityParam1;
             AbilityParam2 = record.AbilityParam2;
+            AbilityParam3 = record.AbilityParam3;
             Condition = record.Condition;
             
             PlayerMotionId = record.PlayerMotionId;

@@ -14,6 +14,8 @@ namespace ShopperAssets.Scripts.Master
         public AbilityUseCase.AbilityCommands Command; //複合効果を考えて配列に
         public int AbilityParam1;
         public int AbilityParam2;
+        public int AbilityParam3;
+
         public int PlayerMotionId;
         public int EnemyMotionId;
         
@@ -29,6 +31,7 @@ namespace ShopperAssets.Scripts.Master
         public int Attack;
         public int Defence;
         public int Hp;
+        public int[] DropCardId;
         public int[] AbilityId;
 
     }

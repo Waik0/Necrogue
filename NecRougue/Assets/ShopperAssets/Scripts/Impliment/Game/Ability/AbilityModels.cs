@@ -22,7 +22,7 @@ public class AbilityCommandResponseModel
 {
     //結果
     public List<NextResolveAbility> NextResolveAbility;
-    public AbilityPerformanceParams AbilityPerformanceParams;
+    public List<AbilityPerformanceParams> AbilityPerformanceParams;
 }
 public class AbilityConditionRequestModel
 {
@@ -50,5 +50,7 @@ public class AbilityPerformanceParams
     //todo アニメーション関係のParamも用意
     public int PlayerAction;
     public List<(string,int)> EnemyAction;//プレイヤー以外のアクション
+    public int PlayerDamage;
+    public  List<(string,int)>  EnemyDamage;
 
 }

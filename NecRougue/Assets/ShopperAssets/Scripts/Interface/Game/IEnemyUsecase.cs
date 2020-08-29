@@ -18,7 +18,7 @@ public interface IEnemyUsecase
     int GetFieldOwnIndex(string guid);
     string GetGUIDFromIndex(int index);
     int EnemyTurn(int index);
-    void Damage(int range,int attack);
+    int Damage(int range,int attack);
     bool Stun(string guid);
     bool Stun(int range);
 }

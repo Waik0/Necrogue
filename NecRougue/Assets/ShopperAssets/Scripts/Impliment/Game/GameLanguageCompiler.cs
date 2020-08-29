@@ -170,15 +170,19 @@ public class AbilityPresenter
         {
             if (responseModel.AbilityPerformanceParams != null)
             {
-                Debug.Log(
-                    $"<color=orange>[Animation] Player {responseModel.AbilityPerformanceParams.PlayerAction}</color>");
-                if (responseModel.AbilityPerformanceParams.EnemyAction != null)
+                foreach (var responseModelAbilityPerformanceParam in responseModel.AbilityPerformanceParams)
                 {
-                    foreach (var valueTuple in responseModel.AbilityPerformanceParams.EnemyAction)
+                    Debug.Log(
+                        $"<color=orange>[Animation] Player {responseModelAbilityPerformanceParam.PlayerAction}</color>");
+                    if (responseModelAbilityPerformanceParam.EnemyAction != null)
                     {
-                        Debug.Log($"<color=orange>[Animation] Enemy {valueTuple.Item2}</color>");
+                        foreach (var valueTuple in responseModelAbilityPerformanceParam.EnemyAction)
+                        {
+                            Debug.Log($"<color=orange>[Animation] Enemy {valueTuple.Item2}</color>");
+                        }
                     }
                 }
+               
             }
         }
 }
@@ -250,9 +254,15 @@ public class AbilityUseCase
         AddExp=1200,//param1 * max( 1 , condition) 経験値上昇
         //除去
         RemoveHand = 1300,//手札があればparam1枚破棄する
-        
+        //毒
+        Poison = 1400,
+        //効果を2回使う
+        TwiceFromCondition = 1500,
+        //使うたびに弱くなる/強くなる
+        UseByUse = 1600,
         //アクションカード 手札にあるとき攻撃以外のアビリティを受けると、効果発動
         Revive = 7001, //生き返り
+       
         
         //マイナス効果
        
@@ -260,6 +270,7 @@ public class AbilityUseCase
 
 
         //敵側効果
+        //攻撃
         EnemyAttackPlayer = 10001, //プレイヤーを攻撃
         Curse = 10002, //呪いを得る
         //DropFromEnemy = 1003, //param1枚すてさせる
@@ -268,6 +279,9 @@ public class AbilityUseCase
         WallEnemy = 10006, //一定量無力化
         EnemyChargeAttack = 10007,//1ターン後に攻撃する プレイヤーに防御を促す
         EnemyAttackCombo = 10008,//連続攻撃 ブロック対策
+        //自爆
+        Sucide = 11000,//
+        //
         //その他
         RemoveThis = 20001, //このアビリティを使った段階で手札から除外
         TurnEnd = 20002,//使った瞬間ターン終了
@@ -286,13 +300,7 @@ public class AbilityUseCase
 //攻撃
                 {
                     AbilityCommands.PlayerAttackEnemy, _abilityImpliment.PlayerAttackEnemy
-                }, // 攻撃力 param1 * max( 1 , condition) 範囲 param2 
-                {
-                    AbilityCommands.PlayerAttackAllEnemy, _abilityImpliment.PlayerAttackAllEnemy
-                }, //攻撃力 param1 * max( 1 , condition)  全体攻撃
-                {
-                    AbilityCommands.PlayerAttackCombo, _abilityImpliment.PlayerAttackCombo
-                }, // 攻撃力 ( param1 ) 攻撃回数 param2 回 連続攻撃
+                }, // 攻撃力 param1 * max( 1 , condition) 範囲 param2 攻撃回数 param3
                 {
                     AbilityCommands.PlayerAttackComboFromCondition, _abilityImpliment.PlayerAttackComboFromCondition
                 }, // 攻撃力 ( param1 ) 攻撃回数 condition 回 連続攻撃
