@@ -273,7 +273,7 @@ public class AbilityUseCase
         //攻撃
         EnemyAttackPlayer = 10001, //プレイヤーを攻撃
         Curse = 10002, //呪いを得る
-        //DropFromEnemy = 1003, //param1枚すてさせる
+        DropFromEnemy = 10003, //param1枚すてさせる
         BuffEnemy = 10004, //前方の敵を強化
         BarrierEnemy = 10005, //次の攻撃を無効化
         WallEnemy = 10006, //一定量無力化

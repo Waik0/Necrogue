@@ -91,7 +91,7 @@ public class AbilityImpliment
         return null;
     }
 
-//山札の枚数だけダメージ増加   
+//山札の枚数だけダメージ増加   ( param1 ) * 山札 / 2 射程 param2 回数 param3
     public AbilityCommandResponseModel PlayerAttackDeckNum(AbilityCommandRequestModel req)
     {
         return null;
