@@ -101,7 +101,7 @@ namespace ShopperAssets.Scripts.Game
             //---
             DebugLog.Function(this);
             var cardGUID = _gameInputPresenter.UsingCard;
-            var card = _gamePresenter.PopHand(cardGUID);
+            var card = _gamePresenter.UseHand(cardGUID);
             if (card != null)
             {
                 yield return _abilityPresenter.ResolveAbility(AbilityUseCase.AbilityTiming.Use, card,true, () =>
@@ -151,10 +151,40 @@ namespace ShopperAssets.Scripts.Game
         {
             DebugLog.Function(this);
             _gameInputPresenter.ChangeCommand(InputCommand.None);
+            //アクション全部破棄
+
+            if (_gamePresenter.TrashAllAction())
+            {
+                _gamePresenter.UpdateUI();
+                yield return new WaitForSecondsForStatemachine(0.3f);
+            }
+           
             //全部捨てる
-            _gamePresenter.TrashAllHand();
+            if (_gamePresenter.TrashAllHand())
+            {
+                _gamePresenter.UpdateUI();
+                yield return new WaitForSecondsForStatemachine(0.3f);
+            }
+           
             //最大まで引く
-            _gamePresenter.DrawMax();
+            while (!_gamePresenter.IsHandDrawMax())
+            {
+                if (_gamePresenter.Draw() != null)
+                {
+                    _gamePresenter.UpdateUI();
+                    yield return new WaitForSecondsForStatemachine(0.1f);
+                    continue;
+                }
+                if (!_gamePresenter.TrashToDeckAll())
+                {
+                    break;
+                }
+                _gamePresenter.UpdateUI();
+                yield return new WaitForSecondsForStatemachine(0.5f);
+               
+            }
+
+            _gamePresenter.UpdateShopLevelUpGoods();
             NextState(State.EnemyTurn);
             yield return null;
         }
@@ -196,4 +226,23 @@ namespace ShopperAssets.Scripts.Game
         
     }
 
+}
+
+public class WaitForSecondsForStatemachine : CustomYieldInstruction
+{
+    private float _wait;
+    private float _current = 0;
+
+    public WaitForSecondsForStatemachine(float sec)
+    {
+        _wait = sec;
+    }
+    public override bool keepWaiting
+    {
+        get
+        {
+            _current += Time.deltaTime;
+            return _wait > _current;
+        }
+    }
 }

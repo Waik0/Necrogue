@@ -13,11 +13,11 @@ public class PlayerUI : MonoBehaviour
     public void ResetUI()
     {
         _hp.text = $"";
-        _at.text = $"";
+//        _at.text = $"";
     }
     public void SetStatus(CharacterModel player)
     {
         _hp.text = $"HP : {player.Hp}";
-        _at.text = $"HP : {player.Attack}";
+ //       _at.text = $"HP : {player.Attack}";
     }
 }

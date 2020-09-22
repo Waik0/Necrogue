@@ -6,12 +6,15 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 0
-    path: Assets/NecrougueAssets/Scenes/Test/GameItgTest.unity
-    guid: 4ade1aa194950aa44be6478a668b21ab
+    path: 
+    guid: 00000000000000000000000000000000
+  - enabled: 0
+    path: 
+    guid: 00000000000000000000000000000000
   - enabled: 0
     path: 
     guid: 00000000000000000000000000000000
   - enabled: 1
-    path: Assets/NecrougueAssets/Scenes/Test/GraphicsTest.unity
-    guid: e6dfcc3dc527b35468271058b086fdef
+    path: Assets/ShopperAssets/Scenes/Init.unity
+    guid: 7e777f0094966294e85e09cedf25bf22
   m_configObjects: {}

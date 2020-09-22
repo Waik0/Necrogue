@@ -286,7 +286,9 @@ public class AbilityUseCase
         RemoveThis = 20001, //このアビリティを使った段階で手札から除外
         TurnEnd = 20002,//使った瞬間ターン終了
         LuckySlot = 20003, //手札を好きな数除外して1/8で除外した枚数*7ダメージ
-        Hatena = 20004//何が起きるかわからない 1.全体に999ダメージ 2.ラッキースロットゲット 3.全回復 4.レベルアップ 5.全体に10ダメージ 6.自分に10ダメージ 7.手札を全捨て
+        Hatena = 20004,//何が起きるかわからない 1.全体に999ダメージ 2.ラッキースロットゲット 3.全回復 4.レベルアップ 5.全体に10ダメージ 6.自分に10ダメージ 7.手札を全捨て
+        //ショップ
+        ShopLevelUp = 30004,
     }
 
     void InitCommands()
@@ -368,10 +370,10 @@ public class AbilityUseCase
                 {AbilityCommands.RemoveThis, _abilityImpliment.RemoveThis}, //このアビリティを使った段階で手札から除外
                 {AbilityCommands.TurnEnd, _abilityImpliment.TurnEnd}, //使った瞬間ターン終了
                 {AbilityCommands.LuckySlot, _abilityImpliment.LuckySlot}, //手札を好きな数除外して1/8で除外した枚数*7ダメージ
-                {
-                    AbilityCommands.Hatena, _abilityImpliment.Hatena
-                } //何が起きるかわからない 1.全体に999ダメージ 2.ラッキースロットゲット 3.全回復 4.レベルアップ 5.全体に10ダメージ 6.自分に10ダメージ 7.手札を全捨て
-
+                {AbilityCommands.Hatena, _abilityImpliment.Hatena}, //何が起きるかわからない 1.全体に999ダメージ 2.ラッキースロットゲット 3.全回復 4.レベルアップ 5.全体に10ダメージ 6.自分に10ダメージ 7.手札
+                //ショップ
+                {AbilityCommands.ShopLevelUp,_abilityImpliment.ShopLevelUp}
+                
 
             };
     }

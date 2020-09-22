@@ -64,6 +64,11 @@ namespace ShopperAssets.Scripts.Game
         {
             return _playerUseCase.Hand.Count;
         }
+
+        public CardModel UseHand(string guid)
+        {
+            return _playerUseCase.HandToAction(guid);
+        }
         public CardModel PopHand(string guid)
         {
             return _playerUseCase.DropHand(guid);
@@ -89,6 +94,7 @@ namespace ShopperAssets.Scripts.Game
         {
             var c = _playerUseCase.Hand.Find(_ => _.GUID == guid);
             if (c == null) c = _shopUsecase.Goods.Find(_ => _.GUID == guid);
+            if (c == null) c = _shopUsecase.ShopLevelUpGoods.Find(_ => _.GUID == guid);
             if (c == null) c = _playerUseCase.Deck.Find(_ => _.GUID == guid);
             if (c == null) c = _playerUseCase.Trash.Find(_ => _.GUID == guid);
             if (c == null) c = _playerUseCase.Removed.Find(_ => _.GUID == guid);
@@ -175,15 +181,20 @@ namespace ShopperAssets.Scripts.Game
         public void UpdateShop()
         {
             _shopUsecase.SupplyGoods();
-            
+        }
+
+        public void UpdateShopLevelUpGoods()
+        {
+            _shopUsecase.SupplyShopLevelUpCard();
         }
         //
         public void UpdateUI()
         {
             _gameView.CardIconUI.ResetCard();
             _gameView.ShopUI.SetShopAll(_shopUsecase.Goods);
+            _gameView.ShopUI.SetShopLevelUpGoodsAll(_shopUsecase.ShopLevelUpGoods);
             _gameView.ShopUI.SetCoin(_playerUseCase.Coin);
-            _gameView.DeckUI.SetHandAll(_playerUseCase.Hand);
+            _gameView.DeckUI.SetCardsAll(_playerUseCase);
             _gameView.DeckUI.SetDeck(_playerUseCase.Deck.Count);
             _gameView.DeckUI.SetTrash(_playerUseCase.Trash.Count);
             _gameView.PlayerUI.SetStatus(_playerUseCase.PlayerCharacter.Chara);
@@ -196,12 +207,20 @@ namespace ShopperAssets.Scripts.Game
             
         }
 
+        public bool TrashAllAction()
+        {
+            var haveAction = _playerUseCase.ActionArea.Count > 0;
+            _playerUseCase.ActionToTrashAll();
+            return haveAction;
+        }
         /// <summary>
         /// 手札全捨て
         /// </summary>
-        public void TrashAllHand()
+        public bool TrashAllHand()
         {
+            var haveHand = _playerUseCase.Hand.Count > 0;
             _playerUseCase.HandToTrashAll();
+            return haveHand;
         }
 
         /// <summary>
@@ -213,6 +232,19 @@ namespace ShopperAssets.Scripts.Game
                 if (_playerUseCase.Draw() == null)
                     if (!_playerUseCase.TrashToDeckAll())
                         break;
+        }
+
+        public bool IsHandDrawMax()
+        {
+            return _playerUseCase.Hand.Count >= _playerUseCase.HandMax;
+        }
+        public CardModel Draw()
+        {
+            return _playerUseCase.Draw();
+        }
+        public bool TrashToDeckAll()
+        {
+            return _playerUseCase.TrashToDeckAll();
         }
         
         

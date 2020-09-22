@@ -9,9 +9,10 @@ public interface IShopUsecase
     int Level { get; }
     int MaxGoodsNum { get; }
     List<CardModel> Goods { get; }
-    
+    List<CardModel> ShopLevelUpGoods { get; }
     void Reset();
     void SupplyGoods(); //商品補給
+    void SupplyShopLevelUpCard(); 
     int GetUpgradeGoodsLevelPrice();
     void UpgradeGoodsLevel(); //商品ランクアップ
     void UpgradeGoodsNum(); //陳列数アップ

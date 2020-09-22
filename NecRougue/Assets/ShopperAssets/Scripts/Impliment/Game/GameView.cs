@@ -14,6 +14,7 @@ public class GameView : MonoBehaviour
     [SerializeField] private Button _cancelButton;
     [SerializeField] private CardIconUI _cardIconUi;
     [SerializeField] private EnemyUI _enemyUi;
+   
     public DeckUI DeckUI => _deckUi;
     public ShopUI ShopUI => _shopUi;
     public PlayerUI PlayerUI => _playerUi;
@@ -33,5 +34,6 @@ public class GameView : MonoBehaviour
         EnemyUI.ResetUI();
         PlayerUI.ResetUI();
         DeckUI.ResetUI();
+     
     }
 }

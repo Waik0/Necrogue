@@ -45,6 +45,8 @@
                 <e p="SequenceBase.cs" t="Include" />
               </e>
               <e p="UI" t="Include">
+                <e p="CardIcon.cs" t="Include" />
+                <e p="CardIconPool.cs" t="Include" />
                 <e p="CardIconUI.cs" t="Include" />
                 <e p="CardIconUIDebug.cs" t="Include" />
                 <e p="DeckUI.cs" t="Include" />

@@ -434,6 +434,7 @@ public class AbilityImpliment
 //このアビリティを使った段階で手札から除外   
     public AbilityCommandResponseModel RemoveThis(AbilityCommandRequestModel req)
     {
+        _playerUseCase.RemoveAction(req.Self.GUID);
         return null;
     }
 
@@ -452,6 +453,11 @@ public class AbilityImpliment
 //何が起きるかわからない 1.全体に999ダメージ 2.ラッキースロットゲット 3.全回復 4.レベルアップ 5.全体に10ダメージ 6.自分に10ダメージ 7.手札を全捨て   
     public AbilityCommandResponseModel Hatena(AbilityCommandRequestModel req)
     {
+        return null;
+    }
+    public AbilityCommandResponseModel ShopLevelUp(AbilityCommandRequestModel req)
+    {
+        _shopUseCase.UpgradeGoodsLevel();
         return null;
     }
 }

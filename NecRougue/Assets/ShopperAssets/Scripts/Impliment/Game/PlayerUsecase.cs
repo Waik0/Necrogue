@@ -11,7 +11,7 @@ public class PlayerUsecase : IPlayerUsecase
 {
     public List<CardModel> Deck { get; private set; }
     public List<CardModel> Hand { get; private set; }
-    public List<CardModel> Action { get; private set; }
+    public List<CardModel> ActionArea { get; private set; }
     public List<CardModel> Trash { get; private set; }
 
     public List<CardModel> Removed { get; private set; }
@@ -26,7 +26,8 @@ public class PlayerUsecase : IPlayerUsecase
         Deck = new List<CardModel>();
         Hand = new List<CardModel>();
         Trash = new List<CardModel>();
-        Action = new List<CardModel>();
+        Removed = new List<CardModel>();
+        ActionArea = new List<CardModel>();
         Coin = 0;
         HandMax = 4;
         RangeByTurn = 0;
@@ -45,8 +46,8 @@ public class PlayerUsecase : IPlayerUsecase
 
     private void SetFirstDeck()
     {
-        var coin = MasterdataManager.Get<ShMstCardRecord>(101);
-        var hot = MasterdataManager.Get<ShMstCardRecord>(102);
+        var coin = MasterdataManager.Get<ShMstCardRecord>(201);
+        var hot = MasterdataManager.Get<ShMstCardRecord>(101);
         
         Deck.Add(new CardModel().Generate(coin));
         Deck.Add(new CardModel().Generate(coin));
@@ -75,6 +76,12 @@ public class PlayerUsecase : IPlayerUsecase
         Hand.RemoveAll(_ => true);
     }
 
+    public void ActionToTrashAll()
+    {
+        Trash.AddRange(ActionArea);
+        ActionArea.RemoveAll(_ => true);;
+    }
+    
     public void AddHand(CardModel card)
     {
         Hand.Add(card);
@@ -111,12 +118,46 @@ public class PlayerUsecase : IPlayerUsecase
         var target = Hand.Find(_ => _.GUID == guid);
         if (target != null)
         {
-            Hand.Remove(target);
             Removed.Add(target);
+            Hand.Remove(target);
+            
         }
         return target;
     }
 
+    public CardModel RemoveAction(string guid)
+    {
+        var target = ActionArea.Find(_ => _.GUID == guid);
+        if (target != null)
+        {
+            Removed.Add(target);
+            ActionArea.Remove(target);
+           
+        }
+        return target;
+    }
+
+    public CardModel HandToAction(string guid)
+    {
+        var target = Hand.Find(_ => _.GUID == guid);
+        if (target != null)
+        {
+            Hand.Remove(target);
+            ActionArea.Add(target);
+        }
+        return target;
+    }
+
+    public CardModel ActionToTrash(string guid)
+    {
+        var target = ActionArea.Find(_ => _.GUID == guid);
+        if (target != null)
+        {
+            ActionArea.Remove(target);
+            Trash.Add(target);
+        }
+        return target;
+    }
     public CardModel DropHand(string guid)
     {
         var target = Hand.Find(_ => _.GUID == guid);
@@ -147,10 +188,10 @@ public class PlayerUsecase : IPlayerUsecase
 
     public CardModel ReverseHand(string guid)
     {
-        var target = Trash.Find(_ => _.GUID == guid);
+        var target = ActionArea.Find(_ => _.GUID == guid);
         if (target != null)
         {
-            Trash.Remove(target);
+            ActionArea.Remove(target);
             Hand.Add(target);
         }
         return target;
