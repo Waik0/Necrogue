@@ -1,0 +1,3 @@
+[submodule "NecRougue/Assets/ThirdPirty/2d-extras/2d-extras"]
+	path = NecRougue/Assets/ThirdPirty/2d-extras/2d-extras
+	url = https://github.com/Unity-Technologies/2d-extras.git
