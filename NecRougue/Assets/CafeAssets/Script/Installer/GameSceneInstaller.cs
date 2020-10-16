@@ -1,18 +1,16 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Zenject;
 
-public class GameSceneInstaller : MonoBehaviour
+public class GameSceneInstaller : MonoInstaller
 {
-    // Start is called before the first frame update
-    void Start()
+    /// <summary>
+    /// Gameシーンでインストールされる項目
+    /// </summary>
+    public override void InstallBindings()
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        Debug.Log("[GameScene] Install");
+        Container.Bind<GameParameterPresenter>().AsCached().Lazy();
     }
 }

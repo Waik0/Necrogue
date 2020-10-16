@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ParameterSystem : MonoBehaviour
+public class MilestonePresenter : MonoBehaviour
 {
-    
 }

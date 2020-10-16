@@ -20,11 +20,19 @@
               <e p="SequenceController.cs" t="Include" />
             </e>
             <e p="system" t="Include">
-              <e p="MapSystem" t="Include">
-                <e p="MapView.cs" t="Include" />
+              <e p="GameCoreSystem" t="Include">
+                <e p="GamePresenter.cs" t="Include" />
               </e>
-              <e p="ParameterSystem" t="Include">
-                <e p="ParameterPresenter.cs" t="Include" />
+              <e p="GameMapSystem" t="Include">
+                <e p="MapView.cs" t="Include" />
+                <e p="TileModel.cs" t="Include" />
+              </e>
+              <e p="GameMilestoneSystem" t="Include">
+                <e p="MilestonePresenter.cs" t="Include" />
+              </e>
+              <e p="GameParameterSystem" t="Include">
+                <e p="GameParameterModel.cs" t="Include" />
+                <e p="GameParameterPresenter.cs" t="Include" />
               </e>
               <e p="PropsSystem" t="Include">
                 <e p="Props.cs" t="Include" />

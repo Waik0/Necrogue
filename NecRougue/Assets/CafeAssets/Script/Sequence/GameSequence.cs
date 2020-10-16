@@ -25,6 +25,7 @@ public class GameSequence : ISequence,ISequenceResult<GameSequence.ResultState>
     private ResultState _result;
     private Statemachine<State> _statemachine;
     private Props _props;
+    private GamePresenter _gamePresenter;
     public GameSequence(
         Props props
             )
@@ -41,12 +42,14 @@ public class GameSequence : ISequence,ISequenceResult<GameSequence.ResultState>
     IEnumerator InitParams()
     {
         Debug.Log("[Game]Initialize");
+        _gamePresenter.ResetParams();
         _statemachine.Next(State.InitMap);
         yield return null;
     }
     IEnumerator InitMap()
     {
         Debug.Log("[Game]InitializeMap");
+        _gamePresenter.ResetMap();
         _statemachine.Next(State.LoadData);
         yield return null;
     }
