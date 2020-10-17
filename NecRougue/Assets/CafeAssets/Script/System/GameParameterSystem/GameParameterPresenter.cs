@@ -1,56 +1,87 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
+public enum ParameterStyle
+{
+    Fixable,
+    Fluid
+    
+}
+
+public class GameParamModel
+{
+    public Dictionary<ParameterStyle, int> Param;
+    public GameParamModel()
+    {
+        Param = new Dictionary<ParameterStyle, int>();
+        foreach (ParameterStyle key in Enum.GetValues(typeof(ParameterStyle)))
+        {
+            Param.Add(key,0);
+        }
+    }
+
+    public void Set(ParameterStyle key, int num)
+    {
+        Param[key] = num;
+    }
+
+    public int Get(ParameterStyle key)
+    {
+        return Param[key];
+    }
+
+    public int GetSum()
+    {
+        return Param.Sum(keyValuePair => keyValuePair.Value);
+    }
+}
 public class GameParameterPresenter : IDisposable
 {
-    private Dictionary<string, int> IntParams;
+    private Dictionary<string, GameParamModel> IntParams;//固定資産
     public void Reset()
     {
         IntParams.Clear();
     }
 
+    void AddModel(string key)
+    {
+        if (!IntParams.ContainsKey(key))
+        {
+            IntParams.Add(key,new GameParamModel());
+        }
+    }
     public int Get(string key)
     {
-        if (!IntParams.ContainsKey(key))
-        {
-            IntParams.Add(key,0);
-        }
-        return IntParams[key];
+        AddModel(key);
+        return IntParams[key].GetSum();
     }
 
-    public int Set(string key, int num)
+    public int Set(ParameterStyle style,string key, int num)
     {
-        if (!IntParams.ContainsKey(key))
-        {
-            IntParams.Add(key,0);
-        }
-
-        IntParams[key] = num;
-        return IntParams[key];
+        AddModel(key);
+        IntParams[key].Set(style,num);
+        return IntParams[key].GetSum();
     }
 
-    public int Operation(string key, GameParameterOperations operation, int num)
+    public int Operation(ParameterStyle style,string key, GameParameterOperations operation, int num)
     {
-        if (!IntParams.ContainsKey(key))
-        {
-            IntParams.Add(key,0);
-        }
-
+        AddModel(key);
         switch (operation)
         {
             case GameParameterOperations.Add:
-                IntParams[key] += num;
+                IntParams[key].Set(style, IntParams[key].Get(style) + num);
                 break;
             case GameParameterOperations.Times:
-                IntParams[key] *= num;
+                IntParams[key].Set(style, IntParams[key].Get(style) * num);
                 break;
             case GameParameterOperations.Division:
-                IntParams[key] /= num;
+                IntParams[key].Set(style, IntParams[key].Get(style) / num);
                 break;
         }
-        return IntParams[key];
+        return IntParams[key].GetSum();
     }
 
     public void Dispose()
