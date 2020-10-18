@@ -2,8 +2,8 @@
 
 namespace CafeAssets.Script.System.GameMapSystem.TileInheritance
 {
-    [CreateAssetMenu(fileName = "FanitureTile_0000",menuName = "ScriptableObject/FanitureTile")]
-    public class FanitureTileModel : EffectiveTileModel
+    [CreateAssetMenu(fileName = "FurnitureTile_0000",menuName = "ScriptableObject/FurnitureTile")]
+    public class FurnitureTileModel : EffectiveTileModel
     {
     }
 }

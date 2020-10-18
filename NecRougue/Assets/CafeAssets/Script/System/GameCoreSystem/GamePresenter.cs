@@ -1,40 +1,55 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using CafeAssets.Script.System.GameMapSystem;
 using UnityEngine;
 
-public class GamePresenter : IDisposable
+namespace CafeAssets.Script.System.GameCoreSystem
 {
-    private GameParameterPresenter _parameter;
-    private MapView _mapView;
-
-    public GamePresenter(
-        MapView mapView)
-    {
-        _parameter = new GameParameterPresenter();
-        _mapView = mapView;
-    }
-    /// <summary>
-    /// セーブデータよみこみ
-    /// </summary>
-    /// <param name="path"></param>
-    public void LoadData(string path)
+    public interface IGamePresenter
     {
         
     }
-
-    public void ResetParams()
+    public class GamePresenter : IGamePresenter,IDisposable
     {
-        _parameter.Reset();
-    }
+        private GameParameterPresenter _parameter;
+        private IGameStaticDataController _staticData;
+        private MapView _mapView;
 
-    public void ResetMap()
-    {
-        _mapView.Reset();
-    }
+        public GamePresenter(
+            MapView mapView,
+            IGameStaticDataController staticData)
+        {
+            _parameter = new GameParameterPresenter();
+            _mapView = mapView;
+            _staticData = staticData;
+        }
+        /// <summary>
+        /// セーブデータよみこみ
+        /// </summary>
+        /// <param name="path"></param>
+        public void LoadData(string path)
+        {
+        
+        }
 
-    public void Dispose()
-    {
+        public void ResetParams()
+        {
+            _parameter.Reset();
+        }
+
+        public void ResetMap()
+        {
+            _mapView.Reset();
+        }
+
+        public void SetTileDebug()
+        {
+            var data = _staticData.GetFloorTileModel("FloorTile_0000");
+            Debug.Log(data.Name);
+            _mapView.SetTile(data,Vector3Int.zero);
+        }
+
+        public void Dispose()
+        {
+        }
     }
 }

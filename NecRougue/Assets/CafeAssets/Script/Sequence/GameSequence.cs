@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using CafeAssets.Script.System.GameCoreSystem;
 using CafeAssets.Script.System.PropsSystem;
 using Toast;
 using UnityEngine;
@@ -71,6 +72,7 @@ public class GameSequence : MonoBehaviour,ISequence,ISequenceResult<GameSequence
     //ゲーム内時間を進める
     IEnumerator GameTick()
     {
+        _gamePresenter.SetTileDebug();
         yield return null;
     }
     public ResultState Result()
