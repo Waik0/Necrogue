@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using CafeAssets.Script.System.PropsSystem;
 using Toast;
 using UnityEngine;
+using Zenject;
 
-public class GameSequence : ISequence,ISequenceResult<GameSequence.ResultState>
+public class GameSequence : MonoBehaviour,ISequence,ISequenceResult<GameSequence.ResultState>
 {
     public enum State
     {
@@ -26,13 +27,20 @@ public class GameSequence : ISequence,ISequenceResult<GameSequence.ResultState>
     private Statemachine<State> _statemachine;
     private Props _props;
     private GamePresenter _gamePresenter;
-    public GameSequence(
-        Props props
-            )
+
+    [Inject]
+    void Inject(
+        Props props,
+        GamePresenter gamePresenter)
+    {
+        _props = props;
+        _gamePresenter = gamePresenter;
+    }
+    void Awake()
     {
         _statemachine = new Statemachine<State>();
         _statemachine.Init(this);
-        _props = props;
+        
     }
     public bool UpdateState()
     {

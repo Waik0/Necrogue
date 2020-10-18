@@ -7,10 +7,11 @@ using UnityEngine;
 
 namespace CafeAssets.Script.System.GameMapSystem
 {
-    [CreateAssetMenu(fileName = "Tile_0000",menuName = "ScriptableObject/TileModel")]
+
     public class TileModel : IsometricRuleTile
     {
         public string Unique => this.name;
+        [Header("表示情報")]
         public string Name;
         public string Description;
         [Header("入手に必要なパラメータ")]
@@ -22,6 +23,10 @@ namespace CafeAssets.Script.System.GameMapSystem
         [Header("設置可能レイヤ")]
         public int MinLayer;
         public int MaxLayer;
+        [Header("通行可否(壁かどうか)")] 
+        //同じ座標のすべてのレイヤがIsWall == falseじゃないと通行できない
+        public bool IsWall;
+        
     }
 
     [Serializable]

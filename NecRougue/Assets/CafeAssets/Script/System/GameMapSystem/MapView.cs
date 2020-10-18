@@ -1,18 +1,36 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Tilemaps;
+using NotImplementedException = System.NotImplementedException;
 
-public class MapView : MonoBehaviour
+namespace CafeAssets.Script.System.GameMapSystem
 {
-    // Start is called before the first frame update
-    void Start()
+    public interface IMapView
     {
-        
+        void Reset();
+        void SetTile(TileModel tile, Vector3Int pos);
+        void RemoveTile(Vector3Int pos);
     }
-
-    // Update is called once per frame
-    void Update()
+    public class MapView : MonoBehaviour,IMapView
     {
-        
+        [SerializeField] private Tilemap _tilemap;
+        [SerializeField] private TilemapRenderer _tilemapRenderer;
+        public void Reset()
+        {
+            Debug.Log("[MapView]Reset");
+            _tilemap.ClearAllTiles();
+           
+        }
+
+        public void SetTile(TileModel tile, Vector3Int pos)
+        {
+            _tilemap.SetTile(pos,tile);
+        }
+
+        public void RemoveTile(Vector3Int pos)
+        {
+            _tilemap.SetTile(pos,null);
+        }
     }
 }

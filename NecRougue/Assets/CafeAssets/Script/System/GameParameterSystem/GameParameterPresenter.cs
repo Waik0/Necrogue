@@ -43,6 +43,10 @@ public class GameParameterPresenter : IDisposable
     private Dictionary<string, GameParamModel> IntParams;//固定資産
     public void Reset()
     {
+        if (IntParams == null)
+        {
+            IntParams = new Dictionary<string, GameParamModel>();
+        }
         IntParams.Clear();
     }
 

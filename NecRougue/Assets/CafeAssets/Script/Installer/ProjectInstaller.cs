@@ -12,8 +12,7 @@ public class ProjectInstaller : MonoInstaller
         Debug.Log("[PJIns] Install");
         //シーケンス周りをバインド
         Container.Bind<SequenceController>().FromNewComponentOnNewGameObject().AsSingle().NonLazy();
-        Container.Bind<RootSequence>().AsSingle().Lazy();
-        Container.Bind<GameSequence>().AsSingle().Lazy();
+        Container.Bind<RootSequence>().FromNewComponentOnNewGameObject().AsSingle().Lazy();
         //Props
         Container.Bind<Props>().FromNewComponentOnNewGameObject().AsSingle().NonLazy();
     }

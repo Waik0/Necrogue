@@ -7,4 +7,8 @@ using Zenject;
 public class MenuModelProvider : ScriptableObjectInstaller
 {
     public MenuModel[] Models;
+    public override void InstallBindings()
+    {
+        Container.BindInstance(this);
+    }
 }
