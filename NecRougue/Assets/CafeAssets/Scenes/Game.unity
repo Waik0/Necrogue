@@ -176,7 +176,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 5
+  orthographic size: 10
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -280,6 +280,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _mapViewPrefab: {fileID: 69387107283309812, guid: d8f258a8eac3c6d4d9add435ea95f75d, type: 3}
+  _gameTimeView: {fileID: 2690409568064313249, guid: e9b681a8e071fc34bacb3ad6a82193ec, type: 3}
 --- !u!114 &1910633943
 MonoBehaviour:
   m_ObjectHideFlags: 0

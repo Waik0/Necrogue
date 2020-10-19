@@ -1,26 +1,38 @@
 ﻿using System;
 using CafeAssets.Script.System.GameMapSystem;
+using CafeAssets.Script.System.GameParameterSystem;
+using CafeAssets.Script.System.GameTimeSystem;
 using UnityEngine;
+using Zenject;
 
 namespace CafeAssets.Script.System.GameCoreSystem
 {
-    public interface IGamePresenter
+    public interface IGameUseCase
     {
-        
+        //セーブデータ
+        void LoadData(string path);
+        void ResetParams();
+        void ResetMap();
+        void Tick();
+
     }
-    public class GamePresenter : IGamePresenter,IDisposable
+    public class GameUseCase : IGameUseCase,IDisposable
     {
-        private GameParameterPresenter _parameter;
+        private IGameParameterUseCase _parameter;
         private IGameStaticDataController _staticData;
+        private IGameTimeUseCase _gameTimeUseCase;
         private MapView _mapView;
 
-        public GamePresenter(
+        public GameUseCase(
             MapView mapView,
-            IGameStaticDataController staticData)
+            IGameParameterUseCase parameterUseCase,
+            IGameStaticDataController staticData,
+            IGameTimeUseCase gameTimeUseCase)
         {
-            _parameter = new GameParameterPresenter();
+            _parameter = parameterUseCase;
             _mapView = mapView;
             _staticData = staticData;
+            _gameTimeUseCase = gameTimeUseCase;
         }
         /// <summary>
         /// セーブデータよみこみ
@@ -50,6 +62,11 @@ namespace CafeAssets.Script.System.GameCoreSystem
 
         public void Dispose()
         {
+        }
+
+        public void Tick()
+        {
+            _gameTimeUseCase.Tick();
         }
     }
 }

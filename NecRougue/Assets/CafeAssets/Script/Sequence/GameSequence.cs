@@ -27,15 +27,15 @@ public class GameSequence : MonoBehaviour,ISequence,ISequenceResult<GameSequence
     private ResultState _result;
     private Statemachine<State> _statemachine;
     private Props _props;
-    private GamePresenter _gamePresenter;
+    private IGameUseCase _gameUseCase;
 
     [Inject]
     void Inject(
         Props props,
-        GamePresenter gamePresenter)
+        IGameUseCase gameUseCase)
     {
         _props = props;
-        _gamePresenter = gamePresenter;
+        _gameUseCase = gameUseCase;
     }
     void Awake()
     {
@@ -51,14 +51,14 @@ public class GameSequence : MonoBehaviour,ISequence,ISequenceResult<GameSequence
     IEnumerator InitParams()
     {
         Debug.Log("[Game]Initialize");
-        _gamePresenter.ResetParams();
+        _gameUseCase.ResetParams();
         _statemachine.Next(State.InitMap);
         yield return null;
     }
     IEnumerator InitMap()
     {
         Debug.Log("[Game]InitializeMap");
-        _gamePresenter.ResetMap();
+        _gameUseCase.ResetMap();
         _statemachine.Next(State.LoadData);
         yield return null;
     }
@@ -72,7 +72,11 @@ public class GameSequence : MonoBehaviour,ISequence,ISequenceResult<GameSequence
     //ゲーム内時間を進める
     IEnumerator GameTick()
     {
-        _gamePresenter.SetTileDebug();
+        while (true)
+        {
+            _gameUseCase.Tick();
+            yield return null;
+        }
         yield return null;
     }
     public ResultState Result()

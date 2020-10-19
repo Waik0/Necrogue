@@ -12,15 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a1283b94004d19e4eb833fda23c5d2b3, type: 3}
   m_Name: TileModelProvider
   m_EditorClassIdentifier: 
-  Models:
+  FloorTileModels:
   - {fileID: 11400000, guid: 49554e7c57238444a8de84c153d16878, type: 2}
-  - {fileID: 11400000, guid: d37a208804ef4d648a95c9938f85a694, type: 2}
-  - {fileID: 11400000, guid: 05c30a98c391eb243ae2c16c596908ad, type: 2}
-  - {fileID: 11400000, guid: 7ff27cb110c9c394dbeb9b13b4842f0b, type: 2}
-  - {fileID: 11400000, guid: 23717d8b98285b64abd5ac176fc37266, type: 2}
-  - {fileID: 11400000, guid: 2f2d8d610f648b74583fc4e16b95b463, type: 2}
-  - {fileID: 11400000, guid: 8e1b6f677ea8d5247b959850932863af, type: 2}
-  - {fileID: 11400000, guid: a4e122b39ae93804081e2a9ed778e31b, type: 2}
-  - {fileID: 11400000, guid: aba480fc44749154fb00893e0e75714c, type: 2}
-  - {fileID: 11400000, guid: 304a0de9ad8e64e48956f12c1448f45a, type: 2}
-  - {fileID: 11400000, guid: 3fc3daf726b926b49969d3f28335fece, type: 2}
+  FurnitureTileModels: []
+  GoodsTileModels: []
