@@ -15,7 +15,7 @@ namespace CafeAssets.Script.System.GameMapSystem
         void RemoveTile(Vector3Int pos);
     }
 
-    public class MapView : MonoBehaviour, IMapView, IGameResettable
+    public class MapView : MonoBehaviour, IMapView, IGameResettable,IMapPlaceReceiver
     {
         [SerializeField] private Tilemap _tilemap;
         [SerializeField] private TilemapRenderer _tilemapRenderer;
@@ -41,6 +41,16 @@ namespace CafeAssets.Script.System.GameMapSystem
         {
             Debug.Log("[MapView]Reset");
             _tilemap.ClearAllTiles();
+        }
+
+        public void OnPlaceTile(MapPlaceModel model)
+        {
+            SetTile(model.Model,model.Pos);
+        }
+
+        public void OnRemoveTile(MapPlaceModel model)
+        {
+            throw new NotImplementedException();
         }
     }
 }

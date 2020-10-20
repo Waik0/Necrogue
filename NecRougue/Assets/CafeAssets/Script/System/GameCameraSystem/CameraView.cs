@@ -9,7 +9,7 @@ namespace CafeAssets.Script.System.GameCameraSystem
     {
         void MoveCamera(Vector2 move);
     }
-    public class CameraView : MonoBehaviour,ICameraView,IGameInputReceivable
+    public class CameraView : MonoBehaviour,ICameraView,IGameScreenInputReceiver
     {
         [SerializeField] private Camera _target;
         public void MoveCamera(Vector2 move)

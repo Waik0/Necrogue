@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
 
-public interface IGameInputReceivable
+public interface IGameScreenInputReceiver
 {
     void GameInput(GameInputModel model);
 }
@@ -13,18 +13,21 @@ public interface IGameInputManager
 {
     void InputOnGame(GameInputModel model);
 }
-public class GameInputManager : IGameInputManager,IManager<IGameInputReceivable>,IDisposable
+/// <summary>
+/// ボタン以外の入力を管理
+/// </summary>
+public class GameScreenInputManager : IGameInputManager,IManager<IGameScreenInputReceiver>,IDisposable
 {
-    private List<IGameInputReceivable> _gameInputReceivables = new List<IGameInputReceivable>();
-    public GameInputManager(
+    private List<IGameScreenInputReceiver> _gameInputReceivables = new List<IGameScreenInputReceiver>();
+    public GameScreenInputManager(
         [InjectOptional]
-        List<IGameInputReceivable> gameInputReceivables
+        List<IGameScreenInputReceiver> gameInputReceivables
         )
     {
         if(gameInputReceivables != null)
             _gameInputReceivables = gameInputReceivables;
     }
-    public void Add(IGameInputReceivable element)
+    public void Add(IGameScreenInputReceiver element)
     {
         _gameInputReceivables.Add(element);
     }

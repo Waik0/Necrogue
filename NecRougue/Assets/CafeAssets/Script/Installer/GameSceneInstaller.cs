@@ -26,12 +26,13 @@ public class GameSceneInstaller : MonoInstaller
         //UseCase
         Container.Bind<IGameUseCase>().To<GameUseCase>().AsCached().Lazy();
         Container.Bind<IGameParameterUseCase>().To<GameParameterUseCase>().AsCached().Lazy();
-        
+        Container.BindInterfacesTo<MapUseCase>().AsCached().NonLazy();
         //manager
         //特殊なinterfaceを管理するclass
         Container.BindInterfacesTo<GameTimeManager>().AsCached().NonLazy();//実装先のTickOnGameを呼び出す
         Container.BindInterfacesTo<GameResettableManager>().AsCached().NonLazy();//実装先のResetOnGameを呼び出す
-        Container.BindInterfacesTo<GameInputManager>().AsCached().NonLazy();//実装先のInputOnGameを呼び出す
+        Container.BindInterfacesTo<GameScreenInputManager>().AsCached().NonLazy();//実装先のInputOnGameを呼び出す
+        Container.BindInterfacesTo<MapPlaceManager>().AsCached().NonLazy();
         //Controller
         Container.BindInterfacesTo<GameStaticDataController>().AsSingle().NonLazy();
         //View
