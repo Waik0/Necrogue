@@ -61,5 +61,11 @@ namespace CafeAssets.Script.System.GameTimeSystem
         {
             _timeModel = model;
         }
+
+        public void Dispose()
+        {
+            Debug.Log("[GameTimeManager]Dispose");
+            _tickables?.Clear();
+        }
     }
 }

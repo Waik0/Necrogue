@@ -44,5 +44,10 @@ namespace CafeAssets.Script.System.GameCoreSystem
         {
             _gameResettables?.RemoveAll(_ => _ == null);
         }
+
+        public void Dispose()
+        {
+            _gameResettables?.Clear();
+        }
     }
 }

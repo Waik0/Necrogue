@@ -20,7 +20,7 @@ namespace CafeAssets.Script.System.GameMapSystem
         [SerializeField] private Tilemap _tilemap;
         [SerializeField] private TilemapRenderer _tilemapRenderer;
         [SerializeField] private Text _debugText;
-        private bool _placeTileMode = false;
+     
         public void SetTile(TileModel tile, Vector3Int pos)
         {
             _tilemap.SetTile(pos, tile);
@@ -35,36 +35,7 @@ namespace CafeAssets.Script.System.GameMapSystem
         {
             
         }
-
-        void MoveCamera(Vector2 move)
-        {
-            var cam = Camera.main;
-            cam.gameObject.transform.Translate(move);
-        }
-        public void OnPointerDown(BaseEventData e)
-        {
-            var pe = (PointerEventData) e;
-            if (_placeTileMode)
-            {
-                PlaceTile(pe.position);
-            }
-           
-
-        }
-
-        public void OnPointerUp()
-        {
-            
-        }
-
-        public void OnDrag(BaseEventData e)
-        {
-            var pe = (PointerEventData) e;
-            if (!_placeTileMode)
-            {
-                MoveCamera(pe.delta);
-            }
-        }
+        
 
         public void ResetOnGame()
         {
