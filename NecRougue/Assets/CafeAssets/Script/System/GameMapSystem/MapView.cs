@@ -1,32 +1,26 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using CafeAssets.Script.System.GameCoreSystem;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.Tilemaps;
+using UnityEngine.UI;
 using NotImplementedException = System.NotImplementedException;
 
 namespace CafeAssets.Script.System.GameMapSystem
 {
     public interface IMapView
     {
-        void Reset();
         void SetTile(TileModel tile, Vector3Int pos);
         void RemoveTile(Vector3Int pos);
     }
 
-    public class MapView : MonoBehaviour, IMapView
+    public class MapView : MonoBehaviour, IMapView, IGameResettable
     {
         [SerializeField] private Tilemap _tilemap;
         [SerializeField] private TilemapRenderer _tilemapRenderer;
+        [SerializeField] private Text _debugText;
         private bool _placeTileMode = false;
-        
-        public void Reset()
-        {
-            Debug.Log("[MapView]Reset");
-            _tilemap.ClearAllTiles();
-
-        }
-
         public void SetTile(TileModel tile, Vector3Int pos)
         {
             _tilemap.SetTile(pos, tile);
@@ -66,12 +60,16 @@ namespace CafeAssets.Script.System.GameMapSystem
         public void OnDrag(BaseEventData e)
         {
             var pe = (PointerEventData) e;
-            Debug.Log(pe.delta);
             if (!_placeTileMode)
             {
-                
                 MoveCamera(pe.delta);
             }
+        }
+
+        public void ResetOnGame()
+        {
+            Debug.Log("[MapView]Reset");
+            _tilemap.ClearAllTiles();
         }
     }
 }

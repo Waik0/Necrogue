@@ -3,11 +3,13 @@ using Toast;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.SceneManagement;
-using Zenject;
 
 namespace CafeAssets.Script.Sequence
 {
-    public class RootSequence : MonoBehaviour,ISequence
+    /// <summary>
+    /// Injectされないので注意
+    /// </summary>
+    public class RootSequence : SequenceRoot,ISequence
     {
         public enum State
         {
@@ -51,7 +53,7 @@ namespace CafeAssets.Script.Sequence
                 yield return null;
             }
         }
-        public bool UpdateState()
+        public override bool UpdateState()
         {
             _statemachine.Update();
             return _statemachine.Current != State.End;

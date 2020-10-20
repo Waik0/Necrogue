@@ -4,10 +4,18 @@ using Zenject;
 
 namespace CafeAssets.Script.Sequence
 {
+    /// <summary>
+    /// Injectされないので注意
+    /// </summary>
     public class SequenceController : MonoBehaviour
     {
-        [Inject] private RootSequence _rootSequence;
+        [SerializeField]
+        private SequenceRoot _rootSequence;
 
+        private void Awake()
+        {
+            DontDestroyOnLoad(this.gameObject);
+        }
         private void Update()
         {
             _rootSequence?.UpdateState();

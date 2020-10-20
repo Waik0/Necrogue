@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using CafeAssets.Script.System.GameMapSystem;
 using CafeAssets.Script.System.GameParameterSystem;
 using CafeAssets.Script.System.GameTimeSystem;
 using UnityEngine;
+using UnityEngine.Events;
 using Zenject;
 
 namespace CafeAssets.Script.System.GameCoreSystem
@@ -11,29 +13,25 @@ namespace CafeAssets.Script.System.GameCoreSystem
     {
         //セーブデータ
         void LoadData(string path);
-        void ResetParams();
-        void ResetMap();
+        void Reset();
         void Tick();
 
     }
+    
     public class GameUseCase : IGameUseCase,IDisposable
     {
-        private IGameParameterUseCase _parameter;
-        private IGameStaticDataController _staticData;
-        private IGameTimeUseCase _gameTimeUseCase;
-        private MapView _mapView;
+        private IGameTimeManager _gameTimeUseCase;
+        private IGameResettableManager _gameResettable;
 
         public GameUseCase(
-            MapView mapView,
-            IGameParameterUseCase parameterUseCase,
-            IGameStaticDataController staticData,
-            IGameTimeUseCase gameTimeUseCase)
+            IGameResettableManager gameResettableManager,
+            IGameTimeManager gameTimeUseCase)
         {
-            _parameter = parameterUseCase;
-            _mapView = mapView;
-            _staticData = staticData;
+            _gameResettable = gameResettableManager;
             _gameTimeUseCase = gameTimeUseCase;
         }
+        
+
         /// <summary>
         /// セーブデータよみこみ
         /// </summary>
@@ -43,22 +41,11 @@ namespace CafeAssets.Script.System.GameCoreSystem
         
         }
 
-        public void ResetParams()
+        public void Reset()
         {
-            _parameter.Reset();
+            _gameResettable?.ResetOnGame();
         }
-
-        public void ResetMap()
-        {
-            _mapView.Reset();
-        }
-
-        public void SetTileDebug()
-        {
-            var data = _staticData.GetFloorTileModel("FloorTile_0000");
-            Debug.Log(data.Name);
-            _mapView.SetTile(data,Vector3Int.zero);
-        }
+        
 
         public void Dispose()
         {

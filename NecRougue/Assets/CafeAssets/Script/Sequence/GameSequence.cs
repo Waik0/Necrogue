@@ -10,8 +10,7 @@ public class GameSequence : MonoBehaviour,ISequence,ISequenceResult<GameSequence
 {
     public enum State
     {
-        InitParams,
-        InitMap,
+        Init,
         LoadData,
         GameTick,
         End,
@@ -48,17 +47,10 @@ public class GameSequence : MonoBehaviour,ISequence,ISequenceResult<GameSequence
         _statemachine.Update();
         return _statemachine.Current != State.End;
     }
-    IEnumerator InitParams()
+    IEnumerator Init()
     {
         Debug.Log("[Game]Initialize");
-        _gameUseCase.ResetParams();
-        _statemachine.Next(State.InitMap);
-        yield return null;
-    }
-    IEnumerator InitMap()
-    {
-        Debug.Log("[Game]InitializeMap");
-        _gameUseCase.ResetMap();
+        _gameUseCase.Reset();
         _statemachine.Next(State.LoadData);
         yield return null;
     }

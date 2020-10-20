@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -18,4 +19,9 @@ public interface ISequence
 public interface ISequenceResult<T> where T : struct
 {
     T Result();
+}
+
+public abstract class SequenceRoot : MonoBehaviour,ISequence
+{ 
+    public abstract bool UpdateState();
 }
