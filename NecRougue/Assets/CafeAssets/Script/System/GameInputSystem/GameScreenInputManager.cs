@@ -63,6 +63,7 @@ public enum GameInputState
 public class GameInputModel
 {
     public Vector3 CurrentPos;
+    public Vector3 WorldCurrentPos;
     public Vector3 Delta;
     public Vector3 WorldDelta;
     public Vector3 DownPos;

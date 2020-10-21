@@ -201,6 +201,7 @@ MonoBehaviour:
   _cameraView: {fileID: 1546130176707112421, guid: 77965cb77fd1cff48847a215e086cff1, type: 3}
   _gameInputView: {fileID: 7564934715022245036, guid: 3d2553bdafa23e14eae5c778be7655b1, type: 3}
   _tileSelect: {fileID: 8598966036238986208, guid: ee352275a7d2fa748bcc7476ce1c6e20, type: 3}
+  _debug: {fileID: 6459845268290082964, guid: 1988dcaa398f1374597f652f44650422, type: 3}
 --- !u!114 &1910633943
 MonoBehaviour:
   m_ObjectHideFlags: 0

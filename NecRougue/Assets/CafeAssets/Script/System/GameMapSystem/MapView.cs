@@ -19,8 +19,7 @@ namespace CafeAssets.Script.System.GameMapSystem
     {
         [SerializeField] private Tilemap _tilemap;
         [SerializeField] private TilemapRenderer _tilemapRenderer;
-        [SerializeField] private Text _debugText;
-     
+
         public void SetTile(TileModel tile, Vector3Int pos)
         {
             _tilemap.SetTile(pos, tile);
@@ -45,7 +44,7 @@ namespace CafeAssets.Script.System.GameMapSystem
 
         public void OnPlaceTile(MapPlaceModel model)
         {
-            SetTile(model.Model,model.Pos);
+            SetTile(model.Model, _tilemap.WorldToCell(model.WorldPos));
         }
 
         public void OnRemoveTile(MapPlaceModel model)

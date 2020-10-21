@@ -11,6 +11,8 @@ namespace CafeAssets.Script.System.GameCoreSystem
         FurnitureTileModel GetFurnitureTileModel(string name);
         GoodsTileModel GetGoodsTileModel(string name);
     }
+
+   
     public class GameStaticDataController : IGameStaticDataController
     {
         private TileModelProvider _tileModelProvider;

@@ -10,21 +10,26 @@ namespace CafeAssets.Script.System.GameMapSystem
 {
     public interface ITileSelectView
     {
-    
+        TileType SelectedType { get; set; }
     }
     public class TileSelectView : MonoBehaviour,ITileSelectView,IGameScreenInputReceiver
     {
         [SerializeField] private Canvas _canvas;
         [SerializeField] private RectTransform _tileTypeList;
         [SerializeField] private RectTransform _tileList;
+        [SerializeField] private Button _cancelButton;
+        //prefab
         [SerializeField] private Button _buttonPrefab;
         private TileModelProvider _tileModelProvider;
-        private TileType _selected;
+        private ITileSelectManager _tileSelectManager;
+        public TileType SelectedType { get; set; }
         [Inject]
         void Inject(
-            TileModelProvider tileModelProvider
-            )
+            TileModelProvider tileModelProvider,
+            ITileSelectManager tileSelectManager
+        )
         {
+            _tileSelectManager = tileSelectManager;
             _tileModelProvider = tileModelProvider;
         }
 
@@ -41,7 +46,10 @@ namespace CafeAssets.Script.System.GameMapSystem
 
         void OnSelectType(TileType type)
         {
-            _selected = type;
+            SelectedType = type;
+            _tileSelectManager.OnSelectTile(new TileSelectModel(){
+                Model = _tileModelProvider.GetFloorTileModel("FloorTile_0000")
+            });//debug
         }
         private void Awake()
         {
@@ -52,8 +60,12 @@ namespace CafeAssets.Script.System.GameMapSystem
         {
             if (model.State == GameInputState.PointerDown)
             {
-                _selected = TileType.None;
+                SelectedType = TileType.None;
+                _tileSelectManager.OnSelectTile(new TileSelectModel(){Model = null});
             }
         }
+
+
+        
     }
 }

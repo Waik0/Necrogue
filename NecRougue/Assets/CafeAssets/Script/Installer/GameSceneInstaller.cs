@@ -16,6 +16,11 @@ public class GameSceneInstaller : MonoInstaller
     [SerializeField] private CameraView _cameraView;
     [SerializeField] private GameInputView _gameInputView;
     [SerializeField] private TileSelectView _tileSelect;
+    
+    //debug
+    //todo 別Installerに分けてdefine切り分けしてReleaseに入らないように
+    [SerializeField] private DebugView _debug;
+    
     /// <summary>
     /// Gameシーンでインストールされる項目
     /// ※Lazyの使用に注意!!!
@@ -27,21 +32,25 @@ public class GameSceneInstaller : MonoInstaller
         //UseCase
         Container.Bind<IGameUseCase>().To<GameUseCase>().AsCached().Lazy();
         Container.Bind<IGameParameterUseCase>().To<GameParameterUseCase>().AsCached().Lazy();
-        Container.BindInterfacesTo<MapUseCase>().AsCached().NonLazy();
+        Container.BindInterfacesTo<MapPlaceUseCase>().AsCached().NonLazy();
         //manager
         //特殊なinterfaceを管理するclass
         Container.BindInterfacesTo<GameTimeManager>().AsCached().NonLazy();//実装先のTickOnGameを呼び出す
         Container.BindInterfacesTo<GameResettableManager>().AsCached().NonLazy();//実装先のResetOnGameを呼び出す
         Container.BindInterfacesTo<GameScreenInputManager>().AsCached().NonLazy();//実装先のInputOnGameを呼び出す
-        Container.BindInterfacesTo<MapPlaceManager>().AsCached().NonLazy();
+        Container.BindInterfacesTo<MapPlaceManager>().AsCached().NonLazy();//OnMapPlace
+        Container.BindInterfacesTo<TileSelectManager>().AsCached().NonLazy();//OnTileSelect
         //Controller
-        Container.BindInterfacesTo<GameStaticDataController>().AsSingle().NonLazy();
+        //Container.BindInterfacesTo<GameStaticDataController>().AsSingle().NonLazy();
         //View
         Container.BindInterfacesTo<MapView>().FromComponentInNewPrefab(_mapViewPrefab).AsCached().NonLazy();
         Container.BindInterfacesTo<GameTimeView>().FromComponentInNewPrefab(_gameTimeView).AsCached().NonLazy();
         Container.BindInterfacesTo<CameraView>().FromComponentInNewPrefab(_cameraView).AsCached().NonLazy();
         Container.BindInterfacesTo<GameInputView>().FromComponentInNewPrefab(_gameInputView).AsCached().NonLazy();
         Container.BindInterfacesTo<TileSelectView>().FromComponentInNewPrefab(_tileSelect).AsCached().NonLazy();
-
+        
+        //Debug
+        //todo 別Installerに分けてdefine切り分けしてReleaseに入らないように
+        Container.BindInterfacesTo<DebugView>().FromComponentInNewPrefab(_debug).AsCached().NonLazy();
     }
 }

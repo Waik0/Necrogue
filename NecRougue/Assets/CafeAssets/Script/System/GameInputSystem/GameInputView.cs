@@ -8,25 +8,31 @@ namespace CafeAssets.Script.System.GameInputSystem
 {
     public interface IGameInputView
     {
-        
+        GameInputModel Model { get; }
     }
     public class GameInputView : MonoBehaviour,IGameInputView
     {
-        private bool _placeTileMode = false;
         private IMapView _mapView;
         private ICameraView _cameraView;
         private IGameInputManager _inputManager;
+        private ITileSelectView _tileSelectView;
+        private IMapPlaceUseCase _mapPlaceUseCase;
         private GameInputModel _model;
         private Vector3 _before;
+        public GameInputModel Model => _model;
         [Inject]
         void Inject(
             IMapView mapView,
             ICameraView cameraView,
-            IGameInputManager inputManager)
+            IGameInputManager inputManager,
+            IMapPlaceUseCase mapPlaceUseCase,
+            ITileSelectView tileSelectView)
         {
             _mapView = mapView;
             _cameraView = cameraView;
             _inputManager = inputManager;
+            _tileSelectView = tileSelectView;
+            _mapPlaceUseCase = mapPlaceUseCase;
             _model = new GameInputModel();
         }
 
@@ -34,7 +40,6 @@ namespace CafeAssets.Script.System.GameInputSystem
         {
           
             var pe = (PointerEventData) e;
-            Debug.Log(state);
             //前回がUpだった
             if (_model.State == GameInputState.PointerUp || 
                 state == GameInputState.PointerDown)
@@ -43,11 +48,19 @@ namespace CafeAssets.Script.System.GameInputSystem
                 _before = pe.position;
                 _model.DownPos = pe.position;
             }
+
+            if (state == GameInputState.PointerDown)
+            {
+                //downの時のみ判定
+                _model.IsPlaceTileMode = _mapPlaceUseCase.SelectedTile != null;
+            }
+            var pos = _cameraView.ScreenToWorldPoint(pe.position);
             _model.Delta = pe.delta;
-            _model.WorldDelta = _cameraView.ScreenToWorldPoint(pe.position) - _cameraView.ScreenToWorldPoint(_before);
+            _model.WorldDelta = pos - _cameraView.ScreenToWorldPoint(_before);
             _model.CurrentPos = pe.position;
+            _model.WorldCurrentPos = pos;
             _model.State = state;
-            _model.IsPlaceTileMode = _placeTileMode;
+            
             _inputManager.InputOnGame(_model);
             _before = pe.position;
         }
@@ -67,6 +80,7 @@ namespace CafeAssets.Script.System.GameInputSystem
         {
             SendInput(e,GameInputState.Drug);
         }
-        
+
+       
     }
 }

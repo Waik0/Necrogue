@@ -62,6 +62,6 @@ namespace CafeAssets.Script.System.GameMapSystem
     public class MapPlaceModel
     {
         public TileModel Model;
-        public Vector3Int Pos;
+        public Vector3 WorldPos;
     }
 }
