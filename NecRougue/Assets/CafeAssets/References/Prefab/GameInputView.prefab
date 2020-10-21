@@ -272,7 +272,7 @@ MonoBehaviour:
         - m_Target: {fileID: 7564934715022245036}
           m_TargetAssemblyTypeName: CafeAssets.Script.System.GameInputSystem.GameInputView,
             Assembly-CSharp
-          m_MethodName: OnPointerUp
+          m_MethodName: OnDrag
           m_Mode: 0
           m_Arguments:
             m_ObjectArgument: {fileID: 0}

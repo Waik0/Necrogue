@@ -17,6 +17,7 @@ namespace CafeAssets.Script.System.GameInputSystem
         private ICameraView _cameraView;
         private IGameInputManager _inputManager;
         private GameInputModel _model;
+        private Vector3 _before;
         [Inject]
         void Inject(
             IMapView mapView,
@@ -31,16 +32,29 @@ namespace CafeAssets.Script.System.GameInputSystem
 
         void SendInput(BaseEventData e,GameInputState state)
         {
+          
             var pe = (PointerEventData) e;
+            Debug.Log(state);
+            //前回がUpだった
+            if (_model.State == GameInputState.PointerUp || 
+                state == GameInputState.PointerDown)
+            {
+                Debug.Log("Reset");
+                _before = pe.position;
+                _model.DownPos = pe.position;
+            }
             _model.Delta = pe.delta;
-            _model.Pos = pe.position;
+            _model.WorldDelta = _cameraView.ScreenToWorldPoint(pe.position) - _cameraView.ScreenToWorldPoint(_before);
+            _model.CurrentPos = pe.position;
             _model.State = state;
             _model.IsPlaceTileMode = _placeTileMode;
             _inputManager.InputOnGame(_model);
+            _before = pe.position;
         }
         public void OnPointerDown(BaseEventData e)
         {
             //check tile state
+            
             SendInput(e,GameInputState.PointerDown);
         }
 

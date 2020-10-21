@@ -7,19 +7,28 @@ namespace CafeAssets.Script.System.GameCameraSystem
 {
     public interface ICameraView
     {
-        void MoveCamera(Vector2 move);
+        void MoveCamera(Vector3 pos);
+        Vector3 ScreenToWorldPoint(Vector2 screenPoint);
     }
     public class CameraView : MonoBehaviour,ICameraView,IGameScreenInputReceiver
     {
         [SerializeField] private Camera _target;
-        public void MoveCamera(Vector2 move)
+        private Vector3 _anchor;
+        public void MoveCamera(Vector3 pos)
         {
-            _target.gameObject.transform.Translate(move);
+            pos.z = -10;
+            _target.gameObject.transform.position = pos;
+        }
+
+        public Vector3 ScreenToWorldPoint(Vector2 screenPoint)
+        {
+            return _target.ScreenToWorldPoint(screenPoint);
         }
 
         public void GameInput(GameInputModel model)
         {
-            Debug.Log(model.Delta);
+            Debug.Log(model.WorldDelta);
+            MoveCamera(_target.gameObject.transform.position - model.WorldDelta);
         }
     }
 }

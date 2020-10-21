@@ -41,7 +41,10 @@ public class GameScreenInputManager : IGameInputManager,IManager<IGameScreenInpu
     {
         _gameInputReceivables.Clear();
     }
-
+    /// <summary>
+    /// ボタン以外の点でインプットがあったら発火
+    /// </summary>
+    /// <param name="model"></param>
     public void InputOnGame(GameInputModel model)
     {
         foreach (var gameInputReceivable in _gameInputReceivables)
@@ -59,8 +62,10 @@ public enum GameInputState
 }
 public class GameInputModel
 {
-    public Vector2 Pos;
-    public Vector2 Delta;
+    public Vector3 CurrentPos;
+    public Vector3 Delta;
+    public Vector3 WorldDelta;
+    public Vector3 DownPos;
     public bool IsPlaceTileMode;
     public GameInputState State;
 }

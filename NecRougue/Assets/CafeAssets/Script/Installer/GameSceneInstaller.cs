@@ -15,6 +15,7 @@ public class GameSceneInstaller : MonoInstaller
     [SerializeField] private GameTimeView _gameTimeView;
     [SerializeField] private CameraView _cameraView;
     [SerializeField] private GameInputView _gameInputView;
+    [SerializeField] private TileSelectView _tileSelect;
     /// <summary>
     /// Gameシーンでインストールされる項目
     /// ※Lazyの使用に注意!!!
@@ -40,6 +41,7 @@ public class GameSceneInstaller : MonoInstaller
         Container.BindInterfacesTo<GameTimeView>().FromComponentInNewPrefab(_gameTimeView).AsCached().NonLazy();
         Container.BindInterfacesTo<CameraView>().FromComponentInNewPrefab(_cameraView).AsCached().NonLazy();
         Container.BindInterfacesTo<GameInputView>().FromComponentInNewPrefab(_gameInputView).AsCached().NonLazy();
+        Container.BindInterfacesTo<TileSelectView>().FromComponentInNewPrefab(_tileSelect).AsCached().NonLazy();
 
     }
 }

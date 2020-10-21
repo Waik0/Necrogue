@@ -6,6 +6,7 @@ namespace CafeAssets.Script.System.GameCoreSystem
 {
     public interface IGameStaticDataController
     {
+        TileModelProvider TileModelProvider { get; }
         FloorTileModel GetFloorTileModel(string name);
         FurnitureTileModel GetFurnitureTileModel(string name);
         GoodsTileModel GetGoodsTileModel(string name);
@@ -20,7 +21,9 @@ namespace CafeAssets.Script.System.GameCoreSystem
         {
             _tileModelProvider = tileModelProvider;
         }
-        
+
+        public TileModelProvider TileModelProvider { get => _tileModelProvider; }
+
         /// <summary>
         /// 
         /// </summary>

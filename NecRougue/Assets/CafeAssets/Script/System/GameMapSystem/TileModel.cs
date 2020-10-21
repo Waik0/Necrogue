@@ -7,7 +7,13 @@ using UnityEngine;
 
 namespace CafeAssets.Script.System.GameMapSystem
 {
-
+    public enum TileType
+    {
+        Floor,
+        Furniture,
+        Goods,
+        None,
+    }
     public class TileModel : IsometricRuleTile
     {
         public string Unique => this.name;
