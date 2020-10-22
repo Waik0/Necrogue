@@ -40,21 +40,28 @@ namespace CafeAssets.Script.System.GameInputSystem
         {
           
             var pe = (PointerEventData) e;
-            //前回がUpだった
+            var pos = _cameraView.ScreenToWorldPoint(pe.position);
+            //前回がUpだったか、押されたタイミング
             if (_model.State == GameInputState.PointerUp || 
                 state == GameInputState.PointerDown)
             {
                 Debug.Log("Reset");
                 _before = pe.position;
                 _model.DownPos = pe.position;
+                _model.WorldDownPos = pos;
             }
 
             if (state == GameInputState.PointerDown)
             {
                 //downの時のみ判定
-                _model.IsPlaceTileMode = _mapPlaceUseCase.SelectedTile != null;
+                var mode = InputMode.MoveCamera;
+                if (_mapPlaceUseCase.SelectedTile != null)
+                {
+                    mode = InputMode.PlaceTile;
+                }
+                _model.InputMode = mode;
             }
-            var pos = _cameraView.ScreenToWorldPoint(pe.position);
+            
             _model.Delta = pe.delta;
             _model.WorldDelta = pos - _cameraView.ScreenToWorldPoint(_before);
             _model.CurrentPos = pe.position;

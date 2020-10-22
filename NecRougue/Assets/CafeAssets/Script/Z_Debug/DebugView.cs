@@ -28,12 +28,13 @@ public class DebugView : MonoBehaviour,IDebugView
 
     void Update()
     {
-        _text.text = "MAP DEBUG \n"+
-            $"{_tileSelectView.SelectedType}\n" + 
-            $"{_mapPlaceUseCase.SelectedTile}\n\n" +
-            "INPUT DEBUG \n"+
-            $"{_gameInputView.Model.State} \n"+
-            $"{_gameInputView.Model.IsPlaceTileMode}";
+        _text.text = "MAP DEBUG \n" +
+                     $"{_tileSelectView.SelectedType}\n" +
+                     $"{_mapPlaceUseCase.SelectedTile?.Name}\n\n" +
+                     $"{_mapPlaceUseCase.PlaceTileMode}\n\n" + 
+                     "INPUT DEBUG \n" +
+                     $"{_gameInputView.Model.State} \n" +
+                     $"{_gameInputView.Model.InputMode} \n";
     }
 
 }

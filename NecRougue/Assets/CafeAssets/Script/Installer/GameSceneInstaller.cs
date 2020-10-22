@@ -12,6 +12,7 @@ using Zenject;
 public class GameSceneInstaller : MonoInstaller
 {
     [SerializeField] private MapView _mapViewPrefab;
+    [SerializeField] private MapPlacePreviewView _mapPlacePreviewViewPrefab;
     [SerializeField] private GameTimeView _gameTimeView;
     [SerializeField] private CameraView _cameraView;
     [SerializeField] private GameInputView _gameInputView;
@@ -44,6 +45,7 @@ public class GameSceneInstaller : MonoInstaller
         //Container.BindInterfacesTo<GameStaticDataController>().AsSingle().NonLazy();
         //View
         Container.BindInterfacesTo<MapView>().FromComponentInNewPrefab(_mapViewPrefab).AsCached().NonLazy();
+        Container.BindInterfacesTo<MapPlacePreviewView>().FromComponentInNewPrefab(_mapPlacePreviewViewPrefab).AsCached().NonLazy();
         Container.BindInterfacesTo<GameTimeView>().FromComponentInNewPrefab(_gameTimeView).AsCached().NonLazy();
         Container.BindInterfacesTo<CameraView>().FromComponentInNewPrefab(_cameraView).AsCached().NonLazy();
         Container.BindInterfacesTo<GameInputView>().FromComponentInNewPrefab(_gameInputView).AsCached().NonLazy();

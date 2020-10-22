@@ -12,6 +12,9 @@ namespace CafeAssets.Script.System.GameMapSystem
     {
         TileType SelectedType { get; set; }
     }
+    /// <summary>
+    /// タイル選択UI
+    /// </summary>
     public class TileSelectView : MonoBehaviour,ITileSelectView,IGameScreenInputReceiver
     {
         [SerializeField] private Canvas _canvas;
@@ -61,7 +64,6 @@ namespace CafeAssets.Script.System.GameMapSystem
             if (model.State == GameInputState.PointerDown)
             {
                 SelectedType = TileType.None;
-                _tileSelectManager.OnSelectTile(new TileSelectModel(){Model = null});
             }
         }
 

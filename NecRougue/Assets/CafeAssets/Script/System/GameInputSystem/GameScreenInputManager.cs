@@ -13,6 +13,14 @@ public interface IGameInputManager
 {
     void InputOnGame(GameInputModel model);
 }
+
+public enum InputMode
+{
+    MoveCamera,
+    PlaceTile,
+    None,
+}
+
 /// <summary>
 /// ボタン以外の入力を管理
 /// </summary>
@@ -67,6 +75,7 @@ public class GameInputModel
     public Vector3 Delta;
     public Vector3 WorldDelta;
     public Vector3 DownPos;
-    public bool IsPlaceTileMode;
+    public Vector3 WorldDownPos;
+    public InputMode InputMode;
     public GameInputState State;
 }

@@ -27,7 +27,7 @@ namespace CafeAssets.Script.System.GameCameraSystem
 
         public void GameInput(GameInputModel model)
         {
-            if(!model.IsPlaceTileMode) MoveCamera(_target.gameObject.transform.position - model.WorldDelta);
+            if(model.InputMode == InputMode.MoveCamera) MoveCamera(_target.gameObject.transform.position - model.WorldDelta);
         }
     }
 }

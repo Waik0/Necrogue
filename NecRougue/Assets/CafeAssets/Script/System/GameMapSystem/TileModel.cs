@@ -14,6 +14,13 @@ namespace CafeAssets.Script.System.GameMapSystem
         Goods,
         None,
     }
+    public enum PlaceTileMode
+    {
+        PlaceTileSingle,//一度だけ置く
+        PlaceTileDraw,//ドラッグしたところにも置いていく
+        PlaceTileRect,//四角形に置く
+    
+    }
     public class TileModel : IsometricRuleTile
     {
         public string Unique => this.name;
@@ -32,7 +39,13 @@ namespace CafeAssets.Script.System.GameMapSystem
         [Header("通行可否(壁かどうか)")] 
         //同じ座標のすべてのレイヤがIsWall == falseじゃないと通行できない
         public bool IsWall;
+
+        [Header("ブラシサイズ(単一の大きさ)")] 
+        public Vector2Int Brush;
         
+        [Header("デフォルトの配置モード")] 
+        public PlaceTileMode PlaceMode = PlaceTileMode.PlaceTileSingle;
+
     }
 
     [Serializable]
