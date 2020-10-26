@@ -16,6 +16,9 @@ namespace CafeAssets.Script.System.GameMapSystem
         void OnPlaceTile(MapPlaceModel model);
         void OnRemoveTile(MapPlaceModel model);
     }
+    /// <summary>
+    /// タイルが置かれたことを通知する
+    /// </summary>
     public class MapPlaceManager : IMapPlaceManager,IManager<IMapPlaceReceiver>
     {
         private List<IMapPlaceReceiver> _mapPlaceReceivers = new List<IMapPlaceReceiver>();
