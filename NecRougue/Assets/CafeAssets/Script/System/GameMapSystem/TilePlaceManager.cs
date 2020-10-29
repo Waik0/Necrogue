@@ -8,21 +8,21 @@ namespace CafeAssets.Script.System.GameMapSystem
 {
     public interface IMapPlaceReceiver
     {
-        void OnPlaceTile(MapPlaceModel model);
-        void OnRemoveTile(MapPlaceModel model);
+        void OnPlaceTile(TilePlaceModel model);
+        void OnRemoveTile(TilePlaceModel model);
     }
     public interface IMapPlaceManager
     {
-        void OnPlaceTile(MapPlaceModel model);
-        void OnRemoveTile(MapPlaceModel model);
+        void OnPlaceTile(TilePlaceModel model);
+        void OnRemoveTile(TilePlaceModel model);
     }
     /// <summary>
     /// タイルが置かれたことを通知する
     /// </summary>
-    public class MapPlaceManager : IMapPlaceManager,IManager<IMapPlaceReceiver>
+    public class TilePlaceManager : IMapPlaceManager,IManager<IMapPlaceReceiver>
     {
         private List<IMapPlaceReceiver> _mapPlaceReceivers = new List<IMapPlaceReceiver>();
-        public MapPlaceManager(
+        public TilePlaceManager(
             [InjectOptional]
             List<IMapPlaceReceiver> mapPlaceReceivers
         )
@@ -45,7 +45,7 @@ namespace CafeAssets.Script.System.GameMapSystem
             _mapPlaceReceivers.Clear();
         }
         
-        public void OnPlaceTile(MapPlaceModel model)
+        public void OnPlaceTile(TilePlaceModel model)
         {
             foreach (var mapPlaceReceiver in _mapPlaceReceivers)
             {
@@ -53,7 +53,7 @@ namespace CafeAssets.Script.System.GameMapSystem
             }
         }
 
-        public void OnRemoveTile(MapPlaceModel model)
+        public void OnRemoveTile(TilePlaceModel model)
         {
             foreach (var mapPlaceReceiver in _mapPlaceReceivers)
             {
@@ -62,7 +62,7 @@ namespace CafeAssets.Script.System.GameMapSystem
         }
     }
 
-    public class MapPlaceModel
+    public class TilePlaceModel
     {
         public TileModel Model;
         public PlaceTileMode PlaceMode;

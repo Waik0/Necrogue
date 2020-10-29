@@ -24,7 +24,7 @@ MonoBehaviour:
     Num: 5
   ProvideParameter:
   - Name: Style_American
-    Operation: 0
+    Operation: 1
     Num: 10
   MinLayer: 0
   MaxLayer: 0

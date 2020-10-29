@@ -11,7 +11,7 @@ using Zenject;
 
 public class GameSceneInstaller : MonoInstaller
 {
-    [SerializeField] private MapView _mapViewPrefab;
+    [SerializeField] private TilemapView tilemapViewPrefab;
     [SerializeField] private MapPlacePreviewView _mapPlacePreviewViewPrefab;
     [SerializeField] private GameTimeView _gameTimeView;
     [SerializeField] private CameraView _cameraView;
@@ -31,20 +31,21 @@ public class GameSceneInstaller : MonoInstaller
     {
         Debug.Log("[GameScene] Install");
         //UseCase
-        Container.Bind<IGameUseCase>().To<GameUseCase>().AsCached().Lazy();
-        Container.Bind<IGameParameterUseCase>().To<GameParameterUseCase>().AsCached().Lazy();
+        Container.BindInterfacesTo<GameUseCase>().AsCached().NonLazy();
+        Container.BindInterfacesTo<GameParameterUseCase>().AsCached().NonLazy();
         Container.BindInterfacesTo<MapPlaceUseCase>().AsCached().NonLazy();
         //manager
         //特殊なinterfaceを管理するclass
         Container.BindInterfacesTo<GameTimeManager>().AsCached().NonLazy();//実装先のTickOnGameを呼び出す
         Container.BindInterfacesTo<GameResettableManager>().AsCached().NonLazy();//実装先のResetOnGameを呼び出す
         Container.BindInterfacesTo<GameScreenInputManager>().AsCached().NonLazy();//実装先のInputOnGameを呼び出す
-        Container.BindInterfacesTo<MapPlaceManager>().AsCached().NonLazy();//OnMapPlace
+        Container.BindInterfacesTo<TilePlaceManager>().AsCached().NonLazy();//OnMapPlace
         Container.BindInterfacesTo<TileSelectManager>().AsCached().NonLazy();//OnTileSelect
+        Container.BindInterfacesTo<TilemapManager>().AsCached().NonLazy();//OnUpdateTilemap
         //Controller
         //Container.BindInterfacesTo<GameStaticDataController>().AsSingle().NonLazy();
         //View
-        Container.BindInterfacesTo<MapView>().FromComponentInNewPrefab(_mapViewPrefab).AsCached().NonLazy();
+        Container.BindInterfacesTo<TilemapView>().FromComponentInNewPrefab(tilemapViewPrefab).AsCached().NonLazy();
         Container.BindInterfacesTo<MapPlacePreviewView>().FromComponentInNewPrefab(_mapPlacePreviewViewPrefab).AsCached().NonLazy();
         Container.BindInterfacesTo<GameTimeView>().FromComponentInNewPrefab(_gameTimeView).AsCached().NonLazy();
         Container.BindInterfacesTo<CameraView>().FromComponentInNewPrefab(_cameraView).AsCached().NonLazy();

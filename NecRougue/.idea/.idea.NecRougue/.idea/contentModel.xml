@@ -9,7 +9,10 @@
       <e p="Assets" t="Include">
         <e p="CafeAssets" t="Include">
           <e p="Script" t="Include">
-            <e p="Installer" t="Include">
+            <e p="Archtecture" t="Include">
+              <e p="IManager.cs" t="Include" />
+            </e>
+            <e p="SceneInstaller" t="Include">
               <e p="GameSceneInstaller.cs" t="Include" />
               <e p="ProjectInstaller.cs" t="Include" />
             </e>
@@ -20,22 +23,74 @@
               <e p="SequenceController.cs" t="Include" />
             </e>
             <e p="system" t="Include">
+              <e p="GameCameraSystem" t="Include">
+                <e p="CameraView.cs" t="Include" />
+              </e>
               <e p="GameCoreSystem" t="Include">
-                <e p="GamePresenter.cs" t="Include" />
+                <e p="GameResettableManager.cs" t="Include" />
+                <e p="GameStaticDataController.cs" t="Include" />
+                <e p="GameUseCase.cs" t="Include" />
+              </e>
+              <e p="GameInputSystem" t="Include">
+                <e p="GameInputView.cs" t="Include" />
+                <e p="GameScreenInputManager.cs" t="Include" />
+              </e>
+              <e p="GameMapPreviewSystem" t="Include">
+                <e p="MapPlacePreviewView.cs" t="Include" />
               </e>
               <e p="GameMapSystem" t="Include">
-                <e p="MapView.cs" t="Include" />
+                <e p="BasicTileModel.cs" t="Include" />
+                <e p="EffectiveTileModel.cs" t="Include" />
+                <e p="MapPlaceUseCase.cs" t="Include" />
+                <e p="TileInheritance" t="Include">
+                  <e p="FloorTileModel.cs" t="Include" />
+                  <e p="FurnitureTileModel.cs" t="Include" />
+                  <e p="GoodsTileModel.cs" t="Include" />
+                </e>
+                <e p="TilemapManager.cs" t="Include" />
+                <e p="TilemapView.cs" t="Include" />
                 <e p="TileModel.cs" t="Include" />
+                <e p="TileModelProvider.cs" t="Include" />
+                <e p="TilePlaceManager.cs" t="Include" />
+                <e p="TileSelect" t="Include">
+                  <e p="TileSelectButton.cs" t="Include" />
+                  <e p="TileSelectManager.cs" t="Include" />
+                  <e p="TileSelectView.cs" t="Include" />
+                </e>
+              </e>
+              <e p="GameMenuSystem" t="Include">
+                <e p="MenuModel.cs" t="Include" />
+                <e p="MenuModelProvider.cs" t="Include" />
               </e>
               <e p="GameMilestoneSystem" t="Include">
                 <e p="MilestonePresenter.cs" t="Include" />
               </e>
               <e p="GameParameterSystem" t="Include">
                 <e p="GameParameterModel.cs" t="Include" />
-                <e p="GameParameterPresenter.cs" t="Include" />
+                <e p="GameParameterUseCase.cs" t="Include" />
+              </e>
+              <e p="GameTimeSystem" t="Include">
+                <e p="GameTimeManager.cs" t="Include" />
+                <e p="GameTimeUseCase.cs" t="Include" />
+                <e p="GameTimeView.cs" t="Include" />
               </e>
               <e p="PropsSystem" t="Include">
                 <e p="Props.cs" t="Include" />
+              </e>
+            </e>
+            <e p="Z_Debug" t="Include">
+              <e p="DebugView.cs" t="Include" />
+              <e p="IDebug.cs" t="Include" />
+            </e>
+            <e p="Z_Reference" t="Include">
+              <e p="Editor" t="Include">
+                <e p="GameNpcSystemリファレンス.cs" t="Include" />
+                <e p="ScriptReference.cs" t="Include" />
+              </e>
+            </e>
+            <e p="Z_Test" t="Include">
+              <e p="MapTest" t="Include">
+                <e p="MapTestSequence.cs" t="Include" />
               </e>
             </e>
           </e>

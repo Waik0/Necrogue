@@ -14,8 +14,8 @@ public enum GameParameters
 
 public enum GameParameterOperations
 {
-    Add,
-    Times,
-    Division,
+    Add = 1,
+    Times = 2,
+    Division = 3,
 }
 

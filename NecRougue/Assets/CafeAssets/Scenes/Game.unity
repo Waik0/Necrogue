@@ -196,7 +196,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3332759f29735c94fb22f933e97feebd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _mapViewPrefab: {fileID: 69387107283309812, guid: d8f258a8eac3c6d4d9add435ea95f75d, type: 3}
+  tilemapViewPrefab: {fileID: 69387107283309812, guid: d8f258a8eac3c6d4d9add435ea95f75d, type: 3}
   _mapPlacePreviewViewPrefab: {fileID: 8919544307307749706, guid: 7635862ef5b522640979a905b70f292c, type: 3}
   _gameTimeView: {fileID: 2690409568064313249, guid: e9b681a8e071fc34bacb3ad6a82193ec, type: 3}
   _cameraView: {fileID: 1546130176707112421, guid: 77965cb77fd1cff48847a215e086cff1, type: 3}

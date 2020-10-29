@@ -32,7 +32,7 @@ namespace CafeAssets.Script.System.GameMapSystem
         /// <summary>
         /// タイル設置
         /// </summary>
-        void PlaceTile(MapPlaceModel model)
+        void PlaceTile(TilePlaceModel model)
         {
             
             _mapPlaceManager?.OnPlaceTile(model);
@@ -107,7 +107,7 @@ namespace CafeAssets.Script.System.GameMapSystem
 
     public static class GameInputModelExtensions
     {
-        public static MapPlaceModel ToPlaceModel(this GameInputModel model,PlaceTileMode mode)
+        public static TilePlaceModel ToPlaceModel(this GameInputModel model,PlaceTileMode mode)
         {
             switch (mode)
             {
@@ -124,9 +124,9 @@ namespace CafeAssets.Script.System.GameMapSystem
                     throw new ArgumentOutOfRangeException();
             }
         }
-        private static MapPlaceModel ToPlaceModelInternal(this GameInputModel model,Vector3 spos,Vector3 epos,PlaceTileMode mode)
+        private static TilePlaceModel ToPlaceModelInternal(this GameInputModel model,Vector3 spos,Vector3 epos,PlaceTileMode mode)
         {
-            return new MapPlaceModel()
+            return new TilePlaceModel()
             {
                 StartWorldPos = spos,
                 EndWorldPos = epos,
@@ -134,17 +134,17 @@ namespace CafeAssets.Script.System.GameMapSystem
                 Model = null
             };
         }
-        public static MapPlaceModel PlaceTileSingle(this GameInputModel model)
+        public static TilePlaceModel PlaceTileSingle(this GameInputModel model)
         {
             var p = new Vector3(model.WorldCurrentPos.x, model.WorldCurrentPos.y, 0);
             return model.ToPlaceModelInternal(p,p,PlaceTileMode.PlaceTileSingle);
         }
-        public static MapPlaceModel PlaceTileDraw(this GameInputModel model)
+        public static TilePlaceModel PlaceTileDraw(this GameInputModel model)
         {
             var p = new Vector3(model.WorldCurrentPos.x, model.WorldCurrentPos.y, 0);
             return model.ToPlaceModelInternal(p, p, PlaceTileMode.PlaceTileDraw);
         }
-        public static MapPlaceModel PlaceTileRect(this GameInputModel model)
+        public static TilePlaceModel PlaceTileRect(this GameInputModel model)
         {
             return model.ToPlaceModelInternal(
                 new Vector3(model.WorldCurrentPos.x,model.WorldCurrentPos.y,0),

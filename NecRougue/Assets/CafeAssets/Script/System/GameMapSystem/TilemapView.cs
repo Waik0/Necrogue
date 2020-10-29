@@ -2,31 +2,42 @@
 using System.Collections;
 using System.Collections.Generic;
 using CafeAssets.Script.System.GameCoreSystem;
+using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.Tilemaps;
 using UnityEngine.UI;
+using Zenject;
 using NotImplementedException = System.NotImplementedException;
 
 namespace CafeAssets.Script.System.GameMapSystem
 {
     public interface IMapView
     {
-        void SetTile(MapPlaceModel model);
+        void SetTile(TilePlaceModel model);
         void RemoveTile(Vector3Int pos);
     }
     /// <summary>
     /// タイルマップを管理
-    /// ViewだがTilemapのインスタンスはTileMapManagerを経由して他のUsecaseたちに共有する予定
+    /// todo ViewだがTilemapのインスタンスはTileMapManagerを経由して他のUsecaseたちに共有する予定
     /// </summary>
-    public class MapView : MonoBehaviour, IMapView, IGameResettable,IMapPlaceReceiver
+    public class TilemapView : MonoBehaviour, IMapView, IGameResettable,IMapPlaceReceiver
     {
         [SerializeField] private Tilemap _tilemap;
         [SerializeField] private TilemapRenderer _tilemapRenderer;
+        private ITilemapManager _tilemapManager;
 
-        public void SetTile(MapPlaceModel model)
+        [Inject]
+        public void Inject(
+            ITilemapManager tilemapManager
+        )
+        {
+            _tilemapManager = tilemapManager;
+        }
+        public void SetTile(TilePlaceModel model)
         {
             _tilemap.SetTileModel(model);
+            _tilemapManager.OnUpdateTile(new TilemapModel(){Tilemap = _tilemap});
         }
 
         public void RemoveTile(Vector3Int pos)
@@ -40,12 +51,12 @@ namespace CafeAssets.Script.System.GameMapSystem
             _tilemap.ClearAllTiles();
         }
 
-        public void OnPlaceTile(MapPlaceModel model)
+        public void OnPlaceTile(TilePlaceModel model)
         {
             SetTile(model);
         }
 
-        public void OnRemoveTile(MapPlaceModel model)
+        public void OnRemoveTile(TilePlaceModel model)
         {
             throw new NotImplementedException();
         }
@@ -53,7 +64,7 @@ namespace CafeAssets.Script.System.GameMapSystem
 
     public static class TilemapExtensions
     {
-        public static void SetTileModel(this Tilemap self, MapPlaceModel model)
+        public static void SetTileModel(this Tilemap self, TilePlaceModel model)
         {
             switch (model.PlaceMode)
             {
@@ -81,7 +92,7 @@ namespace CafeAssets.Script.System.GameMapSystem
 
         }
 
-        private static void SetBrushTiles(this Tilemap self,MapPlaceModel model)
+        private static void SetBrushTiles(this Tilemap self,TilePlaceModel model)
         {
             Debug.Log("ブラシモード");
             Debug.Log(model.Model);
@@ -102,7 +113,7 @@ namespace CafeAssets.Script.System.GameMapSystem
             self.SetTiles(positions,tiles);
         }
 
-        private static void SetRectTiles(this Tilemap self,MapPlaceModel model)
+        private static void SetRectTiles(this Tilemap self,TilePlaceModel model)
         {
             Debug.Log("矩形モード");
             Debug.Log(model.Model);
