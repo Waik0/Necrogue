@@ -20,7 +20,6 @@ namespace CafeAssets.Script.System.GameMapSystem
     {
        
         private IMapPlaceManager _mapPlaceManager;
-        private IGameStaticDataController _gameStaticDataController;
         public TileModel SelectedTile { get; set; }
         public PlaceTileMode PlaceTileMode { get; set; } //基本的にタイル固有の設定で一応変更可能に
         private Vector3 _rectStartPos;

@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 0}
+  m_Name: SettingProvider_Debug
+  m_EditorClassIdentifier: Assembly-CSharp:CafeAssets.Script.SceneInstaller:SettingProvider
+  _settings:
+    TilemapViewPrefab: {fileID: 69387107283309812, guid: d8f258a8eac3c6d4d9add435ea95f75d, type: 3}
+    MapPlacePreviewViewPrefab: {fileID: 8919544307307749706, guid: 7635862ef5b522640979a905b70f292c, type: 3}
+    GameTimeView: {fileID: 2690409568064313249, guid: e9b681a8e071fc34bacb3ad6a82193ec, type: 3}
+    CameraView: {fileID: 1546130176707112421, guid: 77965cb77fd1cff48847a215e086cff1, type: 3}
+    GameInputView: {fileID: 7564934715022245036, guid: 3d2553bdafa23e14eae5c778be7655b1, type: 3}
+    TileSelect: {fileID: 8598966036238986208, guid: ee352275a7d2fa748bcc7476ce1c6e20, type: 3}
+    NpcFacade: {fileID: 4482825552022729614, guid: 264916a4aa74ec64c981d93048bbef77, type: 3}
+    Debug: {fileID: 6459845268290082964, guid: 1988dcaa398f1374597f652f44650422, type: 3}

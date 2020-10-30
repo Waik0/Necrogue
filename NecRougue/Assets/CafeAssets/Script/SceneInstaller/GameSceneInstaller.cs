@@ -1,9 +1,11 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using CafeAssets.Script.System.GameCameraSystem;
 using CafeAssets.Script.System.GameCoreSystem;
 using CafeAssets.Script.System.GameInputSystem;
 using CafeAssets.Script.System.GameMapSystem;
+using CafeAssets.Script.System.GameNpcSystem;
 using CafeAssets.Script.System.GameParameterSystem;
 using CafeAssets.Script.System.GameTimeSystem;
 using UnityEngine;
@@ -11,21 +13,29 @@ using Zenject;
 
 public class GameSceneInstaller : MonoInstaller
 {
-    [SerializeField] private TilemapView tilemapViewPrefab;
-    [SerializeField] private MapPlacePreviewView _mapPlacePreviewViewPrefab;
-    [SerializeField] private GameTimeView _gameTimeView;
-    [SerializeField] private CameraView _cameraView;
-    [SerializeField] private GameInputView _gameInputView;
-    [SerializeField] private TileSelectView _tileSelect;
-    
-    //debug
-    //todo 別Installerに分けてdefine切り分けしてReleaseに入らないように
-    [SerializeField] private DebugView _debug;
+    [Serializable]
+    public class Settings
+    {
+        public TilemapView TilemapViewPrefab;
+        public MapPlacePreviewView MapPlacePreviewViewPrefab;
+        public GameTimeView GameTimeView;
+        public CameraView CameraView;
+        public GameInputView GameInputView;
+        public TileSelectView TileSelect;
+
+        public NpcFacade NpcFacade;
+        //debug
+        //todo 別Installerに分けてdefine切り分けしてReleaseに入らないように
+        public DebugView Debug;
+    }
+
+    [Inject] private Settings _settings;
+
     
     /// <summary>
     /// Gameシーンでインストールされる項目
     /// ※Lazyの使用に注意!!!
-    /// ※Interfaceがうまく機能しない可能性がある
+    /// ※Manager系がうまく機能しない可能性がある （Listだから内容変化してもいけるかもしれないけど
     /// </summary>
     public override void InstallBindings()
     {
@@ -43,17 +53,33 @@ public class GameSceneInstaller : MonoInstaller
         Container.BindInterfacesTo<TileSelectManager>().AsCached().NonLazy();//OnTileSelect
         Container.BindInterfacesTo<TilemapManager>().AsCached().NonLazy();//OnUpdateTilemap
         //Controller
-        //Container.BindInterfacesTo<GameStaticDataController>().AsSingle().NonLazy();
+        //Tickイベント駆動であらゆるUseCaseから情報を受け取ってゲームを進行させるやつ
+        Container.BindInterfacesTo<DebugNpcSpawnTimingController>().AsCached().NonLazy();
+        //Spawner
+        Container.BindInterfacesAndSelfTo<NpcSpawner>().AsCached().NonLazy();
+        //Factory
+        //プレハブにはサブコンテナを適用
+        Container.BindFactory<NpcFacadeModel, NpcFacade, NpcFacade.Factory>().FromPoolableMemoryPool<NpcFacadeModel, NpcFacade, NpcFacadePool>(poolBinder => poolBinder
+            .WithInitialSize(20)//スパイクが発生しないように初期化時に20体生成
+            .FromSubContainerResolve()
+            .ByNewPrefabInstaller<NpcInstaller>(_settings.NpcFacade)
+            .UnderTransformGroup("NpcList"));
+        //Registory
+        //アクティブなオブジェクトを管理するクラス
+        Container.Bind<NpcRegistry>().AsSingle();
         //View
-        Container.BindInterfacesTo<TilemapView>().FromComponentInNewPrefab(tilemapViewPrefab).AsCached().NonLazy();
-        Container.BindInterfacesTo<MapPlacePreviewView>().FromComponentInNewPrefab(_mapPlacePreviewViewPrefab).AsCached().NonLazy();
-        Container.BindInterfacesTo<GameTimeView>().FromComponentInNewPrefab(_gameTimeView).AsCached().NonLazy();
-        Container.BindInterfacesTo<CameraView>().FromComponentInNewPrefab(_cameraView).AsCached().NonLazy();
-        Container.BindInterfacesTo<GameInputView>().FromComponentInNewPrefab(_gameInputView).AsCached().NonLazy();
-        Container.BindInterfacesTo<TileSelectView>().FromComponentInNewPrefab(_tileSelect).AsCached().NonLazy();
+        Container.BindInterfacesTo<TilemapView>().FromComponentInNewPrefab(_settings.TilemapViewPrefab).AsCached().NonLazy();
+        Container.BindInterfacesTo<MapPlacePreviewView>().FromComponentInNewPrefab(_settings.MapPlacePreviewViewPrefab).AsCached().NonLazy();
+        Container.BindInterfacesTo<GameTimeView>().FromComponentInNewPrefab(_settings.GameTimeView).AsCached().NonLazy();
+        Container.BindInterfacesTo<CameraView>().FromComponentInNewPrefab(_settings.CameraView).AsCached().NonLazy();
+        Container.BindInterfacesTo<GameInputView>().FromComponentInNewPrefab(_settings.GameInputView).AsCached().NonLazy();
+        Container.BindInterfacesTo<TileSelectView>().FromComponentInNewPrefab(_settings.TileSelect).AsCached().NonLazy();
         
         //Debug
         //todo 別Installerに分けてdefine切り分けしてReleaseに入らないように
-        Container.BindInterfacesTo<DebugView>().FromComponentInNewPrefab(_debug).AsCached().NonLazy();
+        Container.BindInterfacesTo<DebugView>().FromComponentInNewPrefab(_settings.Debug).AsCached().NonLazy();
+    }
+    class NpcFacadePool : MonoPoolableMemoryPool<NpcFacadeModel, IMemoryPool, NpcFacade>
+    {
     }
 }

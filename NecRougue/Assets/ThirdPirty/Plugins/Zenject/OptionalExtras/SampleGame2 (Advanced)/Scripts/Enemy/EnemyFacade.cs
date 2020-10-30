@@ -27,6 +27,7 @@ namespace Zenject.SpaceFighter
             _deathHandler = deathHandler;
             _stateManager = stateManager;
             _registry = registry;
+            
         }
 
         public EnemyStates State
@@ -71,7 +72,6 @@ namespace Zenject.SpaceFighter
             _pool = pool;
             _tunables.Accuracy = accuracy;
             _tunables.Speed = speed;
-
             _registry.AddEnemy(this);
         }
 
