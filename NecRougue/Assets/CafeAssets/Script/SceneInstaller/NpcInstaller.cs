@@ -13,5 +13,9 @@ public class NpcInstaller : Installer<NpcInstaller>
     {
         Container.BindInterfacesTo<NpcAiUseCase>().AsSingle();
         Container.BindInterfacesTo<NpcParamUseCase>().AsSingle();
+        //行動系
+        //INpcActionUseCaseを継承しているもの
+        Container.BindInterfacesTo<NpcStop>();
+        Container.BindInterfacesTo<NpcMoveToPlace>();
     }
 }

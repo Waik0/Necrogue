@@ -10,15 +10,40 @@ namespace CafeAssets.Script.System.GameNpcSystem
         Complete,
     }
 
+    /// <summary>
+    /// アクションはこれを継承して実装していく
+    /// </summary>
     public interface INpcActionUseCase
     {
         NpcActionPattern TargetPattern { get; }
         NpcActionStatus CurrentStatus { get; }
         void StartAction(NpcActionModel model);
 
-        void Tick(IGameTimeManager gameTimeManager);
+        void Tick();
     }
+    //停止
+    public class NpcStop : INpcActionUseCase
+    {
+        public NpcActionPattern TargetPattern { get; private set; } = NpcActionPattern.MoveToPlace;
+        public NpcActionStatus CurrentStatus { get; private set; }
 
+        private int count = 0;
+        public void StartAction(NpcActionModel model)
+        {
+            CurrentStatus = NpcActionStatus.Start;
+            count = 5;
+        }
+
+        public void Tick()
+        {
+            count--;
+            if (count == 0)
+            {
+                CurrentStatus = NpcActionStatus.Complete;
+            }
+        }
+    }
+    //ランダムな場所に移動
     public class NpcMoveToPlace : INpcActionUseCase
     {
         public NpcActionPattern TargetPattern { get; private set; } = NpcActionPattern.MoveToPlace;
@@ -29,7 +54,7 @@ namespace CafeAssets.Script.System.GameNpcSystem
             CurrentStatus = NpcActionStatus.Start;
         }
 
-        public void Tick(IGameTimeManager gameTimeManager)
+        public void Tick()
         {
         }
     }

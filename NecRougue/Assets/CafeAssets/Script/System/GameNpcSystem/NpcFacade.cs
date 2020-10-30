@@ -63,6 +63,7 @@ namespace CafeAssets.Script.System.GameNpcSystem
         {
             if (!_actionUseCases.ContainsKey(_aiUseCase.Current)) return;
             var currentAction = _actionUseCases[_aiUseCase.Current];
+            currentAction.Tick();
             switch (currentAction.CurrentStatus)
             {
                 case NpcActionStatus.Start:
