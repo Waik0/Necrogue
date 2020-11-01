@@ -1,0 +1,17 @@
+{
+    "name": "Interface.Layer_02",
+    "references": [
+        "GUID:6f0eef2ca5ecac7488045226d8629201",
+        "GUID:fa6fe07ee5d817649ae5df4ac50a722f",
+        "GUID:8299f1fdb4e3f804d9fe50fadbe79a00"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

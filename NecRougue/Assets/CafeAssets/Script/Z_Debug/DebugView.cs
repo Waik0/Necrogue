@@ -1,5 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using CafeAssets.Script.Interface.UseCase;
+using CafeAssets.Script.Interface.View;
 using CafeAssets.Script.System.GameInputSystem;
 using CafeAssets.Script.System.GameMapSystem;
 using CafeAssets.Script.System.GameParameterSystem;
@@ -10,20 +12,20 @@ using Zenject;
 public class DebugView : MonoBehaviour,IDebugView
 {
     [SerializeField] private Text _text;
-    private IMapView _mapView;
+    private ITilemapView _tilemapView;
     private ITileSelectView _tileSelectView;
     private IGameInputView _gameInputView;
-    private IMapPlaceUseCase _mapPlaceUseCase;
+    private IPlaceTileUseCase _mapPlaceUseCase;
     private IGameParameterUseCase _gameParameterUseCase;
     [Inject]
     void Inject(
-        IMapView mapView, 
+        ITilemapView tilemapView, 
         ITileSelectView tileSelectView,
         IGameInputView gameInputView,
-        IMapPlaceUseCase mapPlaceUseCase,
+        IPlaceTileUseCase mapPlaceUseCase,
         IGameParameterUseCase gameParameterUseCase)
     {
-        _mapView = mapView;
+        _tilemapView = tilemapView;
         _tileSelectView = tileSelectView;
         _gameInputView = gameInputView;
         _mapPlaceUseCase = mapPlaceUseCase;

@@ -4,17 +4,113 @@
     <e p="C:\Users\stoas\.Rider2019.3\system\extResources" t="IncludeRecursive" />
     <e p="C:\Users\stoas\.Rider2019.3\system\resharper-host\local\Transient\ReSharperHost\v193\SolutionCaches\_NecRougue.-987795839.00" t="ExcludeRecursive" />
     <e p="E:\works\unity\Necrogue\unity\NecRougue" t="IncludeRecursive">
+      <e p="Archtecture.csproj" t="IncludeRecursive" />
       <e p="Assembly-CSharp-Editor.csproj" t="IncludeRecursive" />
       <e p="Assembly-CSharp.csproj" t="IncludeRecursive" />
       <e p="Assets" t="Include">
         <e p="CafeAssets" t="Include">
           <e p="Script" t="Include">
             <e p="Archtecture" t="Include">
+              <e p="Archtecture.asmdef" t="Include" />
               <e p="IManager.cs" t="Include" />
+              <e p="IRegistry.cs" t="Include" />
             </e>
-            <e p="SceneInstaller" t="Include">
+            <e p="Impliment" t="Include">
+              <e p="Game" t="Include">
+                <e p="Layer_01" t="Include">
+                  <e p="Game.Layer_01.asmdef" t="Include" />
+                  <e p="Manager" t="Include">
+                    <e p="GameResettableManager.cs" t="Include" />
+                    <e p="GameScreenInputManager.cs" t="Include" />
+                    <e p="GameTimeManager.cs" t="Include" />
+                    <e p="NpcManager.cs" t="Include" />
+                    <e p="TilemapManager.cs" t="Include" />
+                    <e p="TilePlaceManager.cs" t="Include" />
+                    <e p="TileSelectManager.cs" t="Include" />
+                  </e>
+                  <e p="Registry" t="Include">
+                    <e p="NpcRegistry.cs" t="Include" />
+                  </e>
+                </e>
+                <e p="Layer_02" t="Include">
+                  <e p="Game.Layer_02.asmdef" t="Include" />
+                  <e p="UseCase" t="Include">
+                    <e p="GameParameterUseCase.cs" t="Include" />
+                    <e p="GameUseCase.cs" t="Include" />
+                    <e p="MilestoneUseCase.cs" t="Include" />
+                    <e p="NpcActionUseCase.cs" t="Include" />
+                    <e p="NpcAiUseCase.cs" t="Include" />
+                    <e p="NpcParamUseCase.cs" t="Include" />
+                    <e p="NpcSpawner.cs" t="Include" />
+                    <e p="PlaceTileUseCase.cs" t="Include" />
+                  </e>
+                </e>
+                <e p="Layer_03" t="Include">
+                  <e p="Controller" t="Include">
+                    <e p="NpcSpawnTimingController.cs" t="Include" />
+                  </e>
+                  <e p="Facade" t="Include">
+                    <e p="NpcFacade.cs" t="Include" />
+                  </e>
+                  <e p="Game.Layer_03.asmdef" t="Include" />
+                </e>
+                <e p="Layer_04" t="Include">
+                  <e p="Game.Layer_04.asmdef" t="Include" />
+                  <e p="View" t="Include">
+                    <e p="CameraView.cs" t="Include" />
+                    <e p="GameInputView.cs" t="Include" />
+                    <e p="GameTimeView.cs" t="Include" />
+                    <e p="MapPlacePreviewView.cs" t="Include" />
+                    <e p="NpcView.cs" t="Include" />
+                    <e p="TilemapView.cs" t="Include" />
+                    <e p="TileSelectButton.cs" t="Include" />
+                    <e p="TileSelectView.cs" t="Include" />
+                  </e>
+                </e>
+              </e>
+            </e>
+            <e p="Installer" t="Include">
               <e p="GameSceneInstaller.cs" t="Include" />
+              <e p="NpcInstaller.cs" t="Include" />
               <e p="ProjectInstaller.cs" t="Include" />
+              <e p="SettingProvider.cs" t="Include" />
+            </e>
+            <e p="Interface" t="Include">
+              <e p="Layer_01" t="Include">
+                <e p="Interface.Layer_01.asmdef" t="Include" />
+                <e p="Manager" t="Include">
+                  <e p="ManagerInterfaces.cs" t="Include" />
+                  <e p="ManagerInvokeInterfaces.cs" t="Include" />
+                </e>
+                <e p="Registry" t="Include">
+                  <e p="RegistoryCollectionInterfaces.cs" t="Include" />
+                  <e p="RegistoryInterfaces.cs" t="Include" />
+                </e>
+              </e>
+              <e p="Layer_02" t="Include">
+                <e p="Factory" t="Include">
+                  <e p="FactoryInterfaces.cs" t="Include" />
+                </e>
+                <e p="Interface.Layer_02.asmdef" t="Include" />
+                <e p="UseCase" t="Include">
+                  <e p="UseCaseInterfaces.cs" t="Include" />
+                </e>
+              </e>
+              <e p="Layer_03" t="Include">
+                <e p="Controller" t="Include">
+                  <e p="ControllerInterfaces.cs" t="Include" />
+                </e>
+                <e p="Facade" t="Include">
+                  <e p="FacadeInterfaces.cs" t="Include" />
+                </e>
+                <e p="Interface.Layer_03.asmdef" t="Include" />
+              </e>
+              <e p="Layer_04" t="Include">
+                <e p="Interface.Layer_04.asmdef" t="Include" />
+                <e p="View" t="Include">
+                  <e p="ViewInterfaces.cs" t="Include" />
+                </e>
+              </e>
             </e>
             <e p="Sequence" t="Include">
               <e p="GameSequence.cs" t="Include" />
@@ -22,61 +118,23 @@
               <e p="RootSequence.cs" t="Include" />
               <e p="SequenceController.cs" t="Include" />
             </e>
-            <e p="system" t="Include">
-              <e p="GameCameraSystem" t="Include">
-                <e p="CameraView.cs" t="Include" />
-              </e>
-              <e p="GameCoreSystem" t="Include">
-                <e p="GameResettableManager.cs" t="Include" />
-                <e p="GameStaticDataController.cs" t="Include" />
-                <e p="GameUseCase.cs" t="Include" />
-              </e>
-              <e p="GameInputSystem" t="Include">
-                <e p="GameInputView.cs" t="Include" />
-                <e p="GameScreenInputManager.cs" t="Include" />
-              </e>
-              <e p="GameMapPreviewSystem" t="Include">
-                <e p="MapPlacePreviewView.cs" t="Include" />
-              </e>
-              <e p="GameMapSystem" t="Include">
-                <e p="BasicTileModel.cs" t="Include" />
-                <e p="EffectiveTileModel.cs" t="Include" />
-                <e p="MapPlaceUseCase.cs" t="Include" />
-                <e p="TileInheritance" t="Include">
+            <e p="Shared" t="Include">
+              <e p="Model" t="Include">
+                <e p="Enums.cs" t="Include" />
+                <e p="Models.cs" t="Include" />
+                <e p="Props.cs" t="Include" />
+                <e p="ScriptableObjects" t="Include">
+                  <e p="CafeMenuModel.cs" t="Include" />
                   <e p="FloorTileModel.cs" t="Include" />
                   <e p="FurnitureTileModel.cs" t="Include" />
                   <e p="GoodsTileModel.cs" t="Include" />
                 </e>
-                <e p="TilemapManager.cs" t="Include" />
-                <e p="TilemapView.cs" t="Include" />
-                <e p="TileModel.cs" t="Include" />
+              </e>
+              <e p="Provider" t="Include">
+                <e p="CafeMenuModelProvider.cs" t="Include" />
                 <e p="TileModelProvider.cs" t="Include" />
-                <e p="TilePlaceManager.cs" t="Include" />
-                <e p="TileSelect" t="Include">
-                  <e p="TileSelectButton.cs" t="Include" />
-                  <e p="TileSelectManager.cs" t="Include" />
-                  <e p="TileSelectView.cs" t="Include" />
-                </e>
               </e>
-              <e p="GameMenuSystem" t="Include">
-                <e p="MenuModel.cs" t="Include" />
-                <e p="MenuModelProvider.cs" t="Include" />
-              </e>
-              <e p="GameMilestoneSystem" t="Include">
-                <e p="MilestonePresenter.cs" t="Include" />
-              </e>
-              <e p="GameParameterSystem" t="Include">
-                <e p="GameParameterModel.cs" t="Include" />
-                <e p="GameParameterUseCase.cs" t="Include" />
-              </e>
-              <e p="GameTimeSystem" t="Include">
-                <e p="GameTimeManager.cs" t="Include" />
-                <e p="GameTimeUseCase.cs" t="Include" />
-                <e p="GameTimeView.cs" t="Include" />
-              </e>
-              <e p="PropsSystem" t="Include">
-                <e p="Props.cs" t="Include" />
-              </e>
+              <e p="Shared.asmdef" t="Include" />
             </e>
             <e p="Z_Debug" t="Include">
               <e p="DebugView.cs" t="Include" />
@@ -819,9 +877,18 @@
           </e>
         </e>
       </e>
+      <e p="Game.Layer_01.csproj" t="IncludeRecursive" />
+      <e p="Game.Layer_02.csproj" t="IncludeRecursive" />
+      <e p="Game.Layer_03.csproj" t="IncludeRecursive" />
+      <e p="Game.Layer_04.csproj" t="IncludeRecursive" />
+      <e p="Interface.FirstLayer.csproj" t="IncludeRecursive" />
+      <e p="Interface.Layer_01.csproj" t="IncludeRecursive" />
+      <e p="Interface.Layer_02.csproj" t="IncludeRecursive" />
+      <e p="Interface.Layer_04.csproj" t="IncludeRecursive" />
       <e p="NecRougue.sln" t="IncludeFlat" />
       <e p="obj" t="ExcludeRecursive" />
       <e p="Packages" t="ExcludeRecursive" />
+      <e p="Shared.csproj" t="IncludeRecursive" />
       <e p="Temp\bin" t="ExcludeRecursive" />
       <e p="Unity.2D.Tilemap.Extras.csproj" t="IncludeRecursive" />
       <e p="Unity.2D.Tilemap.Extras.Editor.csproj" t="IncludeRecursive" />
