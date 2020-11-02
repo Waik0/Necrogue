@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using CafeAssets.Script.Impliment.Game.Layer_01.Factory;
 using CafeAssets.Script.Interface.Layer_01.Manager;
 using CafeAssets.Script.Interface.Registry;
 using CafeAssets.Script.Interface.UseCase;
@@ -14,20 +15,20 @@ namespace CafeAssets.Script.System.GameNpcSystem
 
     public class NpcSpawner : INpcSpawner,IGameResettable,IGameTickable
     {
-        //private NpcFacade.Factory _factory;
+        private NpcCollectionFactory _factory;
         private INpcRegistry _registry;
         //private List<INpcFacade> _npcFacades = new List<INpcFacade>();
         public NpcSpawner(
-            //NpcFacade.Factory factory,
+            NpcCollectionFactory factory,
             INpcRegistry registry
             )
         {
-        //    _factory = factory;
+            _factory = factory;
             _registry = registry;
         }
         public void Spawn(NpcFacadeModel model)
         {
-        //    _factory.Create(model);
+            _factory.Create(model);
         }
 
         public void ResetOnGame()

@@ -16,11 +16,17 @@ namespace CafeAssets.Script.Model
     {
         
     }
+    public class NpcMoveModel
+    {
+        public Vector3 Position;
+        public GameObject Self;
+    }
     public class NpcFacadeModel
     {
         public string Name;
         public NpcType Type;
         public NpcAiModel Ai;
+        public NpcMoveModel Move;
     }
     public class NpcModel
     {

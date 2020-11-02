@@ -25,7 +25,14 @@ namespace CafeAssets.Script.System.GameCoreSystem
             if (!test)
             {
                 test = true;
-                _npcSpawner.Spawn(new NpcFacadeModel(){});
+                _npcSpawner.Spawn(new NpcFacadeModel()
+                {
+                    Ai = new NpcAiModel(),
+                    Move = new NpcMoveModel()
+                    {
+                        Position = Vector3.zero,
+                    }
+                });
             }
         }
     }

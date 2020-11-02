@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using CafeAssets.Script.Impliment.Game.Layer_01.Factory;
 using CafeAssets.Script.Model;
 using CafeAssets.Script.System.GameCameraSystem;
 using CafeAssets.Script.System.GameCoreSystem;
@@ -69,7 +70,7 @@ public class GameSceneInstaller : MonoInstaller
 
         //Factory
         //プレハブにはサブコンテナを適用
-        Container.BindFactory<NpcFacadeModel, NpcFacade, NpcFacade.Factory>().FromPoolableMemoryPool<NpcFacadeModel, NpcFacade, NpcFacadePool>(poolBinder => poolBinder
+        Container.BindFactory<NpcFacadeModel, INpcCollection, NpcCollectionFactory>().To<NpcFacade>().FromPoolableMemoryPool<NpcFacadeModel, NpcFacade, NpcFacadePool>(poolBinder => poolBinder
             .WithInitialSize(20)//スパイクが発生しないように初期化時に20体生成
             .FromSubContainerResolve()
             .ByNewPrefabInstaller<NpcInstaller>(_settings.NpcFacade)

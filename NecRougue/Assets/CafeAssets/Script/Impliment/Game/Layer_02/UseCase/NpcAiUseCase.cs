@@ -26,7 +26,8 @@ namespace CafeAssets.Script.System.GameNpcSystem
 
         public void Think()
         {
-            
+            Current = NpcActionPattern.MoveToRandomPlace;
+            Debug.Log("RandomMove");
         }
 
         public void Reset(NpcAiModel model)
@@ -34,7 +35,7 @@ namespace CafeAssets.Script.System.GameNpcSystem
             Debug.Log(_registry.Entity.Count());
         }
 
-        public void Tick(IGameTimeManager gameTimeManager)
+        public void Tick()
         {
             CurrentParam.Param = "";
         }

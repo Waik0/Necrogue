@@ -19,27 +19,26 @@ namespace CafeAssets.Script.System.GameNpcSystem
     /// </summary>
     public class NpcFacade : MonoBehaviour, INpcFacade, INpcCollection, IPoolable<NpcFacadeModel, IMemoryPool>
     {
-        public class Factory : PlaceholderFactory<NpcFacadeModel, NpcFacade>
-        {
-        }
-
         public NpcFacadeModel FacadeModel { get; private set; }
 
         private INpcAiUseCase _aiUseCase;
         private INpcParamUseCase _paramUseCase;
-        private Dictionary<NpcActionPattern, INpcActionUseCase> _actionUseCases;
         private INpcRegistry _registry;
+        private INpcMoveUseCase _moveUseCase;
+        private Dictionary<NpcActionPattern, INpcActionUseCase> _actionUseCases;
+        
 
         [Inject]
         void Inject(
             INpcAiUseCase aiUseCase,
+            INpcMoveUseCase moveUseCase,
             INpcParamUseCase paramUseCase,
             INpcRegistry registry,
             List<INpcActionUseCase> actions
         )
         {
-            Debug.Log(actions.Count);
             _aiUseCase = aiUseCase;
+            _moveUseCase = moveUseCase;
             _paramUseCase = paramUseCase;
             _registry = registry;
             _actionUseCases = actions.ToDictionary(a => a.TargetPattern);
@@ -53,7 +52,9 @@ namespace CafeAssets.Script.System.GameNpcSystem
         public void OnSpawned(NpcFacadeModel p1, IMemoryPool p2)
         {
             Debug.Log("Spawned " + gameObject.name);
+            p1.Move.Self = gameObject;
             _aiUseCase.Reset(p1.Ai);
+            _moveUseCase.Reset(p1.Move);
             _paramUseCase.Reset();
             _registry.Add(this);
             FacadeModel = p1;
@@ -66,16 +67,16 @@ namespace CafeAssets.Script.System.GameNpcSystem
         {
             if (!_actionUseCases.ContainsKey(_aiUseCase.Current)) return;
             var currentAction = _actionUseCases[_aiUseCase.Current];
-            currentAction.Tick();
             switch (currentAction.CurrentStatus)
             {
-                case NpcActionStatus.Start:
-                    Debug.Log(_aiUseCase.CurrentParam);
+                case NpcActionStatus.Sleep:
                     currentAction.StartAction(_aiUseCase.CurrentParam);
                     break;
                 case NpcActionStatus.Doing:
+                    currentAction.Tick();
                     break;
                 case NpcActionStatus.Complete:
+                    currentAction.EndAction();
                     _aiUseCase.Think();
                     break;
             }

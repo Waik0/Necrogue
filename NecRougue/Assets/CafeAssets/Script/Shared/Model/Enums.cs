@@ -4,7 +4,7 @@ using UnityEngine;
 public enum NpcActionPattern
 {
     Stop,
-    MoveToPlace,
+    MoveToRandomPlace,
     MoveToNpc,
     Order,
     Talk,
@@ -53,7 +53,7 @@ public enum TileEffectType
 }
 public enum NpcActionStatus
 {
-    Start,
+    Sleep,
     Doing,
     Complete,
 }

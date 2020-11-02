@@ -25,6 +25,13 @@ namespace CafeAssets.Script.Interface.UseCase
         void Think();
         void Reset(NpcAiModel model);
     }
+
+    public interface INpcMoveUseCase
+    {
+        Vector2 CurrentPos();
+        void Move(Vector2 delta);
+        void Reset(NpcMoveModel model);
+    }
     
     /// <summary>
     /// アクションはこれを継承して実装していく
@@ -37,7 +44,7 @@ namespace CafeAssets.Script.Interface.UseCase
         NpcActionPattern TargetPattern { get; }
         NpcActionStatus CurrentStatus { get; }
         void StartAction(NpcActionModel model);
-
+        void EndAction();
         void Tick();
     }
     /// <summary>
