@@ -2,6 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using CafeAssets.Script.Impliment.Game.Layer_01.Factory;
+using CafeAssets.Script.Impliment.Game.Layer_02.UseCase;
+using CafeAssets.Script.Impliment.Game.Layer_04.View;
 using CafeAssets.Script.Model;
 using CafeAssets.Script.System.GameCameraSystem;
 using CafeAssets.Script.System.GameCoreSystem;
@@ -19,6 +21,7 @@ public class GameSceneInstaller : MonoInstaller
     public class Settings
     {
         public TilemapView TilemapViewPrefab;
+        public TilemapPassableView TilemapPassableViewPrefab;
         public MapPlacePreviewView MapPlacePreviewViewPrefab;
         public GameTimeView GameTimeView;
         public CameraView CameraView;
@@ -61,6 +64,8 @@ public class GameSceneInstaller : MonoInstaller
         Container.BindInterfacesTo<GameUseCase>().AsCached().NonLazy();
         Container.BindInterfacesTo<GameParameterUseCase>().AsCached().NonLazy();
         Container.BindInterfacesTo<PlaceTileUseCase>().AsCached().NonLazy();
+        Container.BindInterfacesTo<TilemapUseCase>().AsCached().NonLazy();
+        Container.BindInterfacesTo<TilemapPassabilityUseCase>().AsCached().NonLazy();
         //Spawner
         Container.BindInterfacesAndSelfTo<NpcSpawner>().AsCached().NonLazy();
         //3層
@@ -78,6 +83,7 @@ public class GameSceneInstaller : MonoInstaller
         
         //View
         Container.BindInterfacesTo<TilemapView>().FromComponentInNewPrefab(_settings.TilemapViewPrefab).AsCached().NonLazy();
+        Container.BindInterfacesTo<TilemapPassableView>().FromComponentInNewPrefab(_settings.TilemapPassableViewPrefab).AsCached().NonLazy();
         Container.BindInterfacesTo<MapPlacePreviewView>().FromComponentInNewPrefab(_settings.MapPlacePreviewViewPrefab).AsCached().NonLazy();
         Container.BindInterfacesTo<GameTimeView>().FromComponentInNewPrefab(_settings.GameTimeView).AsCached().NonLazy();
         Container.BindInterfacesTo<CameraView>().FromComponentInNewPrefab(_settings.CameraView).AsCached().NonLazy();

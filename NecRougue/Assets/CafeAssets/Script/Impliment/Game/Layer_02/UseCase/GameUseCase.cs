@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using CafeAssets.Script.Interface.Layer_01.Manager;
-using CafeAssets.Script.Interface.UseCase;
+using CafeAssets.Script.Interface.Layer_02.UseCase;
 using CafeAssets.Script.System.GameMapSystem;
 using CafeAssets.Script.System.GameParameterSystem;
 using CafeAssets.Script.System.GameTimeSystem;

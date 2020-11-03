@@ -1,6 +1,6 @@
 ﻿using CafeAssets.Script.Interface.Controller;
 using CafeAssets.Script.Interface.Layer_01.Manager;
-using CafeAssets.Script.Interface.UseCase;
+using CafeAssets.Script.Interface.Layer_02.UseCase;
 using CafeAssets.Script.Model;
 using UnityEngine;
 using NotImplementedException = System.NotImplementedException;

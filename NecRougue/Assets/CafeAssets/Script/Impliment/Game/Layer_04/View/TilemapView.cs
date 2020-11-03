@@ -23,6 +23,7 @@ namespace CafeAssets.Script.System.GameMapSystem
     {
         [SerializeField] private Tilemap _tilemap;
         [SerializeField] private TilemapRenderer _tilemapRenderer;
+        //[SerializeField] private TilemapCollider2D _tilemapCollider;
         private ITilemapManager _tilemapManager;
 
         [Inject]
@@ -35,7 +36,11 @@ namespace CafeAssets.Script.System.GameMapSystem
         public void SetTile(TilePlaceModel model)
         {
             _tilemap.SetTileModel(model);
-            _tilemapManager.OnUpdateTile(new TilemapModel(){Tilemap = _tilemap});
+            _tilemapManager.OnUpdateTile(new TilemapModel()
+            {
+                Tilemap = _tilemap,
+                //TilemapCollider2D = _tilemapCollider
+            });
         }
 
         public void RemoveTile(Vector3Int pos)
@@ -62,6 +67,33 @@ namespace CafeAssets.Script.System.GameMapSystem
 
     public static class TilemapExtensions
     {
+        public static void SetTilePassable(this Tilemap self, TilePlaceModel model, AstarNodeTile tile)
+        {
+            switch (model.PlaceMode)
+            {
+                //1個置き
+                case PlaceTileMode.PlaceTileSingle:
+                case PlaceTileMode.PlaceTileDraw:
+                    //ブラシサイズ対応
+                    if (model.Model.Brush.sqrMagnitude > 1)
+                    {
+                        self.SetBrushTiles(model,tile);
+                    }
+                    else
+                    {
+                        var pos = self.WorldToCell(model.StartWorldPos);
+                        pos.z = model.Z;
+                        self.SetTile(pos, tile);
+                    }
+                    break;
+                case PlaceTileMode.PlaceTileRect:
+                    self.SetRectTiles(model,tile);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+
+        }
         public static void SetTileModel(this Tilemap self, TilePlaceModel model)
         {
             switch (model.PlaceMode)
@@ -72,7 +104,7 @@ namespace CafeAssets.Script.System.GameMapSystem
                     //ブラシサイズ対応
                     if (model.Model.Brush.sqrMagnitude > 1)
                     {
-                        self.SetBrushTiles(model);
+                        self.SetBrushTiles(model,model.Model);
                     }
                     else
                     {
@@ -82,7 +114,7 @@ namespace CafeAssets.Script.System.GameMapSystem
                     }
                     break;
                 case PlaceTileMode.PlaceTileRect:
-                    self.SetRectTiles(model);
+                    self.SetRectTiles(model,model.Model);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -90,7 +122,7 @@ namespace CafeAssets.Script.System.GameMapSystem
 
         }
 
-        private static void SetBrushTiles(this Tilemap self,TilePlaceModel model)
+        private static void SetBrushTiles(this Tilemap self,TilePlaceModel model,TileBase tile)
         {
             Debug.Log("ブラシモード");
             Debug.Log(model.Model);
@@ -105,13 +137,13 @@ namespace CafeAssets.Script.System.GameMapSystem
                 {
                     
                     positions[i * model.Model.Brush.y + j] = new Vector3Int(origin.x - xhalf + i,origin.y - yhalf + j,model.Z);
-                    tiles[i * model.Model.Brush.y + j] = model.Model;
+                    tiles[i * model.Model.Brush.y + j] = tile;
                 }
             }
             self.SetTiles(positions,tiles);
         }
 
-        private static void SetRectTiles(this Tilemap self,TilePlaceModel model)
+        private static void SetRectTiles(this Tilemap self,TilePlaceModel model,TileBase tile)
         {
             Debug.Log("矩形モード");
             Debug.Log(model.Model);
@@ -132,7 +164,7 @@ namespace CafeAssets.Script.System.GameMapSystem
                 {
                     
                     positions[i * ly + j] = new Vector3Int(sx + i,sy + j,model.Z);
-                    tiles[i * ly + j] = model.Model;
+                    tiles[i * ly + j] = tile;
                 }
             }
             self.SetTiles(positions,tiles);

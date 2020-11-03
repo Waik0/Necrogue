@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using CafeAssets.Script.Interface.UseCase;
+using CafeAssets.Script.Interface.Layer_02.UseCase;
 using CafeAssets.Script.Interface.View;
 using CafeAssets.Script.System.GameInputSystem;
 using CafeAssets.Script.System.GameMapSystem;

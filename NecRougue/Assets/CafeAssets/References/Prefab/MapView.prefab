@@ -177,4 +177,3 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _tilemap: {fileID: 7805169650326393164}
   _tilemapRenderer: {fileID: 7805169650326393167}
-  _debugText: {fileID: 0}

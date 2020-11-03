@@ -26,4 +26,12 @@ namespace CafeAssets.Script.Interface.View
         void SetTile(TilePlaceModel model);
         void RemoveTile(Vector3Int pos);
     }
+    /// <summary>
+    /// タイルマップ通過制御
+    /// </summary>
+    public interface ITilemapPassableView
+    {
+        void SetTile(TilePlaceModel model);
+        void RemoveTile(Vector3Int pos);
+    }
 }

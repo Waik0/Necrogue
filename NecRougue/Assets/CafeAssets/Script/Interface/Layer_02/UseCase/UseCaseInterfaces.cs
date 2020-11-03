@@ -1,7 +1,9 @@
-﻿using CafeAssets.Script.Model;
+﻿using System.Collections.Generic;
+using CafeAssets.Script.Model;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
-namespace CafeAssets.Script.Interface.UseCase
+namespace CafeAssets.Script.Interface.Layer_02.UseCase
 {
     #region GameCore
     public interface IGameUseCase
@@ -64,7 +66,18 @@ namespace CafeAssets.Script.Interface.UseCase
         TileModel SelectedTile { get; set; }
         PlaceTileMode PlaceTileMode { get; set; }
     }
-
+    public interface ITilemapUseCase
+    {
+        Vector2Int MaxSize { get; }
+        Tilemap Tilemap { get; }
+        T GetTileModel<T>(Vector3Int pos) where T : TileModel;
+    }
+    public interface ITilemapPassabilityUseCase
+    {
+        //Tilemap PassableTilemap { get; }
+        Vector2Int[] GetRoute(Vector3Int from, Vector3Int to);
+        Vector2Int[] GetRoute(Vector2 worldFrom, Vector2 worldTo);
+    }
     #region GameParams
     
     public interface IGameParameterUseCase
@@ -75,6 +88,6 @@ namespace CafeAssets.Script.Interface.UseCase
         int Set(ParameterStyle style, string key, int num);
         int Operation(ParameterStyle style, string key, GameParameterOperations operation, int num);
     }
-    
+
     #endregion
 }
