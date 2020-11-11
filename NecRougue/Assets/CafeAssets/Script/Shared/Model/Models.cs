@@ -158,8 +158,11 @@ namespace CafeAssets.Script.Model
     public class TilemapModel
     {
         public Tilemap Tilemap;
-
-        public Tilemap Passable;
+        //public TilemapCollider2D TilemapCollider2D;
+    }
+    public class PassableTilemapModel
+    {
+        public Tilemap Tilemap;
         //public TilemapCollider2D TilemapCollider2D;
     }
     #endregion

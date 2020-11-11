@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using CafeAssets.Script.Interface.Layer_01.Manager;
+using CafeAssets.Script.Interface.Layer_02.UseCase;
 using CafeAssets.Script.Interface.View;
 using CafeAssets.Script.Model;
 using CafeAssets.Script.System.GameCoreSystem;
@@ -28,10 +29,12 @@ namespace CafeAssets.Script.System.GameMapSystem
 
         [Inject]
         public void Inject(
-            ITilemapManager tilemapManager
+            ITilemapManager tilemapManager,
+            ITilemapUseCase tilemapUseCase
         )
         {
             _tilemapManager = tilemapManager;
+            tilemapUseCase.Tilemap = _tilemap;
         }
         public void SetTile(TilePlaceModel model)
         {
@@ -67,33 +70,6 @@ namespace CafeAssets.Script.System.GameMapSystem
 
     public static class TilemapExtensions
     {
-        public static void SetTilePassable(this Tilemap self, TilePlaceModel model, AstarNodeTile tile)
-        {
-            switch (model.PlaceMode)
-            {
-                //1個置き
-                case PlaceTileMode.PlaceTileSingle:
-                case PlaceTileMode.PlaceTileDraw:
-                    //ブラシサイズ対応
-                    if (model.Model.Brush.sqrMagnitude > 1)
-                    {
-                        self.SetBrushTiles(model,tile);
-                    }
-                    else
-                    {
-                        var pos = self.WorldToCell(model.StartWorldPos);
-                        pos.z = model.Z;
-                        self.SetTile(pos, tile);
-                    }
-                    break;
-                case PlaceTileMode.PlaceTileRect:
-                    self.SetRectTiles(model,tile);
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-
-        }
         public static void SetTileModel(this Tilemap self, TilePlaceModel model)
         {
             switch (model.PlaceMode)
@@ -122,7 +98,7 @@ namespace CafeAssets.Script.System.GameMapSystem
 
         }
 
-        private static void SetBrushTiles(this Tilemap self,TilePlaceModel model,TileBase tile)
+        private static Vector3Int[] SetBrushTiles(this Tilemap self,TilePlaceModel model,TileBase tile)
         {
             Debug.Log("ブラシモード");
             Debug.Log(model.Model);
@@ -141,9 +117,10 @@ namespace CafeAssets.Script.System.GameMapSystem
                 }
             }
             self.SetTiles(positions,tiles);
+            return positions;
         }
 
-        private static void SetRectTiles(this Tilemap self,TilePlaceModel model,TileBase tile)
+        private static Vector3Int[] SetRectTiles(this Tilemap self,TilePlaceModel model,TileBase tile)
         {
             Debug.Log("矩形モード");
             Debug.Log(model.Model);
@@ -168,6 +145,7 @@ namespace CafeAssets.Script.System.GameMapSystem
                 }
             }
             self.SetTiles(positions,tiles);
+            return positions;
         }
     }
 }

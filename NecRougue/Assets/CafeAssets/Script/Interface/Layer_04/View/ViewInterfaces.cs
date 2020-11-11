@@ -31,7 +31,9 @@ namespace CafeAssets.Script.Interface.View
     /// </summary>
     public interface ITilemapPassableView
     {
+        
         void SetTile(TilePlaceModel model);
         void RemoveTile(Vector3Int pos);
+        BoundsInt CanReachBounds();
     }
 }

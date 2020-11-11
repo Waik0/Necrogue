@@ -18,4 +18,4 @@ MonoBehaviour:
   Weight: 0
   Prev: {x: 0, y: 0}
   IsAlreadyPassed: 0
-  Passable: 0
+  Passable: 1

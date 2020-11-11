@@ -69,12 +69,21 @@ namespace CafeAssets.Script.Interface.Layer_02.UseCase
     public interface ITilemapUseCase
     {
         Vector2Int MaxSize { get; }
-        Tilemap Tilemap { get; }
+        Tilemap Tilemap { set; }
         T GetTileModel<T>(Vector3Int pos) where T : TileModel;
+        Vector3Int WorldToCell(Vector3 world);
+        
+        Vector3 CellToWorld(Vector3Int cell);
+        
+        BoundsInt CellBounds { get; }
+        
+        bool GetPassable(Vector3Int cell);
+
     }
     public interface ITilemapPassabilityUseCase
     {
-        //Tilemap PassableTilemap { get; }
+     //   Tilemap PassableTilemap { set; }
+        Vector2 GetRandomPassableTilePos();
         Vector2Int[] GetRoute(Vector3Int from, Vector3Int to);
         Vector2Int[] GetRoute(Vector2 worldFrom, Vector2 worldTo);
     }
