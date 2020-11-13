@@ -15,7 +15,7 @@ public class RetroGraphicsSpriteTest : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Application.targetFrameRate = 60;
+        //Application.targetFrameRate = 60;
         _renderer.SetClearBuffer(true,RetroScreenRenderer.LayerList.Sprite);
         _renderer.DrawText(0,0,100,"てすとてきすとあいうえtおかきくけこさしすせそあいうえおかきくけこさしすせそ");
     }

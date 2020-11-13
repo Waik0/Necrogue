@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bf902f759b7071e4996fcf78a4c47e65, type: 3}
   m_Name: FurnitureTile_0000
   m_EditorClassIdentifier: Assembly-CSharp:CafeAssets.Script.System.GameMapSystem.TileInheritance:FanitureTileModel
-  m_DefaultSprite: {fileID: 21300000, guid: ae221e6e20d01154c8aef3da31f6541e, type: 3}
+  m_DefaultSprite: {fileID: 21300000, guid: 489d58e2d22d7a74cb966bbef92531dc, type: 3}
   m_DefaultGameObject: {fileID: 0}
   m_DefaultColliderType: 1
   m_TilingRules: []
