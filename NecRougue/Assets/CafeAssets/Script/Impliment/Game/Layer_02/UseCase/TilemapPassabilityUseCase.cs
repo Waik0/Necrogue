@@ -53,7 +53,7 @@ namespace CafeAssets.Script.Impliment.Game.Layer_02.UseCase
             }
             return _tilemapUseCase.CellToWorld(_passableMap.Keys.ToArray()[Random.Range(0, _passableMap.Keys.Count)]);
         }
-        public Vector2Int[] GetRoute(Vector3Int from,Vector3Int to)
+        public Stack<Vector2Int> GetRoute(Vector3Int from,Vector3Int to)
         {
             //Debug.Log(from);
             //Debug.Log(to);
@@ -64,7 +64,7 @@ namespace CafeAssets.Script.Impliment.Game.Layer_02.UseCase
             {
                 //Debug.Log("NPCがRect内にいない");
                 //含まれない場合空で返す
-                return new Vector2Int[0];
+                return new Stack<Vector2Int>();
             }
             //Debug.Log("探索開始");
             //A-starアルゴリズムによる探索
@@ -74,8 +74,7 @@ namespace CafeAssets.Script.Impliment.Game.Layer_02.UseCase
             var toActual = to - _tilemapUseCase.CellBounds.position;
             Debug.Log(fromActual);
             Debug.Log(toActual);
-            _astarAlgorithm.Search(new Vector2Int(fromActual.x,fromActual.y), new Vector2Int(toActual.x,toActual.y),new Vector2Int(_tilemapUseCase.CellBounds.position.x,_tilemapUseCase.CellBounds.position.y));
-            var r = _astarAlgorithm.Result;
+            var r = _astarAlgorithm.FindPath(new Vector2Int(fromActual.x,fromActual.y), new Vector2Int(toActual.x,toActual.y),new Vector2Int(_tilemapUseCase.CellBounds.position.x,_tilemapUseCase.CellBounds.position.y));
             //Debug.Log("探索終了-");
             // foreach (var vector2Int in r)
             // {
@@ -84,7 +83,7 @@ namespace CafeAssets.Script.Impliment.Game.Layer_02.UseCase
             //Debug.Log("---");
             return r;
         }
-        public Vector2Int[] GetRoute(Vector2 worldFrom ,Vector2 worldTo)
+        public Stack<Vector2Int> GetRoute(Vector2 worldFrom ,Vector2 worldTo)
         {
             var from = _tilemapUseCase.WorldToCell(worldFrom);
             var to = _tilemapUseCase.WorldToCell(worldTo);
@@ -178,7 +177,7 @@ namespace CafeAssets.Script.Impliment.Game.Layer_02.UseCase
                 {
                     for (var j = 0; j < model.Model.Brush.y; j++)
                     {
-                        var pos = new Vector3Int(origin.x - xhalf + i,origin.y - yhalf + j,model.Z);
+                        var pos = new Vector3Int(origin.x - xhalf + i,origin.y - yhalf + j,model.Model.MinLayer);
                         pos.z = 0;
                         if (!passable.ContainsKey(pos))
                         {
@@ -270,7 +269,7 @@ namespace CafeAssets.Script.Impliment.Game.Layer_02.UseCase
                 {
                     for (var j = 0; j < model.Model.Brush.y; j++)
                     {
-                        var pos = new Vector3Int(origin.x - xhalf + i,origin.y - yhalf + j,model.Z);
+                        var pos = new Vector3Int(origin.x - xhalf + i,origin.y - yhalf + j,model.Model.MinLayer);
                         pos.z = 0;
                         if (!passable.ContainsKey(pos))
                         {

@@ -44,11 +44,33 @@ namespace CafeAssets.Script.Impliment.Game.Layer_02.UseCase
         {
             var zPos = Tilemap.cellBounds.position.z;
             var zSize = Tilemap.cellBounds.size.z;
-            return Tilemap.GetTilesBlock(new BoundsInt(cell.x, cell.y, zPos, 1, 1, zSize)).All(_ =>
+            var count = 0;
+            var passable = true;
+            foreach (var tileBase in Tilemap.GetTilesBlock(new BoundsInt(cell.x, cell.y, zPos, 1, 1, zSize)))
             {
-                var at = _ as TileModel;
-                return at != null && at.IsWall == false;
-            });
+                var at = tileBase as TileModel;
+                if (at == null)
+                {
+                    if (count == 0)
+                    {
+                        //床がnullなら通行不可能
+                        return false;
+                    }
+                }
+                else
+                {
+                    passable &= at.IsWall == false;
+                }
+                count++;
+            }
+
+            return passable;
+            // return Tilemap.GetTilesBlock(new BoundsInt(cell.x, cell.y, zPos, 1, 1, zSize)).All(_ =>
+            // {
+            //    
+            //     var at = _ as TileModel;
+            //     return at != null && at.IsWall == false;
+            // });
         }
     }
 }

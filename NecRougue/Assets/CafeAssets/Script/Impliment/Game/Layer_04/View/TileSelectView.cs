@@ -59,11 +59,11 @@ namespace CafeAssets.Script.System.GameMapSystem
         /// タイルを選択
         /// </summary>
         /// <param name="name"></param>
-        void OnSelectTile(string name)
+        void OnSelectTile(string name,TileType type)
         {
             _tileSelectManager.OnSelectTile(new TileSelectModel()
             {
-                Model = _tileModelProvider.GetFloorTileModel(name)
+                Model = _tileModelProvider.GetTileModel(name,type)
             });
         }
         /// <summary>
@@ -95,6 +95,9 @@ namespace CafeAssets.Script.System.GameMapSystem
                 ins.Setup(value.ToString(),null,()=>OnSelectType(value));
             }
         }
+        /// <summary>
+        /// タイルタイプが選ばれたときにタイル一覧を表示する処理
+        /// </summary>
         void CreateTileSelectButton()
         {
             foreach (Transform o in _tileList.transform)
@@ -105,7 +108,7 @@ namespace CafeAssets.Script.System.GameMapSystem
             foreach (var tileModel in _tileModelProvider.GetTileModelList(SelectedType))
             {
                 var ins = Instantiate(_tileButtonPrefab, _tileList);
-                ins.Setup(tileModel.Name,null,()=>OnSelectTile(tileModel.name));
+                ins.Setup(tileModel.Name,null,()=>OnSelectTile(tileModel.name,SelectedType));
             }
         }
         /// <summary>

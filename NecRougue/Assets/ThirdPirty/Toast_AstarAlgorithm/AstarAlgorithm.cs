@@ -21,15 +21,16 @@ public class AstarAlgorithm
 {
     public class AstarNode
     {
+        
         public int Step;
-        public float Distance;
-        public float Weight;
-        public Vector2Int Prev;
+        public float Distance;//推定コスト
+        public float Weight;//実コスト
+        public AstarNode Prev;
+        public Vector2Int PrevPos;
+        public Vector2Int Pos;
         public bool IsAlreadyPassed;
         public bool Passable;
     }
-    private List<Vector2Int> _result = new List<Vector2Int>();
-    public Vector2Int[] Result => _result.ToArray();
     public AstarNode[,] Field { get; private set; }
     public bool IsFinish { get; private set; }
 
@@ -37,11 +38,14 @@ public class AstarAlgorithm
     //
     public void Reset()
     {
-        _result.Clear();
         foreach (var astarNode in Field)
         {
             if (astarNode == null) continue;
             astarNode.IsAlreadyPassed = false;
+            astarNode.Distance = 0;
+            astarNode.Weight = 0;
+            astarNode.Prev = null;
+            astarNode.PrevPos = Vector2Int.zero;
         }
     }
 
@@ -53,79 +57,22 @@ public class AstarAlgorithm
     /// 探索
     /// <summary>
     /// </summary>
-    public void Search(Vector2Int start,Vector2Int goal,Vector2Int modify )
-    {
-        if (IsReady)
-        {
-            IsFinish = false;
-            IsReady = false;
-            StartSearch(start, goal,modify);
-          
-        }
-    }
-
-    void StartSearch(Vector2Int start, Vector2Int goal,Vector2Int modify)
+ 
+    
+    List<Vector2Int> SearchCandidatesSurroundings(int x,int y )
     {
         var candidate = new List<Vector2Int>();
-#if NOT_ASYNC
-        Debug.Log("Start");
-        Debug.Log(start);
-        Debug.Log(goal);
-        var time = DateTime.Now;
-        SearchRecursive(start, goal, candidate, true,modify);
-        Debug.Log($"Finish {(DateTime.Now - time).TotalSeconds}sec");
-        IsFinish = true;
-        IsReady = true;
-#else
-        Task.Run( async () =>
-        {
-            
-            Debug.Log("Start");
-            var time = DateTime.Now;
-            await SearchRecursive(start, goal, candidate,true);
-            Debug.Log($"Finish {(DateTime.Now - time).TotalSeconds}sec");
-            IsFinish = true;
-            IsReady = true;
-        });
-#endif
-    }
-    void SearchRecursive(Vector2Int start, Vector2Int goal, List<Vector2Int> candidate,bool isEntry,Vector2Int modify)
-    {
-        //初回は0でも許可
-        Debug.Log(candidate.Count);
-        if ((candidate.Count == 0 && !isEntry) || start == goal)
-        {
-            return;
-        }
-        //Debug.Log(candidate.Count);
-        candidate.AddRange(SearchCandidatesSurroundings(start.x,start.y,goal));
-        var next = DecideCandidates(candidate,goal);
-        candidate.Remove(next);
-        _result.Add(new Vector2Int(next.x + modify.x,next.y + modify.y));
-        OpenNode(start);//通過済みに
-        SearchRecursive(next, goal, candidate,false,modify);
         
-    }
-
-    Vector2Int DecideCandidates(List<Vector2Int> candidate,Vector2Int goal)
-    {
-        foreach (var vector2Int in candidate)
-        {
-            CalcWeight(vector2Int, goal);
-            //OpenNode(new Vector2Int(x + i, y + j));
-        }
-        var min = candidate.OrderBy(_ => Field[_.x, _.y].Weight).First();
-        return min;
-
-    }
-    List<Vector2Int> SearchCandidatesSurroundings(int x,int y ,Vector2Int goal)
-    {
-        var candidate = new List<Vector2Int>();
         for (var i = -1; i < 2; i++)
         {
             for (var j = -1; j < 2; j++)
             {
-                if (i == 0 && j == 0)
+                if ((i == 0 && j == 0)
+                    // (i == -1 && j == -1) ||
+                    // (i == 1 && j == 1) ||
+                    // (i == -1 && j == 1) ||
+                    // (i == 1 && j == -1)
+                    )
                 {
                     continue;
                 }
@@ -136,7 +83,7 @@ public class AstarAlgorithm
                 candidate.Add(new Vector2Int(x + i, y + j));
             }
         }
-        Debug.Log(candidate.Count);
+        Debug.Log("Can : "+candidate.Count);
         return candidate;
 
     }
@@ -156,25 +103,86 @@ public class AstarAlgorithm
     /// 
     /// </summary>
     /// <returns></returns>
-    void CalcWeight(Vector2Int now,Vector2Int end)
+    void CalcWeight(Vector2Int now,AstarNode parent,Vector2Int parentPos,Vector2Int end)
     {
         //var Field[now.x, now.y].Distance
         Field[now.x, now.y].Distance = (end - now).magnitude;
         Field[now.x, now.y].Weight = Field[now.x, now.y].Distance;
+        //Field[now.x, now.y].Step = 0;
+        if (parent != null)
+        {
+            Field[now.x, now.y].Weight += parent.Weight;
+            Field[now.x, now.y].Prev = parent;
+            Field[now.x, now.y].PrevPos = parentPos;
+            //Field[now.x, now.y].Step += parent.Step + 1;
+        }
+        
     }
+    
 
-    void OpenNode(Vector2Int now)
+    public Stack<Vector2Int> FindPath(Vector2Int start, Vector2Int end,Vector2Int modify)
     {
-        Debug.Log(now);
-        Debug.Log(Field.GetLength(0));
-        Debug.Log(Field.GetLength(1));
-        if(Field[now.x, now.y] != null) Field[now.x, now.y].IsAlreadyPassed = true;
+
+      
+        List<Vector2Int> OpenList = new List<Vector2Int>();
+        List<Vector2Int> ClosedList = new List<Vector2Int>();
+        List<Vector2Int> adjacencies;
+        Vector2Int current = start;
+
+        // add start node to Open List
+        OpenList.Add(start);
+
+        while (OpenList.Count != 0 && !ClosedList.Exists(x => x == end))
+        {
+            Debug.Log(OpenList.Count);
+            current = OpenList[0];
+            OpenList.Remove(current);
+            ClosedList.Add(current);
+            adjacencies = SearchCandidatesSurroundings(current.x,current.y);
+
+
+            foreach (Vector2Int n in adjacencies)
+            {
+                if (!ClosedList.Contains(n))
+                {
+                    if (!OpenList.Contains(n))
+                    {
+                        CalcWeight(n,Field[current.x, current.y],current,end);
+                        OpenList.Add(n);
+                    }
+                }
+            }
+        }
+
+        // construct path, if end was not closed return null
+        if (!ClosedList.Exists(x => x == end))
+        {
+            Debug.LogError("CannnotReach");
+            return null;
+        }
+
+        // if all good, return path
+        if (!ClosedList.Contains(current))
+        {
+            Debug.LogError("CannnotReach 2");
+            return null;
+        }
+        Vector2Int temp = ClosedList[ClosedList.IndexOf(current)];
+        Stack<Vector2Int> Path = new Stack<Vector2Int>();
+        do
+        {
+            Path.Push(temp+modify);
+            temp = Field[temp.x,temp.y].PrevPos;
+        } while (temp != start && Field[temp.x,temp.y].Prev != null);
+
+        return Path;
     }
     
 
 }
 
-
+//別のやり方
+#if false
 namespace AStarSharp
 {
     public class Node
@@ -316,7 +324,7 @@ namespace AStarSharp
         }
     }
 }
-
+#endif
 /// <summary>
 /// 仕組み的に不可能だった
 /// </summary>

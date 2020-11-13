@@ -41,6 +41,17 @@ public static class TileModelProviderExtensions
     {
         return prov.FloorTileModels.FirstOrDefault(_=>_.name == name);
     }
+    public static TileModel GetTileModel(this TileModelProvider prov,string name,TileType type)
+    {
+        switch (type)
+        {
+            case TileType.Floor:return prov.FloorTileModels.FirstOrDefault(_=>_.name == name);
+            case TileType.Furniture:return prov.FurnitureTileModels.FirstOrDefault(_=>_.name == name);
+            case TileType.Goods:return prov.GoodsTileModels.FirstOrDefault(_=>_.name == name);
+        }
+
+        return null;
+    }
 }
 
 public static class TileBaseExtensions

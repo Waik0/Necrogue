@@ -36,6 +36,10 @@ namespace CafeAssets.Script.System.GameMapSystem
             _tilemapManager = tilemapManager;
             tilemapUseCase.Tilemap = _tilemap;
         }
+        /// <summary>
+        /// todo Usecaseに一部委譲したい
+        /// </summary>
+        /// <param name="model"></param>
         public void SetTile(TilePlaceModel model)
         {
             _tilemap.SetTileModel(model);
@@ -85,7 +89,7 @@ namespace CafeAssets.Script.System.GameMapSystem
                     else
                     {
                         var pos = self.WorldToCell(model.StartWorldPos);
-                        pos.z = model.Z;
+                        pos.z = model.Model.MinLayer;
                         self.SetTile(pos, model.Model);
                     }
                     break;
@@ -112,7 +116,7 @@ namespace CafeAssets.Script.System.GameMapSystem
                 for (var j = 0; j < model.Model.Brush.y; j++)
                 {
                     
-                    positions[i * model.Model.Brush.y + j] = new Vector3Int(origin.x - xhalf + i,origin.y - yhalf + j,model.Z);
+                    positions[i * model.Model.Brush.y + j] = new Vector3Int(origin.x - xhalf + i,origin.y - yhalf + j,model.Model.MinLayer);
                     tiles[i * model.Model.Brush.y + j] = tile;
                 }
             }
@@ -140,7 +144,7 @@ namespace CafeAssets.Script.System.GameMapSystem
                 for (var j = 0; j < ly; j++)
                 {
                     
-                    positions[i * ly + j] = new Vector3Int(sx + i,sy + j,model.Z);
+                    positions[i * ly + j] = new Vector3Int(sx + i,sy + j,model.Model.MinLayer);
                     tiles[i * ly + j] = tile;
                 }
             }

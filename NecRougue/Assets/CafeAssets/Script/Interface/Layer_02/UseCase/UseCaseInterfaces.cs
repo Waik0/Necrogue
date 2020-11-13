@@ -84,8 +84,8 @@ namespace CafeAssets.Script.Interface.Layer_02.UseCase
     {
      //   Tilemap PassableTilemap { set; }
         Vector2 GetRandomPassableTilePos();
-        Vector2Int[] GetRoute(Vector3Int from, Vector3Int to);
-        Vector2Int[] GetRoute(Vector2 worldFrom, Vector2 worldTo);
+        Stack<Vector2Int> GetRoute(Vector3Int from, Vector3Int to);
+        Stack<Vector2Int> GetRoute(Vector2 worldFrom, Vector2 worldTo);
     }
     #region GameParams
     

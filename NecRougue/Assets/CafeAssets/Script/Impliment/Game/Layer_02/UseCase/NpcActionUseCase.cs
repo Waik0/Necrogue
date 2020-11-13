@@ -45,7 +45,7 @@ namespace CafeAssets.Script.System.GameNpcSystem
         private INpcParamUseCase _paramUseCase;
         private ITilemapPassabilityUseCase _tilemapPassabilityUseCase;
         private ITilemapUseCase _tilemapUseCase;
-        private Queue<Vector2Int> _aimList;
+        private Stack<Vector2Int> _aimList;
         private Vector2 _aim;
         public NpcMoveToRandomPlace(
             INpcMoveUseCase moveUseCase,
@@ -57,18 +57,14 @@ namespace CafeAssets.Script.System.GameNpcSystem
             _paramUseCase = paramUseCase;
             _tilemapPassabilityUseCase = tilemapPassabilityUseCase;
             _tilemapUseCase = tilemapUseCase;
-            _aimList = new Queue<Vector2Int>();
+            _aimList = new Stack<Vector2Int>();
         }
         public void StartAction(NpcActionModel model)
         {
             CurrentStatus = NpcActionStatus.Doing;
             var from = _moveUseCase.CurrentPos();
             var to = _tilemapPassabilityUseCase.GetRandomPassableTilePos();
-            _aimList.Clear();
-            foreach (var vector2Int in _tilemapPassabilityUseCase.GetRoute(from,to))
-            {
-                _aimList.Enqueue(vector2Int);
-            }
+            _aimList = _tilemapPassabilityUseCase.GetRoute(from, to);
         }
 
         public void EndAction()
@@ -91,15 +87,15 @@ namespace CafeAssets.Script.System.GameNpcSystem
                     return;
                 }
 
-                var next = _aimList.Dequeue();
+                var next = _aimList.Pop();
                 _aim = _tilemapUseCase.CellToWorld(new Vector3Int(next.x,next.y,0));
                 //Debug.Log(_tilemapUseCase.CellToWorld(new Vector3Int(next.x,next.y,0)));
             }
            
             float speed = .05f;
             Vector2 direction = (_aim - _moveUseCase.CurrentPos()).normalized;
-            _moveUseCase.Move(direction * speed);
-          
+            //_moveUseCase.Move(direction * speed);
+            _moveUseCase.Move(_aim);
 
         }
     }

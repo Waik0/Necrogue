@@ -152,7 +152,7 @@ namespace CafeAssets.Script.Model
         public PlaceTileMode PlaceMode;
         public Vector3 StartWorldPos;
         public Vector3 EndWorldPos;
-        public int Z;
+        //public int Z;
     }
 
     public class TilemapModel

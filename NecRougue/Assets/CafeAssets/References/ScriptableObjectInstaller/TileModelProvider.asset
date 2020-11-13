@@ -14,5 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   FloorTileModels:
   - {fileID: 11400000, guid: 49554e7c57238444a8de84c153d16878, type: 2}
-  FurnitureTileModels: []
+  FurnitureTileModels:
+  - {fileID: 11400000, guid: bf36c3bb415b7f9439bd24a7d25de349, type: 2}
+  - {fileID: 11400000, guid: 888ca935bb4e35e42867de3ec30db9d8, type: 2}
   GoodsTileModels: []

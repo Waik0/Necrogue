@@ -23,8 +23,8 @@ namespace CafeAssets.Script.Impliment.Game.Layer_02.UseCase
             if (_rigidbody != null)
             {
                 //_rigidbody.AddForce(delta);
-               // _rigidbody.transform.position = delta
-               _rigidbody.transform.Translate(delta);
+                _rigidbody.transform.position = delta;
+                //_rigidbody.transform.Translate(delta);
             }
         }
 

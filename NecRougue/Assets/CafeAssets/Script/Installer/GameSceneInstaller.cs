@@ -83,7 +83,7 @@ public class GameSceneInstaller : MonoInstaller
         
         //View
         Container.BindInterfacesTo<TilemapView>().FromComponentInNewPrefab(_settings.TilemapViewPrefab).AsCached().NonLazy();
-        Container.BindInterfacesTo<TilemapPassableView>().FromComponentInNewPrefab(_settings.TilemapPassableViewPrefab).AsCached().NonLazy();
+        //Container.BindInterfacesTo<TilemapPassableView>().FromComponentInNewPrefab(_settings.TilemapPassableViewPrefab).AsCached().NonLazy();
         Container.BindInterfacesTo<MapPlacePreviewView>().FromComponentInNewPrefab(_settings.MapPlacePreviewViewPrefab).AsCached().NonLazy();
         Container.BindInterfacesTo<GameTimeView>().FromComponentInNewPrefab(_settings.GameTimeView).AsCached().NonLazy();
         Container.BindInterfacesTo<CameraView>().FromComponentInNewPrefab(_settings.CameraView).AsCached().NonLazy();
