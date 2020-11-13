@@ -8,22 +8,22 @@ namespace CafeAssets.Script.Impliment.Game.Layer_02.UseCase
     public class NpcMoveUseCase : INpcMoveUseCase
     {
         private NpcMoveModel _model;
-        private Rigidbody2D _rigidbody;
+        private GameObject gameObject;
         public Vector2 CurrentPos()
         {
-            if (_rigidbody != null)
+            if (gameObject != null)
             {
-                return _rigidbody.position;
+                return gameObject.transform.position;
             }
             return Vector2.zero;
         }
 
-        public void Move(Vector2 delta)
+        public void Move(Vector2 pos)
         {
-            if (_rigidbody != null)
+            if (gameObject != null)
             {
                 //_rigidbody.AddForce(delta);
-                _rigidbody.transform.position = delta;
+                gameObject.transform.position = pos;
                 //_rigidbody.transform.Translate(delta);
             }
         }
@@ -32,7 +32,7 @@ namespace CafeAssets.Script.Impliment.Game.Layer_02.UseCase
         {
             _model = model;
             _model.Self.transform.position = _model.Position;
-            _rigidbody = _model.Self.GetComponent<Rigidbody2D>();
+            gameObject = _model.Self;
         }
     }
 }

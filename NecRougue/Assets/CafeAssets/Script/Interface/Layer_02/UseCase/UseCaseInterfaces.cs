@@ -31,7 +31,7 @@ namespace CafeAssets.Script.Interface.Layer_02.UseCase
     public interface INpcMoveUseCase
     {
         Vector2 CurrentPos();
-        void Move(Vector2 delta);
+        void Move(Vector2 pos);
         void Reset(NpcMoveModel model);
     }
     
