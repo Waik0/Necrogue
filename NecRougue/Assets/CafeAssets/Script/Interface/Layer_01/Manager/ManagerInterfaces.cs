@@ -38,5 +38,10 @@ namespace CafeAssets.Script.Interface.Layer_01.Manager
         GameTimeModel GetNow();
         void Set(GameTimeModel model);
     }
+    public interface INpcSpawnManager:IManager<INpcSpawnReceiver>
+    {
+        //method
+        void OnSpawn(NpcModel model);
+    }
 
 }

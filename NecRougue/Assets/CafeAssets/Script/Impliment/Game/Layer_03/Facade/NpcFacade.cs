@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using CafeAssets.Script.Interface.Facade;
+using CafeAssets.Script.Interface.Layer_01.Manager;
 using CafeAssets.Script.Interface.Layer_02.UseCase;
 using CafeAssets.Script.Interface.Registry;
 using CafeAssets.Script.Model;
@@ -25,8 +26,7 @@ namespace CafeAssets.Script.System.GameNpcSystem
         private INpcParamUseCase _paramUseCase;
         private INpcRegistry _registry;
         private INpcMoveUseCase _moveUseCase;
-        private Dictionary<NpcActionPattern, INpcActionUseCase> _actionUseCases;
-        
+        private INpcSpawnManager _npcSpawnManager;
 
         [Inject]
         void Inject(
@@ -34,14 +34,14 @@ namespace CafeAssets.Script.System.GameNpcSystem
             INpcMoveUseCase moveUseCase,
             INpcParamUseCase paramUseCase,
             INpcRegistry registry,
-            List<INpcActionUseCase> actions
+            INpcSpawnManager spawnManager
         )
         {
             _aiUseCase = aiUseCase;
             _moveUseCase = moveUseCase;
             _paramUseCase = paramUseCase;
             _registry = registry;
-            _actionUseCases = actions.ToDictionary(a => a.TargetPattern);
+            _npcSpawnManager = spawnManager;
         }
 
         public void OnDespawned()
@@ -57,29 +57,11 @@ namespace CafeAssets.Script.System.GameNpcSystem
             _moveUseCase.Reset(p1.Move);
             _paramUseCase.Reset();
             _registry.Add(this);
-            FacadeModel = p1;
-        }
-
-        /// <summary>
-        /// 行動する または 次の行動を考える
-        /// </summary>
-        void UpdateAction()
-        {
-            if (!_actionUseCases.ContainsKey(_aiUseCase.Current)) return;
-            var currentAction = _actionUseCases[_aiUseCase.Current];
-            switch (currentAction.CurrentStatus)
+            _npcSpawnManager.OnSpawn(new NpcModel()
             {
-                case NpcActionStatus.Sleep:
-                    currentAction.StartAction(_aiUseCase.CurrentParam);
-                    break;
-                case NpcActionStatus.Doing:
-                    currentAction.Tick();
-                    break;
-                case NpcActionStatus.Complete:
-                    currentAction.EndAction();
-                    _aiUseCase.Think();
-                    break;
-            }
+                GameObject = gameObject
+            });
+            FacadeModel = p1;
         }
 
 
@@ -91,7 +73,18 @@ namespace CafeAssets.Script.System.GameNpcSystem
 
         public void Tick()
         {
-            UpdateAction();
+            _aiUseCase.UpdateAction();
+        }
+
+        public NpcActionPattern CurrentAction() => _aiUseCase.Current;
+        public string[] GetParamKeys()
+        {
+            return _paramUseCase.GetKeys();
+        }
+
+        public int GetParam(string key)
+        {
+            return _paramUseCase.Get(key);
         }
     }
 }

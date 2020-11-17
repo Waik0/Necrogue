@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class NpcManager
+public class NpcDebugModel
 {
-
+    public GameObject ChaseObject;
+    
 }

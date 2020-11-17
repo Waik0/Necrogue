@@ -15,10 +15,24 @@ public class NpcInstaller : Installer<NpcInstaller>
         Container.BindInterfacesTo<NpcAiUseCase>().AsSingle();
         Container.BindInterfacesTo<NpcParamUseCase>().AsSingle();
         Container.BindInterfacesTo<NpcMoveUseCase>().AsSingle();
+        InstallNpcAction();
+        InstallNpcCondition();
+    }
+
+    private void InstallNpcAction()
+    {
         //行動系
         //INpcActionUseCaseを継承しているもの
         Container.BindInterfacesTo<NpcStop>().AsCached();
         Container.BindInterfacesTo<NpcMoveToRandomPlace>().AsCached();
-        
+        Container.BindInterfacesTo<NpcMoveToChair>().AsCached();
+
+    }
+
+    private void InstallNpcCondition()
+    {
+        Container.BindInterfacesTo<NpcStopCondition>().AsCached();
+        Container.BindInterfacesTo<NpcMoveToRandomPlaceCondition>().AsCached();
+        Container.BindInterfacesTo<NpcMoveToChairCondition>().AsCached();
     }
 }

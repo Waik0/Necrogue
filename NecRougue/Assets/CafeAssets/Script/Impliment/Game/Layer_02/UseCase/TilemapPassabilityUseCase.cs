@@ -44,15 +44,26 @@ namespace CafeAssets.Script.Impliment.Game.Layer_02.UseCase
         /// ランダムな通行可能タイルの場所を返す
         /// </summary>
         /// <returns></returns>
-        public Vector2 GetRandomPassableTilePos()
+        public Vector2 GetRandomPassableTilePos(Vector3Int from,int MaxSqrtDistance)
         {
-            
-            if (_passableMap == null || _passableMap.Keys.Count == 0)
+            if (_passableMap == null)
             {
                 return Vector2.zero;
             }
-            return _tilemapUseCase.CellToWorld(_passableMap.Keys.ToArray()[Random.Range(0, _passableMap.Keys.Count)]);
+            var candidate = _passableMap.Keys.Where(_ => (from - _).sqrMagnitude <= MaxSqrtDistance).ToArray();
+            if (candidate.Length == 0)
+            {
+                return Vector2.zero;
+            }
+            return _tilemapUseCase.CellToWorld(candidate[Random.Range(0, candidate.Length)]);
         }
+
+        public Vector2 GetRandomPassableTilePos(Vector2 from, int MaxSqrtDistance)
+        {
+            var f = _tilemapUseCase.WorldToCell(from);
+            return GetRandomPassableTilePos(f, MaxSqrtDistance);
+        }
+
         public Stack<Vector2Int> GetRoute(Vector3Int from,Vector3Int to)
         {
             //Debug.Log(from);
@@ -72,8 +83,6 @@ namespace CafeAssets.Script.Impliment.Game.Layer_02.UseCase
             _astarAlgorithm.Reset();
             var fromActual = from - _tilemapUseCase.CellBounds.position;
             var toActual = to - _tilemapUseCase.CellBounds.position;
-            Debug.Log(fromActual);
-            Debug.Log(toActual);
             var r = _astarAlgorithm.FindPath(new Vector2Int(fromActual.x,fromActual.y), new Vector2Int(toActual.x,toActual.y),new Vector2Int(_tilemapUseCase.CellBounds.position.x,_tilemapUseCase.CellBounds.position.y));
             //Debug.Log("探索終了-");
             // foreach (var vector2Int in r)

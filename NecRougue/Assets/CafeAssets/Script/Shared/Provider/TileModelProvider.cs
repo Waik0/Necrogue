@@ -32,7 +32,6 @@ public static class TileModelProviderExtensions
             case TileType.Floor: return prov.FloorTileModels;
             case TileType.Furniture: return prov.FurnitureTileModels;
             case TileType.Goods: return prov.GoodsTileModels;
-            case TileType.None:
             default:
                 throw new ArgumentOutOfRangeException(nameof(type), type, null);
         }

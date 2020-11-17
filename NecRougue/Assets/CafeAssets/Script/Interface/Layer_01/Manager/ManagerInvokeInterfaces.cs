@@ -37,4 +37,9 @@ namespace CafeAssets.Script.Interface.Layer_01.Manager
     {
         void TickOnGame(IGameTimeManager gameTimeManager);
     }
+
+    public interface INpcSpawnReceiver
+    {
+        void OnSpawnNpc(NpcModel model);
+    }
 }

@@ -23,6 +23,11 @@ namespace CafeAssets.Script.System.GameCameraSystem
             return _target.ScreenToWorldPoint(screenPoint);
         }
 
+        public Vector2 WorldToScreenPoint(Vector3 world)
+        {
+            return _target.WorldToScreenPoint(world);
+        }
+
         public void GameInput(GameInputModel model)
         {
             if(model.InputMode == InputMode.MoveCamera) MoveCamera(_target.gameObject.transform.position - model.WorldDelta);

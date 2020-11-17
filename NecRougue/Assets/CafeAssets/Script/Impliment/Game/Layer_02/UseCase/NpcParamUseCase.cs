@@ -18,7 +18,7 @@ namespace CafeAssets.Script.System.GameNpcSystem
         int Operation(ParameterStyle style, string key, GameParameterOperations operation, int num);
     }
     /// <summary>
-    /// NPCのプレハブに張り付けておくためMonoBehaviour
+    /// 
     /// </summary>
     public class NpcParamUseCase : INpcParamUseCase
     {

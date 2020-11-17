@@ -29,9 +29,6 @@ public class GameSceneInstaller : MonoInstaller
         public TileSelectView TileSelect;
 
         public NpcFacade NpcFacade;
-        //debug
-        //todo 別Installerに分けてdefine切り分けしてReleaseに入らないように
-        public DebugView Debug;
     }
 
     [Inject] private Settings _settings;
@@ -54,9 +51,14 @@ public class GameSceneInstaller : MonoInstaller
         Container.BindInterfacesTo<TilePlaceTileManager>().AsCached().NonLazy();//OnMapPlace
         Container.BindInterfacesTo<TileSelectManager>().AsCached().NonLazy();//OnTileSelect
         Container.BindInterfacesTo<TilemapManager>().AsCached().NonLazy();//OnUpdateTilemap
+        Container.BindInterfacesTo<NpcSpawnManager>().AsCached().NonLazy();//OnSpawn
         //Registory
         //アクティブなオブジェクトを管理するクラス
         Container.BindInterfacesTo<NpcRegistry>().AsSingle();
+        //Repository
+        //データ操作をするクラス
+        Container.BindInterfacesTo<TilemapParameterRepository>().AsCached().NonLazy();
+        
         //2層
         //UseCase
         //単一のビジネスルール
@@ -66,6 +68,7 @@ public class GameSceneInstaller : MonoInstaller
         Container.BindInterfacesTo<PlaceTileUseCase>().AsCached().NonLazy();
         Container.BindInterfacesTo<TilemapUseCase>().AsCached().NonLazy();
         Container.BindInterfacesTo<TilemapPassabilityUseCase>().AsCached().NonLazy();
+        Container.BindInterfacesTo<TilemapParamUseCase>().AsCached().NonLazy();
         //Spawner
         Container.BindInterfacesAndSelfTo<NpcSpawner>().AsCached().NonLazy();
         //3層
@@ -89,10 +92,7 @@ public class GameSceneInstaller : MonoInstaller
         Container.BindInterfacesTo<CameraView>().FromComponentInNewPrefab(_settings.CameraView).AsCached().NonLazy();
         Container.BindInterfacesTo<GameInputView>().FromComponentInNewPrefab(_settings.GameInputView).AsCached().NonLazy();
         Container.BindInterfacesTo<TileSelectView>().FromComponentInNewPrefab(_settings.TileSelect).AsCached().NonLazy();
-        
-        //Debug
-        //todo 別Installerに分けてdefine切り分けしてReleaseに入らないように
-        Container.BindInterfacesTo<DebugView>().FromComponentInNewPrefab(_settings.Debug).AsCached().NonLazy();
+
     }
     class NpcFacadePool : MonoPoolableMemoryPool<NpcFacadeModel, IMemoryPool, NpcFacade>
     {

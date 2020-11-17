@@ -17,6 +17,7 @@ namespace CafeAssets.Script.Interface.View
     {
         void MoveCamera(Vector3 pos);
         Vector3 ScreenToWorldPoint(Vector2 screenPoint);
+        Vector2 WorldToScreenPoint(Vector3 world);
     }
     /// <summary>
     /// タイルマップ制御

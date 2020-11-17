@@ -12,7 +12,7 @@ namespace CafeAssets.Script.System.GameMapSystem
 {
     public interface ITileSelectView
     {
-        TileType SelectedType { get; set; }
+        TileType?  SelectedType { get; set; }
     }
     /// <summary>
     /// タイル選択UI
@@ -28,7 +28,7 @@ namespace CafeAssets.Script.System.GameMapSystem
         [SerializeField] private TileSelectButton _tileButtonPrefab;
         private TileModelProvider _tileModelProvider;
         private ITileSelectManager _tileSelectManager;
-        public TileType SelectedType { get; set; }
+        public TileType? SelectedType { get; set; }
         [Inject]
         void Inject(
             TileModelProvider tileModelProvider,
@@ -71,7 +71,7 @@ namespace CafeAssets.Script.System.GameMapSystem
         /// </summary>
         void Cancel()
         {
-            SelectedType = TileType.None;
+            SelectedType = null;
             foreach (Transform o in _tileList.transform)
             {
                 Destroy(o.gameObject);
@@ -105,10 +105,14 @@ namespace CafeAssets.Script.System.GameMapSystem
                 Destroy(o.gameObject);
             }
 
-            foreach (var tileModel in _tileModelProvider.GetTileModelList(SelectedType))
+            if (SelectedType == null) 
+                return;
+            foreach (var tileModel in _tileModelProvider.GetTileModelList(SelectedType.Value))
             {
                 var ins = Instantiate(_tileButtonPrefab, _tileList);
-                ins.Setup(tileModel.Name,null,()=>OnSelectTile(tileModel.name,SelectedType));
+                if (SelectedType == null) 
+                    continue;
+                ins.Setup(tileModel.Name,null,()=>OnSelectTile(tileModel.name,SelectedType.Value));
             }
         }
         /// <summary>
@@ -125,7 +129,7 @@ namespace CafeAssets.Script.System.GameMapSystem
                     Destroy(o.gameObject);
                 }
 
-                SelectedType = TileType.None;
+                SelectedType = null;
             }
         }
 

@@ -1,0 +1,7 @@
+{
+    "name": "com.neuecc.unirx",
+    "version": "6.2.2",
+    "displayName": "UniRx",
+    "description": "UniRx for 2019.1 or earlier",
+    "unity": "2018.1"
+}

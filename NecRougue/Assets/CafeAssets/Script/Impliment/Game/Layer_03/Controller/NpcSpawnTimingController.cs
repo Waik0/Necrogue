@@ -1,4 +1,5 @@
-﻿using CafeAssets.Script.Interface.Controller;
+﻿using System.Collections.Generic;
+using CafeAssets.Script.Interface.Controller;
 using CafeAssets.Script.Interface.Layer_01.Manager;
 using CafeAssets.Script.Interface.Layer_02.UseCase;
 using CafeAssets.Script.Model;
@@ -27,7 +28,15 @@ namespace CafeAssets.Script.System.GameCoreSystem
                 test = true;
                 _npcSpawner.Spawn(new NpcFacadeModel()
                 {
-                    Ai = new NpcAiModel(),
+                    Ai = new NpcAiModel()
+                    {
+                        Priority = new List<NpcActionPattern>()
+                        {
+                            NpcActionPattern.MoveToChair,
+                            NpcActionPattern.MoveToRandomPlace,
+                            NpcActionPattern.Stop,
+                        }
+                    },
                     Move = new NpcMoveModel()
                     {
                         Position = Vector3.zero,

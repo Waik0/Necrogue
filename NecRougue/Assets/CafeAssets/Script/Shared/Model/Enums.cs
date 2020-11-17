@@ -5,6 +5,7 @@ public enum NpcActionPattern
 {
     Stop,
     MoveToRandomPlace,
+    MoveToChair,
     MoveToNpc,
     Order,
     Talk,
@@ -20,12 +21,14 @@ public enum InputMode
     PlaceTile,
     None,
 }
+/// <summary>
+/// タイルの種類
+/// </summary>
 public enum TileType
 {
     Floor,
     Furniture,
     Goods,
-    None,
 }
 public enum PlaceTileMode
 {
@@ -45,6 +48,9 @@ public enum Region
     Ja = 0,
     En = 1,
 }
+/// <summary>
+/// NPC 隣接or直接効果
+/// </summary>
 public enum TileEffectType
 {
     Sit,//座る
@@ -88,6 +94,11 @@ public enum GameParameters
     MenuCoffee,
     Menu
 }
+public enum NpcParameters
+{
+    SitDown,
+}
+
 
 public enum GameParameterOperations
 {

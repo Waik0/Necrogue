@@ -25,6 +25,7 @@ namespace CafeAssets.Script.Interface.Layer_02.UseCase
         NpcActionPattern Current { get; }
         NpcActionModel CurrentParam { get; }
         void Think();
+        void UpdateAction();
         void Reset(NpcAiModel model);
     }
 
@@ -48,6 +49,12 @@ namespace CafeAssets.Script.Interface.Layer_02.UseCase
         void StartAction(NpcActionModel model);
         void EndAction();
         void Tick();
+    }
+
+    public interface INpcActionConditionUseCase
+    {
+        NpcActionPattern TargetPattern { get; }
+        bool CanAction();
     }
     /// <summary>
     /// Npcをプールから生成する
@@ -76,16 +83,25 @@ namespace CafeAssets.Script.Interface.Layer_02.UseCase
         Vector3 CellToWorld(Vector3Int cell);
         
         BoundsInt CellBounds { get; }
-        
+
+        TileModel[] AggregateTileModels(TileType type);
+        EffectiveTileModel[] AggregateEffectiveTileModels(TileEffectType type);
+
         bool GetPassable(Vector3Int cell);
 
     }
     public interface ITilemapPassabilityUseCase
     {
      //   Tilemap PassableTilemap { set; }
-        Vector2 GetRandomPassableTilePos();
+        Vector2 GetRandomPassableTilePos(Vector3Int from,int MaxSqrtDistance);
+        Vector2 GetRandomPassableTilePos(Vector2 from,int MaxSqrtDistance);
         Stack<Vector2Int> GetRoute(Vector3Int from, Vector3Int to);
         Stack<Vector2Int> GetRoute(Vector2 worldFrom, Vector2 worldTo);
+    }
+    public interface ITilemapParamUseCase
+    {
+        Vector2Int[] FindCanSitDownPlace();
+        Vector2Int? RegisterAndGetSitDownPlace();
     }
     #region GameParams
     

@@ -134,7 +134,6 @@ public class AstarAlgorithm
 
         while (OpenList.Count != 0 && !ClosedList.Exists(x => x == end))
         {
-            Debug.Log(OpenList.Count);
             current = OpenList[0];
             OpenList.Remove(current);
             ClosedList.Add(current);

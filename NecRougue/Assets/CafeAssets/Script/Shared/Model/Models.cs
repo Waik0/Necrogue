@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using Zenject;
 
 namespace CafeAssets.Script.Model
 { 
@@ -14,6 +15,7 @@ namespace CafeAssets.Script.Model
     }
     public class NpcAiModel
     {
+        public List<NpcActionPattern> Priority;
         
     }
     public class NpcMoveModel
@@ -30,7 +32,7 @@ namespace CafeAssets.Script.Model
     }
     public class NpcModel
     {
-    
+        public GameObject GameObject;
     }
     public class NpcParamModel
     {
@@ -124,6 +126,8 @@ namespace CafeAssets.Script.Model
         
         [Header("デフォルトの配置モード")] 
         public PlaceTileMode PlaceMode = PlaceTileMode.PlaceTileSingle;
+        
+        public virtual TileType Type {  get; }
 
     }
     
@@ -138,6 +142,8 @@ namespace CafeAssets.Script.Model
     {
         [Header("効果種類")] 
         public TileEffectType EffectType;
+        [Header("効果範囲（0で真上のみ）")]
+        public int EffectRadius = 0;
         [Header("作業時間")]
         //注文や飲食物作成にかかる時間
         //todo キャラのパラメーターで短縮かのうにする
@@ -160,6 +166,15 @@ namespace CafeAssets.Script.Model
         public Tilemap Tilemap;
         //public TilemapCollider2D TilemapCollider2D;
     }
+    /// <summary>
+    /// タイルマップでは管理できない動的なデータたち
+    /// </summary>
+    public class TilemapPropsModel
+    {
+        public bool CanSitDown;
+        public bool IsSitDown;
+    }
+
     public class PassableTilemapModel
     {
         public Tilemap Tilemap;
