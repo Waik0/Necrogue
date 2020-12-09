@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using CafeAssets.Script.Interface.Facade;
-using CafeAssets.Script.Interface.Registry;
-using CafeAssets.Script.Model;
-using UnityEngine;
+﻿using UnityEngine;
 using Zenject;
 public interface INpcDebugUnitView
 {

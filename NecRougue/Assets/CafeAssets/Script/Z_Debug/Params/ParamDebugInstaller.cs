@@ -1,12 +1,4 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using CafeAssets.Script.Impliment.Game.Layer_04.View;
-using CafeAssets.Script.System.GameCameraSystem;
-using CafeAssets.Script.System.GameInputSystem;
-using CafeAssets.Script.System.GameMapSystem;
-using CafeAssets.Script.System.GameNpcSystem;
-using CafeAssets.Script.System.GameTimeSystem;
 using UnityEngine;
 using Zenject;
 

@@ -1,7 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using CafeAssets.Script.Interface.Layer_01.Manager;
-using CafeAssets.Script.Model;
+﻿using CafeAssets.Script.GameComponents.Npc;
+using CafeAssets.Script.GameComponents.NpcCollection;
+using UniRx;
 using UnityEngine;
 using Zenject;
 
@@ -14,24 +13,38 @@ public interface INpcDebugFacade
     
 }
 public interface  INpcDebugView{}
-public class NpcDebugView : MonoBehaviour,INpcDebugView,INpcSpawnReceiver
+/// <summary>
+/// 各NPC上に表示するデバッグ情報
+/// </summary>
+public class NpcDebugView : MonoBehaviour,INpcDebugView
 {
     private INpcDebugUnitSpawner _spawner;
+    private INpcSpawner _npcSpawner;
     [Inject]
     public void Inject(
-        INpcDebugUnitSpawner spawner
+        INpcDebugUnitSpawner spawner,
+        INpcSpawner npcSpawner
     )
     {
         _spawner = spawner;
+        _npcSpawner = npcSpawner;
     }
 
-
-    public void OnSpawnNpc(NpcModel model)
+    private void Awake()
     {
-        Debug.Log(" WEFAWFAWCVWAVASDFASFCZAEVAWEFAW");
+        _npcSpawner.OnSpawn.Subscribe(OnSpawnNpc).AddTo(this);
+    }
+
+    void OnSpawnNpc(INpcCollection model)
+    {
+        var facade = model as NpcFacade;
+        if (!facade)
+        {
+            Debug.LogError("facade NULL");
+        }
         _spawner.Spawn(new NpcDebugModel()
         {
-            ChaseObject = model.GameObject
+            ChaseObject = facade.gameObject
         });
     }
 }

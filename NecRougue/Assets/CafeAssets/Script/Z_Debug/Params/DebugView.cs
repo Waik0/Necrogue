@@ -1,8 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using CafeAssets.Script.Interface.Layer_02.UseCase;
-using CafeAssets.Script.Interface.View;
-using CafeAssets.Script.System.GameInputSystem;
+﻿using CafeAssets.Script.GameComponents.GameInput;
+using CafeAssets.Script.GameComponents.Tilemap;
+using CafeAssets.Script.GameComponents.TilemapPlaceController;
 using CafeAssets.Script.System.GameMapSystem;
 using CafeAssets.Script.System.GameParameterSystem;
 using UnityEngine;
@@ -12,21 +10,18 @@ using Zenject;
 public class DebugView : MonoBehaviour,IDebugView
 {
     [SerializeField] private Text _text;
-    private ITilemapView _tilemapView;
-    private ITileSelectView _tileSelectView;
-    private IGameInputView _gameInputView;
+    private ITileSelectUseCase _tileSelectUseCase;
+    private IGameInputController _gameInputView;
     private IPlaceTileUseCase _mapPlaceUseCase;
-    private IGameParameterUseCase _gameParameterUseCase;
+    private ITilemapStaticParameterUseCase _gameParameterUseCase;
     [Inject]
     void Inject(
-        ITilemapView tilemapView, 
-        ITileSelectView tileSelectView,
-        IGameInputView gameInputView,
+        ITileSelectUseCase tileSelectUseCase,
+        IGameInputController gameInputView,
         IPlaceTileUseCase mapPlaceUseCase,
-        IGameParameterUseCase gameParameterUseCase)
+        ITilemapStaticParameterUseCase gameParameterUseCase)
     {
-        _tilemapView = tilemapView;
-        _tileSelectView = tileSelectView;
+        _tileSelectUseCase = tileSelectUseCase;
         _gameInputView = gameInputView;
         _mapPlaceUseCase = mapPlaceUseCase;
         _gameParameterUseCase = gameParameterUseCase;
@@ -35,8 +30,8 @@ public class DebugView : MonoBehaviour,IDebugView
     void Update()
     {
         _text.text = "MAP DEBUG \n" +
-                     $"{_tileSelectView.SelectedType}\n" +
-                     $"{_mapPlaceUseCase.SelectedTile?.Name}\n" +
+                     $"{_tileSelectUseCase.SelectedType}\n" +
+                     $"{_mapPlaceUseCase.SelectedTile?.GetName()}\n" +
                      $"{_mapPlaceUseCase.PlaceTileMode}\n" +
                      "\n";
         _text.text +="INPUT DEBUG \n" +
@@ -51,3 +46,5 @@ public class DebugView : MonoBehaviour,IDebugView
     }
 
 }
+
+

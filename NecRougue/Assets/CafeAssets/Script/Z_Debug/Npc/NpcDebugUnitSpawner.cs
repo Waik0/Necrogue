@@ -1,12 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using CafeAssets.Script.Impliment.Game.Layer_01.Factory;
-using CafeAssets.Script.Interface.Layer_01.Manager;
-using CafeAssets.Script.Interface.Registry;
-using CafeAssets.Script.Model;
-using CafeAssets.Script.System.GameNpcSystem;
-using UnityEngine;
-using Zenject;
+﻿using Zenject;
 
 public class NpcDebugUnitSpawner : INpcDebugUnitSpawner
 {
@@ -21,6 +13,7 @@ public class NpcDebugUnitSpawner : INpcDebugUnitSpawner
     }
     public void Spawn(NpcDebugModel model)
     {
+        DebugLog.LogClassName(this,$"NPC生成します");
         _factory.Create(model);
     }
 

@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using CafeAssets.Script.Interface.Facade;
-using CafeAssets.Script.Interface.View;
+﻿using CafeAssets.Script.GameComponents.Npc;
+using CafeAssets.Script.System.GameCameraSystem;
 using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
@@ -13,12 +10,12 @@ public class NpcDebugUnitView : MonoBehaviour,INpcDebugUnitView
     [SerializeField] private RectTransform _moveRoot;
     [SerializeField] private Canvas _canvas;
     [SerializeField] private Text _text;
-    private ICameraView _cameraView;
+    private ICameraUseCase _cameraUseCase;
 
     [Inject]
-    void Inject(ICameraView cameraView)
+    void Inject(ICameraUseCase cameraUseCase)
     {
-        _cameraView = cameraView;
+        _cameraUseCase = cameraUseCase;
     }
 
     private void Awake()
@@ -39,7 +36,7 @@ public class NpcDebugUnitView : MonoBehaviour,INpcDebugUnitView
     public void UpdateView(NpcDebugModel model)
     {
         var pos = (Vector2) model.ChaseObject.transform.position;
-        _moveRoot.position = _cameraView.WorldToScreenPoint(pos);
+        _moveRoot.position = _cameraUseCase.WorldToScreenPoint(pos);
         var facade = model.ChaseObject.GetComponent<INpcFacade>();
         _text.text = "STATUS : \n" + facade?.CurrentAction().ToString();
         var keys = facade?.GetParamKeys();
