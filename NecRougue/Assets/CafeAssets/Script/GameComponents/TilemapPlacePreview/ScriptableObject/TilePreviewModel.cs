@@ -8,7 +8,7 @@ namespace CafeAssets.Script.GameComponents.TilemapPlacePreview.ScriptableObject
     [CreateAssetMenu(fileName = "PreviewTile_0000",menuName = "ScriptableObject/PreviewTileModel")]
     public class TilePreviewModel : Tile,ITilePreviewModel
     {
-
+        public TileStaticParamModelList StaticParams => null;
 
         public string GetName()
         {

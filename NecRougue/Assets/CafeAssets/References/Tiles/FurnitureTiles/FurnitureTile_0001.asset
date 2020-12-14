@@ -26,5 +26,6 @@ MonoBehaviour:
   IsWall: 1
   Brush: {x: 2, y: 2}
   PlaceMode: 0
-  EffectType: 0
+  EffectType: 1
+  EffectRadius: 0
   ActionTime: 0

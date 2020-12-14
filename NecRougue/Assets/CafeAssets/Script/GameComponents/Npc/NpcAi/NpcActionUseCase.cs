@@ -117,6 +117,7 @@ namespace CafeAssets.Script.System.GameNpcSystem
     
     /// <summary>
     /// 座りに行く
+    /// todo 直す 新param対応
     /// </summary>
     public class NpcMoveToChair : INpcActionUseCase
     {
@@ -126,7 +127,7 @@ namespace CafeAssets.Script.System.GameNpcSystem
         private INpcParamUseCase _paramUseCase;
         private ITilemapPassabilityUseCase _tilemapPassabilityUseCase;
         private ITilemapUseCase _tilemapUseCase;
-        private ITilemapParamUseCase _tilemapParamUseCase;
+        //private ITilemapParamUseCase _tilemapParamUseCase;
         private Stack<Vector2Int> _aimList;
         private Vector2 _to;
         private Vector2 _from;
@@ -135,14 +136,15 @@ namespace CafeAssets.Script.System.GameNpcSystem
             INpcMoveUseCase moveUseCase,
             INpcParamUseCase paramUseCase,
             ITilemapPassabilityUseCase tilemapPassabilityUseCase,
-            ITilemapUseCase tilemapUseCase,
-            ITilemapParamUseCase tilemapParamUseCase)
+            ITilemapUseCase tilemapUseCase
+            //ITilemapParamUseCase tilemapParamUseCase
+            )
         {
             _moveUseCase = moveUseCase;
             _paramUseCase = paramUseCase;
             _tilemapPassabilityUseCase = tilemapPassabilityUseCase;
             _tilemapUseCase = tilemapUseCase;
-            _tilemapParamUseCase = tilemapParamUseCase;
+            //_tilemapParamUseCase = tilemapParamUseCase;
             _aimList = new Stack<Vector2Int>();
         }
         public void StartAction(NpcActionModel model)
@@ -150,17 +152,17 @@ namespace CafeAssets.Script.System.GameNpcSystem
             CurrentStatus = NpcActionStatus.Doing;
             Debug.Log("イスを予約");
             //イスを予約
-            var blankChair = _tilemapParamUseCase.RegisterAndGetSitDownPlace();
-            if (blankChair == null)
+            //var blankChair = _tilemapParamUseCase.RegisterAndGetSitDownPlace();
+            if (true)//blankChair == null)
             {
                 Debug.Log("イスがない");
                 CurrentStatus = NpcActionStatus.Complete;
                 return;
             }
-            var from = _tilemapUseCase.WorldToCell(_moveUseCase.CurrentPos());
-            from.z = 0;
-            var to = new Vector3Int(blankChair.Value.x,blankChair.Value.y,0);
-            _aimList = _tilemapPassabilityUseCase.GetRoute(from, to);
+            // var from = _tilemapUseCase.WorldToCell(_moveUseCase.CurrentPos());
+            // from.z = 0;
+            // var to = new Vector3Int(blankChair.Value.x,blankChair.Value.y,0);
+            // _aimList = _tilemapPassabilityUseCase.GetRoute(from, to);
         }
 
         public void EndAction()

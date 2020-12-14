@@ -18,7 +18,11 @@ MonoBehaviour:
   m_TilingRules: []
   Name: "\u30D5\u30ED\u30FC\u30EA\u30F3\u30B0"
   Description: "\u3075\u3064\u3046\u306E\u5E8A"
-  NeedParameterForAppear: []
+  NeedParameterForAppear:
+  - Name: 
+    Num: 0
+  - Name: 
+    Num: 0
   UseParameterForPlace:
   - Name: Wood
     Num: 5
@@ -31,3 +35,7 @@ MonoBehaviour:
   IsWall: 0
   Brush: {x: 1, y: 1}
   PlaceMode: 2
+  _staticParams:
+    _params:
+    - _key: 0
+      _param: 2

@@ -75,7 +75,7 @@ namespace CafeAssets.Script.GameComponents.TilemapPlaceController
         public void StartPlace(Vector3 pos)
         {
             DebugLog.LogClassName(this, $"配置開始 {PlaceTileMode}");
-            DebugLog.LogClassName(this,$"該当モード {_placeTileBehaviours.Count(_=>_.TargetPlaceMode == PlaceTileMode)}");
+            DebugLog.LogClassName(this,$"該当モード {_placeTileBehaviours.Count(_=>_.TargetPlaceMode == PlaceTileMode)} / {_placeTileBehaviours.Count}");
             foreach (var placeTileBehaviour in _placeTileBehaviours)
             {
                 if (placeTileBehaviour.TargetPlaceMode == PlaceTileMode)

@@ -1,5 +1,4 @@
-﻿using CafeAssets.Script.System.GameParameterSystem;
-using Zenject;
+﻿using Zenject;
 
 namespace CafeAssets.Script.GameComponents.TilemapParams
 {
@@ -7,9 +6,9 @@ namespace CafeAssets.Script.GameComponents.TilemapParams
     {
         public override void InstallBindings()
         {
-            Container.BindInterfacesTo<TilemapParameterRepository>().AsCached().NonLazy();
-            Container.BindInterfacesTo<TilemapStaticParamsUseCase>().AsCached().NonLazy();
-            Container.BindInterfacesTo<TilemapDynamicParamsUseCase>().AsCached().NonLazy();
+            Container.BindInterfacesTo<TilemapParamsFacade>().AsCached().NonLazy();
+            Container.BindInterfacesTo<TilemapParameterRepositoryInternal>().AsCached().NonLazy();
+            Container.BindInterfacesTo<TilemapParamsUseCase>().AsCached();
         }
     }
 }

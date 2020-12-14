@@ -32,15 +32,7 @@ namespace CafeAssets.Script.GameComponents.Tilemap
         PlaceTileRect,//四角形に置く
 
     }
-    /// <summary>
-    /// NPC 隣接or直接効果
-    /// </summary>
-    public enum TileEffectType
-    {
-        Sit,//座る
-        Table,//テーブル(飲食物等設置可能)
-        Order,//注文
-    }
+
 
 
 
@@ -57,6 +49,7 @@ namespace CafeAssets.Script.GameComponents.Tilemap
     /// </summary>
     public interface ITileModel
     {
+        TileStaticParamModelList StaticParams { get; }
         string GetName();//フローリングとか
         string GetSystemName();//Tile_0000とか
         bool GetIsWall();
@@ -66,10 +59,12 @@ namespace CafeAssets.Script.GameComponents.Tilemap
         int ZMin();
         int ZMax();
     }
-    
+    /// <summary>
+    /// ここをImplに移動
+    /// </summary>
     public interface ITileEffectiveModel : ITileModel
     {
-        int GetEffectRadius();
+        TileEffectiveParamModelList EffectiveParams { get; }
     }
     
     //ローカライズ

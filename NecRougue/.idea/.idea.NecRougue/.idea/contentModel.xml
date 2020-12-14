@@ -165,24 +165,27 @@
                 </e>
               </e>
               <e p="TilemapParams" t="Include">
-                <e p="TilemapDynamicParamsUseCase.cs" t="Include" />
                 <e p="TilemapParamModel.cs" t="Include" />
                 <e p="TilemapParamRepository.cs" t="Include" />
+                <e p="TilemapParamsFacade.cs" t="Include" />
+                <e p="TilemapParamsImpliment" t="Include">
+                  <e p="TileEffectiveParams.cs" t="Include" />
+                  <e p="TileStaticParams.cs" t="Include" />
+                </e>
                 <e p="TilemapParamsInstaller.cs" t="Include" />
-                <e p="TilemapStaticParamsUseCase.cs" t="Include" />
+                <e p="TilemapParamsUseCase.cs" t="Include" />
               </e>
               <e p="TilemapPassability" t="Include">
                 <e p="TilemapPassabilityInstaller.cs" t="Include" />
                 <e p="TilemapPassabilityUseCase.cs" t="Include" />
               </e>
               <e p="TilemapPlaceController" t="Include">
-                <e p="PlaceTileBehaviour" t="Include">
-                  <e p="PlaceTileBehaviour.cs" t="Include" />
-                </e>
                 <e p="PlaceTileBehaviours" t="Include">
                   <e p="PlaceTileBehaviourRect.cs" t="Include" />
+                  <e p="PlaceTileBehaviourRectParam.cs" t="Include" />
                   <e p="PlaceTileBehaviourRectPreview.cs" t="Include" />
                   <e p="PlaceTileBehaviourSingle.cs" t="Include" />
+                  <e p="PlaceTileBehaviourSingleParam.cs" t="Include" />
                   <e p="PlaceTileBehaviourSinglePreview.cs" t="Include" />
                 </e>
                 <e p="PlaceTileUseCase.cs" t="Include" />

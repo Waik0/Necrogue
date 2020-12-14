@@ -17,8 +17,10 @@ namespace CafeAssets.Script.GameComponents.TilemapPlaceController
         {
             Container.BindInterfacesTo<PlaceTileBehaviourSingle>().AsCached().NonLazy();
             Container.BindInterfacesTo<PlaceTileBehaviourRect>().AsCached().NonLazy();
-            Container.BindInterfacesTo<PlaceTileBehaviourRectPreview>().AsCached().NonLazy();
             Container.BindInterfacesTo<PlaceTileBehaviourSinglePreview>().AsCached().NonLazy();
+            Container.BindInterfacesTo<PlaceTileBehaviourRectPreview>().AsCached().NonLazy();
+            Container.BindInterfacesTo<PlaceTileBehaviourSingleParam>().AsCached().NonLazy();
+            Container.BindInterfacesTo<PlaceTileBehaviourRectParam>().AsCached().NonLazy();
         }
     }
 }

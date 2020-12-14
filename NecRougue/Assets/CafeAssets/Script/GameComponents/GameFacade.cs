@@ -55,3 +55,12 @@ public class GameFacade : MonoBehaviour, IGameFacade
     }
     
 }
+public enum GameParameters
+{
+    //基礎
+    Money,
+    //研究度
+
+    MenuCoffee,
+    Menu
+}

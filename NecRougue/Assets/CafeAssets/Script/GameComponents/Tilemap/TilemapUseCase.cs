@@ -76,14 +76,14 @@ namespace CafeAssets.Script.GameComponents.Tilemap
         {
             DebugLog.LogClassName(this,$"タイルを設置します。 {pos} {tileModel.GetName()}");
             _tilemapAdapter.SetTile(pos, tileModel);
-            _onUpdateTiles.OnNext(Unit.Default);
+            _onUpdateTiles?.OnNext(Unit.Default);
         }
 
         public void SetTiles(Vector3Int[] pos, ITileModel tileModel)
         {
             DebugLog.LogClassName(this,$"タイルを設置します。 {pos.Length}箇所 {tileModel.GetName()}");
             _tilemapAdapter.SetTiles(pos, tileModel);
-            _onUpdateTiles.OnNext(Unit.Default);
+            _onUpdateTiles?.OnNext(Unit.Default);
         }
 
         /// 通行可否

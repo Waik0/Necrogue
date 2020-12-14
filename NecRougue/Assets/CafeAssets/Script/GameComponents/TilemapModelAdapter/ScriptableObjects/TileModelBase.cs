@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using CafeAssets.Script.GameComponents.Tilemap;
+using CafeAssets.Script.GameComponents.TilemapParams;
 using UnityEngine;
 
 namespace CafeAssets.Script.GameComponents.TilemapAdapter.ScriptableObjects
@@ -49,6 +50,13 @@ namespace CafeAssets.Script.GameComponents.TilemapAdapter.ScriptableObjects
     
     public class BasicTileModel : TileModel,ITileModel
     {
+        
+        [Header("供給パラメータ")]
+        [SerializeField]
+        public TileStaticParamModelList _staticParams;
+
+        public TileStaticParamModelList StaticParams => _staticParams;
+
         public string GetName()
         {
             return Name;
@@ -95,15 +103,14 @@ namespace CafeAssets.Script.GameComponents.TilemapAdapter.ScriptableObjects
 //テーブル、レジ、コーヒーメーカーなど想定
     public class EffectiveTileModel : TileModel,ITileEffectiveModel
     {
-        [Header("効果種類")] 
-        public TileEffectType EffectType;
-        [Header("効果範囲（0で真上のみ）")]
-        public int EffectRadius = 0;
-        [Header("作業時間")]
-        //注文や飲食物作成にかかる時間
-        //todo キャラのパラメーターで短縮かのうにする
-        public float ActionTime;
+        [Header("効果")] 
+        private TileEffectiveParamModelList _effectiveParams;
 
+        public TileEffectiveParamModelList EffectiveParams => _effectiveParams;
+
+        private TileStaticParamModelList _staticParams;
+
+        public TileStaticParamModelList StaticParams => _staticParams;
 
         public string GetName()
         {
@@ -130,7 +137,7 @@ namespace CafeAssets.Script.GameComponents.TilemapAdapter.ScriptableObjects
         }
         public int GetEffectRadius()
         {
-            return EffectRadius;
+            return 0;//EffectRadius;
         }
         public Vector2Int BrushSize()
         {
@@ -145,5 +152,7 @@ namespace CafeAssets.Script.GameComponents.TilemapAdapter.ScriptableObjects
         {
             return MaxLayer;
         }
+
+       
     }
 }

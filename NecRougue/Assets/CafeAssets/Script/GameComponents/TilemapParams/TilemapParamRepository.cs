@@ -3,40 +3,41 @@ using UnityEngine;
 
 namespace CafeAssets.Script.GameComponents.TilemapParams
 {
-    public interface ITilemapParameterRepository
+    interface ITilemapParameterRepository 
     {
-        Dictionary<Vector2Int,TilemapPropsModel> Entity { get; }
-        void Add(Vector2Int key, TilemapPropsModel model);
-        TilemapPropsModel Get(Vector2Int key);
-        void Remove(Vector2Int key);
+        Dictionary<Vector3Int,List<ITileParamsModelBase>> Entity { get; }
+        void Add(Vector3Int key, List<ITileParamsModelBase> model);
+        
+        List<ITileParamsModelBase> Get(Vector3Int key);
+        void Remove(Vector3Int key);
     }
     /// <summary>
-    /// タイルマップに関する
+    /// タイルマップに関するデータを保持
     /// </summary>
-    public class TilemapParameterRepository : ITilemapParameterRepository
+    sealed class TilemapParameterRepositoryInternal : ITilemapParameterRepository
     {
 
-        private Dictionary<Vector2Int, TilemapPropsModel> _entity = new Dictionary<Vector2Int, TilemapPropsModel>(); 
-        public Dictionary<Vector2Int, TilemapPropsModel> Entity => _entity;
+        private Dictionary<Vector3Int, List<ITileParamsModelBase>> _entity = new Dictionary<Vector3Int,List<ITileParamsModelBase>>(); 
+        public Dictionary<Vector3Int, List<ITileParamsModelBase>> Entity => _entity;
 
-        public void Add(Vector2Int key, TilemapPropsModel model)
+        public void Add(Vector3Int key, List<ITileParamsModelBase> model)
         {
             if(!_entity.ContainsKey(key))
                 _entity.Add(key,null);
             _entity[key] = model;
         }
-
-        public TilemapPropsModel Get(Vector2Int key)
+        public List<ITileParamsModelBase> Get(Vector3Int key)
         {
             if (!_entity.ContainsKey(key))
                 return null;
             return _entity[key];
         }
 
-        public void Remove(Vector2Int key)
+        public void Remove(Vector3Int key)
         {
             if (!_entity.ContainsKey(key)) return;
             _entity.Remove(key);
         }
+        
     }
 }

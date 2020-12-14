@@ -27,4 +27,5 @@ MonoBehaviour:
   Brush: {x: 1, y: 1}
   PlaceMode: 0
   EffectType: 0
+  EffectRadius: 0
   ActionTime: 0

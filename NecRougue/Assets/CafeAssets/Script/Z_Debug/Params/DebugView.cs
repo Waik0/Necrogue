@@ -1,8 +1,10 @@
-﻿using CafeAssets.Script.GameComponents.GameInput;
+﻿using System;
+using System.Collections.Generic;
+using CafeAssets.Script.GameComponents.GameInput;
 using CafeAssets.Script.GameComponents.Tilemap;
+using CafeAssets.Script.GameComponents.TilemapParams;
 using CafeAssets.Script.GameComponents.TilemapPlaceController;
-using CafeAssets.Script.System.GameMapSystem;
-using CafeAssets.Script.System.GameParameterSystem;
+using UniRx;
 using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
@@ -13,18 +15,20 @@ public class DebugView : MonoBehaviour,IDebugView
     private ITileSelectUseCase _tileSelectUseCase;
     private IGameInputController _gameInputView;
     private IPlaceTileUseCase _mapPlaceUseCase;
-    private ITilemapStaticParameterUseCase _gameParameterUseCase;
+    private ITilemapParamsFacade _tilemapParamsFacade;
     [Inject]
     void Inject(
         ITileSelectUseCase tileSelectUseCase,
         IGameInputController gameInputView,
         IPlaceTileUseCase mapPlaceUseCase,
-        ITilemapStaticParameterUseCase gameParameterUseCase)
+        ITilemapParamsFacade tilemapParamsFacade,
+        ITilemapUseCase tilemapUseCase)
     {
         _tileSelectUseCase = tileSelectUseCase;
         _gameInputView = gameInputView;
         _mapPlaceUseCase = mapPlaceUseCase;
-        _gameParameterUseCase = gameParameterUseCase;
+        _tilemapParamsFacade = tilemapParamsFacade;
+        _tilemapParamsFacade.OnUpdateTileParams.Subscribe(_ => OnUpdateTile()).AddTo(this);
     }
 
     void Update()
@@ -39,10 +43,51 @@ public class DebugView : MonoBehaviour,IDebugView
                      $"{_gameInputView.Model.InputMode} \n" +
                      "\n";
         _text.text += "PARAM DEBUG \n";
-        foreach (var key in _gameParameterUseCase.GetKeys())
+        if (_params == null)
         {
-            _text.text += $"{key,-10} = {_gameParameterUseCase.Get(key),-5}";
+            _params = new Dictionary<TileStaticParams, int>();
         }
+        foreach (var keyValuePair in _params)
+        {
+            _text.text += $"{keyValuePair.Key,-10} = {(keyValuePair.Value),-5}";
+        }
+    }
+
+    
+    private Dictionary<TileStaticParams, int> _params;
+    //Param集計情報更新
+    void OnUpdateTile()
+    {
+        if (_params == null)
+        {
+            _params = new Dictionary<TileStaticParams, int>();
+        }
+        foreach (TileStaticParams value in Enum.GetValues(typeof(TileStaticParams)))
+        {
+            if (!_params.ContainsKey(value))
+            {
+               continue;
+            }
+            _params[value] = 0;
+        }
+        foreach (var keyValuePair in _tilemapParamsFacade.Entity)
+        {
+            foreach (var tileParamsModelBase in keyValuePair.Value)
+            {
+                if (tileParamsModelBase is ITileParamsModel<TileStaticParams> m)
+                {
+                    Debug.Log(keyValuePair.Key + " " + m.Key + " " + m.Param);
+                    if (!_params.ContainsKey(m.Key))
+                    {
+                        _params.Add(m.Key,0);
+                    }
+
+                    _params[m.Key] += m.Param;
+                }
+            }
+        }
+
+       
     }
 
 }

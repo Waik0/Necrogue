@@ -5,14 +5,17 @@ using UnityEngine;
 
 namespace CafeAssets.Script.GameComponents.TilemapPlaceController
 {
-    public class PlaceTileBehaviourSingle : IPlaceTileBehaviour
+    public class PlaceTileBehaviourSingleParam : IPlaceTileBehaviour
     {
         private ITilemapUseCase _tilemapUseCase;
+        private ITilemapParamsFacade _tilemapParamsFacade;
 
-        public PlaceTileBehaviourSingle(
-            ITilemapUseCase tilemapUseCase)
+        public PlaceTileBehaviourSingleParam(
+            ITilemapUseCase tilemapUseCase,
+            ITilemapParamsFacade tilemapParamsFacade)
         {
             _tilemapUseCase = tilemapUseCase;
+            _tilemapParamsFacade = tilemapParamsFacade;
         }
 
         public PlaceTileMode TargetPlaceMode => PlaceTileMode.PlaceTileSingle;
@@ -27,7 +30,19 @@ namespace CafeAssets.Script.GameComponents.TilemapPlaceController
 
         public void EndPlace(Vector3 pos, ITileModel model)
         {
-            DebugLog.LogClassName(this, "配置");
+            DebugLog.LogClassName(this, "PARAM生成");
+            var param = new List<ITileParamsModelBase>();
+            //パラメーター設定
+            if (model is ITileModel tileModel)
+            {
+                param.AddRange(tileModel.StaticParams.Params);
+            }
+            //EffectiveTileの場合パラメーター設定
+            if (model is ITileEffectiveModel effectiveModel)
+            {
+                param.AddRange(effectiveModel.EffectiveParams.Params);
+            }
+            DebugLog.LogClassName(this, "PARAM配置");
             var z = model.ZMin();
             //pos.z = z;
             var origin = _tilemapUseCase.WorldToCell(pos);
@@ -50,9 +65,7 @@ namespace CafeAssets.Script.GameComponents.TilemapPlaceController
                             origin.z);
                     }
                 }
-
-                DebugLog.LogClassName(this, "高さ : " + origin.z);
-                _tilemapUseCase.SetTiles(positions, model);
+                _tilemapParamsFacade.SetTileParam(positions,param);
             }
         }
     }
