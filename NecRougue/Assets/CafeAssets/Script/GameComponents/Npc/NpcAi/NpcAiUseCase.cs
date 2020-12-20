@@ -4,6 +4,9 @@ using UnityEngine;
 
 namespace CafeAssets.Script.GameComponents.Npc.NpcAi
 {
+    
+    #region BoundsOut
+
 
     /// <summary>
     /// 行動を決定する
@@ -11,10 +14,23 @@ namespace CafeAssets.Script.GameComponents.Npc.NpcAi
     public interface INpcAiUseCase
     {
         NpcActionPattern Current { get; }
-        NpcActionModel CurrentParam { get; }
-        void Think();
         void UpdateAction();
         void Reset(NpcAiModel model);
+    }
+    
+    #endregion
+   
+    #region BoundsIn
+
+    
+    /// <summary>
+    /// 行動のステータス
+    /// </summary>
+    public enum NpcActionStatus
+    {
+        Sleep,
+        Doing,
+        Complete,
     }
     /// <summary>
     /// アクションはこれを継承して実装していく
@@ -26,7 +42,7 @@ namespace CafeAssets.Script.GameComponents.Npc.NpcAi
         /// </summary>
         NpcActionPattern TargetPattern { get; }
         NpcActionStatus CurrentStatus { get; }
-        void StartAction(NpcActionModel model);
+        void StartAction();
         void EndAction();
         void Tick();
     }
@@ -37,12 +53,18 @@ namespace CafeAssets.Script.GameComponents.Npc.NpcAi
         NpcActionPattern TargetPattern { get; }
         bool CanAction();
     }
+    
+    #endregion
+
+        
+
     /// <summary>
     /// NPCの行動を制御
     /// INpcActionUseCaseとINpcActionConditionUseCaseに依存
     /// </summary>
     public class NpcAiUseCase : INpcAiUseCase
     {
+        public NpcActionPattern Current { get; private set; } = NpcActionPattern.Stop;
         private INpcRegistry _registry;
         private Dictionary<NpcActionPattern, INpcActionUseCase> _actionUseCases;
         private Dictionary<NpcActionPattern, INpcActionConditionUseCase> _conditionUseCases;
@@ -58,9 +80,8 @@ namespace CafeAssets.Script.GameComponents.Npc.NpcAi
             _conditionUseCases = conditions.ToDictionary(c => c.TargetPattern);
         }
 
-        public NpcActionPattern Current { get; private set; } = NpcActionPattern.Stop;
-        public NpcActionModel CurrentParam { get; private set; } = new NpcActionModel();
-        
+
+
         /// <summary>
         /// 優先度の高い行動を選択
         /// </summary>
@@ -69,17 +90,11 @@ namespace CafeAssets.Script.GameComponents.Npc.NpcAi
             if (_model == null) return;
             foreach (var npcActionPattern in _model.Priority)
             {
-                if (_conditionUseCases.ContainsKey(npcActionPattern))
-                {
-                    if (_conditionUseCases[npcActionPattern].CanAction())
-                    {
-                        Current = npcActionPattern;
-                        return;
-                    }
-                }
+                if (!_conditionUseCases.ContainsKey(npcActionPattern)) continue;
+                if (!_conditionUseCases[npcActionPattern].CanAction()) continue;
+                Current = npcActionPattern;
+                return;
             }
-            //Current = NpcActionPattern.MoveToRandomPlace;
-            //Debug.Log("RandomMove");
         }
         /// <summary>
         /// 選択された行動を実行
@@ -93,7 +108,7 @@ namespace CafeAssets.Script.GameComponents.Npc.NpcAi
             switch (currentAction.CurrentStatus)
             {
                 case NpcActionStatus.Sleep:
-                    currentAction.StartAction(CurrentParam);
+                    currentAction.StartAction();
                     break;
                 case NpcActionStatus.Doing:
                     currentAction.Tick();

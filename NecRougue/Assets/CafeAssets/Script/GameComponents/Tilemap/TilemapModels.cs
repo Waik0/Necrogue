@@ -1,21 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using CafeAssets.Script.GameComponents.TilemapParams;
 using UnityEngine;
 
 namespace CafeAssets.Script.GameComponents.Tilemap
 {
-    
-    /// <summary>
-    /// ローカライズ対応
-    /// ここではない場所に置く
-    /// </summary>
 
-    public enum Region
-    {
-        Ja = 0,
-        En = 1,
-    }
     /// <summary>
     /// タイルの種類
     /// </summary>
@@ -49,12 +40,11 @@ namespace CafeAssets.Script.GameComponents.Tilemap
     /// </summary>
     public interface ITileModel
     {
-        TileStaticParamModelList StaticParams { get; }
+        List<TileStaticParamModel> StaticParams { get; }
         string GetName();//フローリングとか
         string GetSystemName();//Tile_0000とか
         bool GetIsWall();
         PlaceTileMode GetDefaultPlaceMode();
-        ProvideParameterModelSet[] GetProvideParameter();
         Vector2Int BrushSize();
         int ZMin();
         int ZMax();
@@ -64,9 +54,19 @@ namespace CafeAssets.Script.GameComponents.Tilemap
     /// </summary>
     public interface ITileEffectiveModel : ITileModel
     {
-        TileEffectiveParamModelList EffectiveParams { get; }
+        List<TileEffectiveParamModel> EffectiveParams { get; }
     }
-    
+        
+    /// <summary>
+    /// ローカライズ対応
+    /// ここではない場所に置く
+    /// </summary>
+
+    public enum Region
+    {
+        Ja = 0,
+        En = 1,
+    }
     //ローカライズ
     [Serializable]
     public class RegionTextSet
@@ -75,7 +75,7 @@ namespace CafeAssets.Script.GameComponents.Tilemap
         public string Text;
         public Region Region;
     }
-
+    
     public static class RegionTextSetExtensions
     {
         public static string GetText(this RegionTextSet[] self,Region region)

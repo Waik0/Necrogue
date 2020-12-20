@@ -1,32 +1,43 @@
 ﻿using CafeAssets.Script.GameComponents.Npc.NpcAi;
 using CafeAssets.Script.GameComponents.Npc.NpcMove;
-using CafeAssets.Script.Interface.Registry;
 using CafeAssets.Script.System.GameNpcSystem;
 using UnityEngine;
 using Zenject;
 
 namespace CafeAssets.Script.GameComponents.Npc
 {
+    #region BoundsIO
+
+    /// <summary>
+    /// Npc Component System
+    /// ver 0.1
+    /// 
+    /// NPCの動作、状態、パラメータを管理するコンポーネント群
+    /// 
+    /// </summary>
     public interface INpcFacade
     {
-        NpcFacadeModel FacadeModel { get; }
+        /// <summary>
+        /// 現在の行動状態
+        /// </summary>
+        /// <returns></returns>
         NpcActionPattern CurrentAction();
         string[] GetParamKeys();
         int GetParam(string key);
     }
-    /// <summary>
-    /// ファサード
-    /// NPCインスタンスへの窓口の役割
-    /// </summary>
-    public class NpcFacade : MonoBehaviour, INpcFacade, INpcCollection, IPoolable<NpcFacadeModel, IMemoryPool>
-    {
-        public NpcFacadeModel FacadeModel { get; private set; }
 
+    #endregion
+   
+    /// <summary>
+    /// 各機能への窓口
+    /// </summary>
+    sealed class NpcFacade : MonoBehaviour, INpcFacade, INpcCollection, IPoolable<NpcFacadeModel, IMemoryPool>
+    {
+        public NpcActionPattern CurrentAction() => _aiUseCase.Current;
         private INpcAiUseCase _aiUseCase;
         private INpcParamUseCase _paramUseCase;
         private INpcRegistry _registry;
         private INpcMoveUseCase _moveUseCase;
-        // private INpcSpawnManager _npcSpawnManager;
 
         [Inject]
         void Inject(
@@ -34,14 +45,12 @@ namespace CafeAssets.Script.GameComponents.Npc
             INpcMoveUseCase moveUseCase,
             INpcParamUseCase paramUseCase,
             INpcRegistry registry
-            //INpcSpawnManager spawnManager
         )
         {
             _aiUseCase = aiUseCase;
             _moveUseCase = moveUseCase;
             _paramUseCase = paramUseCase;
             _registry = registry;
-            //_npcSpawnManager = spawnManager;
         }
 
         public void OnDespawned()
@@ -57,11 +66,7 @@ namespace CafeAssets.Script.GameComponents.Npc
             _moveUseCase.Reset(p1.Move);
             _paramUseCase.Reset();
             _registry.Add(this);
-            // _npcSpawnManager.OnSpawn(new NpcModel()
-            // {
-            //     GameObject = gameObject
-            // });
-            FacadeModel = p1;
+          
         }
 
 
@@ -76,7 +81,7 @@ namespace CafeAssets.Script.GameComponents.Npc
             _aiUseCase.UpdateAction();
         }
 
-        public NpcActionPattern CurrentAction() => _aiUseCase.Current;
+
         public string[] GetParamKeys()
         {
             return _paramUseCase.GetKeys();

@@ -24,7 +24,6 @@ namespace CafeAssets.Script.GameComponents.TilemapParams
     public interface ITileParamsModelBase
     {
         int Param { get; set; }
-        ITileParamsModelBase DeepCopy();
     }
     
     

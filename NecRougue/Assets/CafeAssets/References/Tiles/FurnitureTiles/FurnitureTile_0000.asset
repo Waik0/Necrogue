@@ -20,12 +20,14 @@ MonoBehaviour:
   Description: "\u305F\u3060\u306E\u3044\u3059"
   NeedParameterForAppear: []
   UseParameterForPlace: []
-  ProvideParameter: []
   MinLayer: 1
   MaxLayer: 1
   IsWall: 0
   Brush: {x: 1, y: 1}
   PlaceMode: 0
-  EffectType: 0
-  EffectRadius: 0
-  ActionTime: 0
+  _staticParams:
+  - _key: 0
+    _param: 1
+  _effectiveParams:
+  - _key: 0
+    _param: 1

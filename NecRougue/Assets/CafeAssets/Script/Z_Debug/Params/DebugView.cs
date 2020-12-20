@@ -43,51 +43,65 @@ public class DebugView : MonoBehaviour,IDebugView
                      $"{_gameInputView.Model.InputMode} \n" +
                      "\n";
         _text.text += "PARAM DEBUG \n";
-        if (_params == null)
+        if (_staticParams == null)
         {
-            _params = new Dictionary<TileStaticParams, int>();
+            _staticParams = new Dictionary<TileStaticParams, int>();
         }
-        foreach (var keyValuePair in _params)
+        foreach (var keyValuePair in _staticParams)
+        {
+            _text.text += $"{keyValuePair.Key,-10} = {(keyValuePair.Value),-5}";
+        }
+        if (_effectiveParams == null)
+        {
+            _effectiveParams = new Dictionary<TileEffectParams, int>();
+        }
+        foreach (var keyValuePair in _effectiveParams)
         {
             _text.text += $"{keyValuePair.Key,-10} = {(keyValuePair.Value),-5}";
         }
     }
 
     
-    private Dictionary<TileStaticParams, int> _params;
+    private Dictionary<TileStaticParams, int> _staticParams;
+    private Dictionary<TileEffectParams, int> _effectiveParams;
     //Param集計情報更新
     void OnUpdateTile()
     {
-        if (_params == null)
+        UpdateParams(_staticParams);
+        UpdateParams(_effectiveParams);
+    }
+
+    void UpdateParams<T>(Dictionary<T,int> dic )where T : struct
+    {
+        if (dic == null)
         {
-            _params = new Dictionary<TileStaticParams, int>();
+            dic = new Dictionary<T, int>();
         }
-        foreach (TileStaticParams value in Enum.GetValues(typeof(TileStaticParams)))
+        foreach (T value in Enum.GetValues(typeof(T)))
         {
-            if (!_params.ContainsKey(value))
+            if (!dic.ContainsKey(value))
             {
-               continue;
+                continue;
             }
-            _params[value] = 0;
+            dic[value] = 0;
         }
         foreach (var keyValuePair in _tilemapParamsFacade.Entity)
         {
             foreach (var tileParamsModelBase in keyValuePair.Value)
             {
-                if (tileParamsModelBase is ITileParamsModel<TileStaticParams> m)
+                if (tileParamsModelBase is ITileParamsModel<T> m)
                 {
-                    Debug.Log(keyValuePair.Key + " " + m.Key + " " + m.Param);
-                    if (!_params.ContainsKey(m.Key))
+                    Debug.Log(m.Key);
+                    if (!dic.ContainsKey(m.Key))
                     {
-                        _params.Add(m.Key,0);
+                       
+                        dic.Add(m.Key,0);
                     }
 
-                    _params[m.Key] += m.Param;
+                    dic[m.Key] += m.Param;
                 }
             }
         }
-
-       
     }
 
 }

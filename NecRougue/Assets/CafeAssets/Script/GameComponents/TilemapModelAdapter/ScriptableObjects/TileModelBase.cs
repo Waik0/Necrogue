@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using CafeAssets.Script.GameComponents.Tilemap;
 using CafeAssets.Script.GameComponents.TilemapParams;
 using UnityEngine;
@@ -30,8 +31,6 @@ namespace CafeAssets.Script.GameComponents.TilemapAdapter.ScriptableObjects
         public NeedParameterModelSet[] NeedParameterForAppear;
         [Header("設置コスト")]
         public UseParameterModelSet[] UseParameterForPlace;
-        [Header("設置効果")]
-        public ProvideParameterModelSet[] ProvideParameter;
         [Header("設置可能レイヤ")]
         public int MinLayer;
         public int MaxLayer;
@@ -53,9 +52,9 @@ namespace CafeAssets.Script.GameComponents.TilemapAdapter.ScriptableObjects
         
         [Header("供給パラメータ")]
         [SerializeField]
-        public TileStaticParamModelList _staticParams;
+        public List<TileStaticParamModelInitial> _staticParams;
 
-        public TileStaticParamModelList StaticParams => _staticParams;
+        public List<TileStaticParamModel> StaticParams => _staticParams.Select(_=>_.CreateCopy()).ToList();
 
         public string GetName()
         {
@@ -75,11 +74,6 @@ namespace CafeAssets.Script.GameComponents.TilemapAdapter.ScriptableObjects
         public PlaceTileMode GetDefaultPlaceMode()
         {
             return PlaceMode;
-        }
-
-        public ProvideParameterModelSet[] GetProvideParameter()
-        {
-            return ProvideParameter;
         }
 
         public Vector2Int BrushSize()
@@ -103,14 +97,14 @@ namespace CafeAssets.Script.GameComponents.TilemapAdapter.ScriptableObjects
 //テーブル、レジ、コーヒーメーカーなど想定
     public class EffectiveTileModel : TileModel,ITileEffectiveModel
     {
-        [Header("効果")] 
-        private TileEffectiveParamModelList _effectiveParams;
-
-        public TileEffectiveParamModelList EffectiveParams => _effectiveParams;
-
-        private TileStaticParamModelList _staticParams;
-
-        public TileStaticParamModelList StaticParams => _staticParams;
+        [Header("設置影響")]
+        [SerializeField]
+        public List<TileStaticParamModelInitial> _staticParams;
+        [Header("設置効果")] 
+        [SerializeField]
+        public List<TileEffectiveParamModelInitial> _effectiveParams;
+        public List<TileEffectiveParamModel>  EffectiveParams =>_effectiveParams.Select(tileEffectiveParamModelInitial => tileEffectiveParamModelInitial.CreateCopy()).ToList();
+        public List<TileStaticParamModel>  StaticParams => _staticParams.Select(staticParamsModelInternal => staticParamsModelInternal.CreateCopy()).ToList();
 
         public string GetName()
         {
@@ -126,11 +120,7 @@ namespace CafeAssets.Script.GameComponents.TilemapAdapter.ScriptableObjects
         {
             return IsWall;
         }
-
-        public ProvideParameterModelSet[] GetProvideParameter()
-        {
-            return ProvideParameter;
-        }
+        
         public PlaceTileMode GetDefaultPlaceMode()
         {
             return PlaceMode;

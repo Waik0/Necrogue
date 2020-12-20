@@ -28,7 +28,7 @@ namespace CafeAssets.Script.GameComponents.TilemapParams
         /// <param name="pos"></param>
         /// <param name="model"></param>
         void SetTileParam(Vector3Int pos, List<ITileParamsModelBase>  model);
-        void SetTileParam(Vector3Int[] pos, List<ITileParamsModelBase>  model);
+        void SetTileParam((Vector3Int pos, List<ITileParamsModelBase> model)[] KeyValuePair);
 
         /// <summary>
         /// 
@@ -53,28 +53,11 @@ namespace CafeAssets.Script.GameComponents.TilemapParams
         /// <param name="pos"></param>
         void RemoveTileParam(Vector3Int pos);
     }
+ 
     /// <summary>
-    /// モデルの集合体に継承させるクラス
-    /// </summary>
-    [Serializable]
-    public abstract class TileParamModelList<T> where T : ITileParamsModelBase
-    {
-        [SerializeField] private List<T> _params;
-        public List<ITileParamsModelBase> Params
-        {
-            get
-            {
-                return _params.ConvertAll(_=>(ITileParamsModelBase)_);
-            }
-        }
-
-        //public abstract T DeepCopy(T origin);
-    }
-    /// <summary>
-    /// モデル単品に継承させるインターフェイス
+    /// モデルに継承させるインターフェイス
     /// </summary>
     /// <typeparam name="T"></typeparam>
-
     public interface ITileParamsModel<T> : ITileParamsModelBase where T : struct
     {
         T Key { get; }
@@ -106,27 +89,17 @@ namespace CafeAssets.Script.GameComponents.TilemapParams
         /// </summary>
         public void SetTileParam(Vector3Int pos,List<ITileParamsModelBase> model)
         {
-            var copy = new List<ITileParamsModelBase>();
-            foreach (var tileParamsModelBase in model)
-            {
-                copy.Add(tileParamsModelBase.DeepCopy());
-            }
-            _useCase.SetTileParam(pos, copy);
+            _useCase.SetTileParam(pos,model);
             _onUpdateTiles?.OnNext(Unit.Default);
         }
 
-        public void SetTileParam(Vector3Int[] pos, List<ITileParamsModelBase> model)
+        public void SetTileParam((Vector3Int pos, List<ITileParamsModelBase> model)[] KeyValuePair)
         {
-            
-            foreach (var vector3Int in pos)
+            foreach (var valueTuple in KeyValuePair)
             {
-                var copy = new List<ITileParamsModelBase>();
-                foreach (var tileParamsModelBase in model)
-                {
-                    copy.Add(tileParamsModelBase.DeepCopy());
-                }
-                _useCase.SetTileParam(vector3Int,copy);
+                _useCase.SetTileParam(valueTuple.pos,valueTuple.model);
             }
+
             _onUpdateTiles?.OnNext(Unit.Default);
         }
 

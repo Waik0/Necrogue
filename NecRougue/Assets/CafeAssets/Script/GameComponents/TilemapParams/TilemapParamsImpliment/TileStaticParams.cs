@@ -11,30 +11,30 @@ public enum TileStaticParams
 {
     American,
 }
-
-[Serializable]
-public class TileStaticParamModelList : TileParamModelList<TileStaticParamModel>
-{
-}
+/// <summary>
+/// お店の雰囲気を表すパラメータ
+/// todo リネーム
+/// </summary>
 [Serializable]
 public class TileStaticParamModel : ITileParamsModel<TileStaticParams>
 {
-    [SerializeField]
-    private TileStaticParams _key;
-    [SerializeField]
-    private int _param;
-
-
-    public int Param { get => _param; set => _param = value; }
-
-    public TileStaticParams Key { get => _key; set => _key = value; }
     
-    public ITileParamsModelBase DeepCopy()
-    {
+    public int Param { get; set; }
+
+    public TileStaticParams Key { get; set; }
+
+}
+[Serializable]
+public class TileStaticParamModelInitial
+{
+    [SerializeField] private TileStaticParams _key;
+    [SerializeField] private int _param;
+    
+    public TileStaticParamModel CreateCopy() {
         return new TileStaticParamModel()
         {
-            _key = _key,
-            _param = _param
+            Key = _key,
+            Param = _param
         };
     }
 }

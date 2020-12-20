@@ -1,4 +1,5 @@
-﻿using CafeAssets.Script.GameComponents.Tilemap;
+﻿using System.Collections.Generic;
+using CafeAssets.Script.GameComponents.Tilemap;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using NotImplementedException = System.NotImplementedException;
@@ -8,7 +9,7 @@ namespace CafeAssets.Script.GameComponents.TilemapPlacePreview.ScriptableObject
     [CreateAssetMenu(fileName = "PreviewTile_0000",menuName = "ScriptableObject/PreviewTileModel")]
     public class TilePreviewModel : Tile,ITilePreviewModel
     {
-        public TileStaticParamModelList StaticParams => null;
+        public List<TileStaticParamModel> StaticParams => null;
 
         public string GetName()
         {

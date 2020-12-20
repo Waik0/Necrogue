@@ -1,7 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using CafeAssets.Script.Interface.Registry;
-using UnityEngine;
+﻿using System.Collections.Generic;
+
 /// <summary>
 /// レジストリで管理するNpc
 /// </summary>

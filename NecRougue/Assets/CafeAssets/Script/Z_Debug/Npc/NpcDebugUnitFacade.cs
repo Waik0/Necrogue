@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 using Zenject;
 public interface INpcDebugUnitView
 {
@@ -7,7 +8,12 @@ public interface INpcDebugUnitView
     void UpdateView(NpcDebugModel model);
 }
 
-public interface INpcDebugUnitRegistry : IRegistry<INpcDebugUnitCollection> { }
+public interface INpcDebugUnitRegistry
+{
+    IEnumerable<INpcDebugUnitCollection> Entity { get; }
+    void Add(INpcDebugUnitCollection element);
+    void Remove(INpcDebugUnitCollection element);
+}
 public class NpcDebugUnitFacade : MonoBehaviour,INpcDebugFacade, INpcDebugUnitCollection, IPoolable<NpcDebugModel,IMemoryPool>
 {
     private INpcDebugUnitView _unitView;

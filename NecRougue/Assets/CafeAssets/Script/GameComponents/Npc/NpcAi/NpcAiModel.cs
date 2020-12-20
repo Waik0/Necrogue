@@ -3,32 +3,8 @@ using UnityEngine;
 
 namespace CafeAssets.Script.GameComponents.Npc.NpcAi
 {
-    /// <summary>
-    /// 行動パターン
-    /// </summary>
-    public enum NpcActionPattern
-    {
-        Stop,
-        MoveToRandomPlace,
-        MoveToChair,
-        MoveToNpc,
-        Order,
-        Talk,
-        Cook,
-        Carry,
-        Pay,
-        Clean,
-        Fortune,
-    }
-    /// <summary>
-    /// 行動のステータス
-    /// </summary>
-    public enum NpcActionStatus
-    {
-        Sleep,
-        Doing,
-        Complete,
-    }
+
+  
     
     public class NpcMoveModel
     {

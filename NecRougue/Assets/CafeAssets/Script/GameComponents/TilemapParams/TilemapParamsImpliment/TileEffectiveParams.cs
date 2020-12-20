@@ -7,7 +7,7 @@ using UnityEngine;
 /// <summary>
 /// NPC 隣接or直接効果
 /// </summary>
-public enum TileEffectType
+public enum TileEffectParams
 {
     Sit,//座る
     Table,//テーブル(飲食物等設置可能)
@@ -17,28 +17,26 @@ public enum TileEffectType
 }
 
 [Serializable]
-public class TileEffectiveParamModelList : TileParamModelList<TileEffectiveParamModel>
+public class TileEffectiveParamModel : ITileParamsModel<TileEffectParams>
 {
-}
-[Serializable]
-public class TileEffectiveParamModel : ITileParamsModel<TileEffectType>
-{
-    [SerializeField]
-    private TileEffectType _key;
-    [SerializeField]
-    private int _param;
 
+    public int Param { get; set; }
 
-    public int Param { get => _param; set => _param = value; }
-
-    public TileEffectType Key { get => _key; set => _key = value; }
+    public TileEffectParams Key { get; set; }
     
-    public ITileParamsModelBase DeepCopy()
-    {
+}
+
+[Serializable]
+public class TileEffectiveParamModelInitial
+{
+    [SerializeField] private TileEffectParams _key;
+    [SerializeField] private int _param;
+    
+    public TileEffectiveParamModel CreateCopy() {
         return new TileEffectiveParamModel()
         {
-            _key = _key,
-            _param = _param
+            Key = _key,
+            Param = _param
         };
     }
 }

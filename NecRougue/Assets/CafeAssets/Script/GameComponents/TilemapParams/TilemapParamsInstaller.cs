@@ -1,4 +1,5 @@
-﻿using Zenject;
+﻿using UnityEngine;
+using Zenject;
 
 namespace CafeAssets.Script.GameComponents.TilemapParams
 {
@@ -6,6 +7,7 @@ namespace CafeAssets.Script.GameComponents.TilemapParams
     {
         public override void InstallBindings()
         {
+            Debug.Log("[TilemapParamsInstaller]Install");
             Container.BindInterfacesTo<TilemapParamsFacade>().AsCached().NonLazy();
             Container.BindInterfacesTo<TilemapParameterRepositoryInternal>().AsCached().NonLazy();
             Container.BindInterfacesTo<TilemapParamsUseCase>().AsCached();

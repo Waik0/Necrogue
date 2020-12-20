@@ -38,6 +38,7 @@ public class AstarAlgorithm
     //
     public void Reset()
     {
+        if (Field == null) return;
         foreach (var astarNode in Field)
         {
             if (astarNode == null) continue;

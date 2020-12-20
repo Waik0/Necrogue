@@ -14,13 +14,13 @@ namespace CafeAssets.Script.System.GameNpcSystem
     //停止
     public class NpcStop : INpcActionUseCase
     {
-        public NpcActionPattern TargetPattern { get; private set; } = NpcActionPattern.Stop;
+        public NpcActionPattern TargetPattern => NpcActionPattern.Stop;
         public NpcActionStatus CurrentStatus { get; private set; }
 
         private int count = 0;
         //停止し続けるフレーム数
         private int _stopCount = 10;
-        public void StartAction(NpcActionModel model)
+        public void StartAction()
         {
             CurrentStatus = NpcActionStatus.Doing;
             count = _stopCount;
@@ -46,7 +46,7 @@ namespace CafeAssets.Script.System.GameNpcSystem
     /// </summary>
     public class NpcMoveToRandomPlace : INpcActionUseCase
     {
-        public NpcActionPattern TargetPattern { get; private set; } = NpcActionPattern.MoveToRandomPlace;
+        public NpcActionPattern TargetPattern => NpcActionPattern.MoveToRandomPlace;
         public NpcActionStatus CurrentStatus { get; private set; }
         private INpcMoveUseCase _moveUseCase;
         private INpcParamUseCase _paramUseCase;
@@ -68,7 +68,7 @@ namespace CafeAssets.Script.System.GameNpcSystem
             _tilemapUseCase = tilemapUseCase;
             _aimList = new Stack<Vector2Int>();
         }
-        public void StartAction(NpcActionModel model)
+        public void StartAction()
         {
             CurrentStatus = NpcActionStatus.Doing;
             var from = _moveUseCase.CurrentPos();
@@ -147,7 +147,7 @@ namespace CafeAssets.Script.System.GameNpcSystem
             //_tilemapParamUseCase = tilemapParamUseCase;
             _aimList = new Stack<Vector2Int>();
         }
-        public void StartAction(NpcActionModel model)
+        public void StartAction()
         {
             CurrentStatus = NpcActionStatus.Doing;
             Debug.Log("イスを予約");

@@ -8,6 +8,7 @@ using NotImplementedException = System.NotImplementedException;
 
 namespace CafeAssets.Script.GameComponents.TilemapParams
 {
+    
     internal interface ITilemapParamsUseCase
     {
         Dictionary<Vector3Int,List<ITileParamsModelBase>> Entity { get; }

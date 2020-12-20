@@ -75,7 +75,7 @@ namespace CafeAssets.Script.GameComponents.TilemapAdapter
             return _tilemap.CellToWorld(cell);
         }
 
-        public BoundsInt CellBounds { get; }
+        public BoundsInt CellBounds => _tilemap.cellBounds;
         public ITileModel[] GetTileModelsBlock(BoundsInt bounds)
         {
             return _tilemap.GetTilesBlock(bounds).OfType<ITileModel>().ToArray();

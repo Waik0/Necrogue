@@ -4,94 +4,9 @@
     <e p="C:\Users\stoas\.Rider2019.3\system\extResources" t="IncludeRecursive" />
     <e p="C:\Users\stoas\.Rider2019.3\system\resharper-host\local\Transient\ReSharperHost\v193\SolutionCaches\_NecRougue.-987795839.00" t="ExcludeRecursive" />
     <e p="E:\works\unity\Necrogue\unity\NecRougue" t="IncludeRecursive">
-      <e p="Archtecture.csproj" t="IncludeRecursive" />
-      <e p="Assembly-CSharp-Editor.csproj" t="IncludeRecursive" />
-      <e p="Assembly-CSharp.csproj" t="IncludeRecursive" />
       <e p="Assets" t="Include">
         <e p="CafeAssets" t="Include">
           <e p="Script" t="Include">
-            <e p="____Old" t="Include">
-              <e p="Archtecture" t="Include">
-                <e p="Archtecture.asmdef" t="Include" />
-                <e p="IManager.cs" t="Include" />
-                <e p="IRegistry.cs" t="Include" />
-              </e>
-              <e p="GameSequence.cs" t="Include" />
-              <e p="Impliment" t="Include">
-                <e p="Game" t="Include">
-                  <e p="Layer_02" t="Include">
-                    <e p="Game.Layer_02.asmdef" t="Include" />
-                    <e p="UseCase" t="Include">
-                      <e p="MilestoneUseCase.cs" t="Include" />
-                      <e p="NpcRouteSearchUseCase.cs" t="Include" />
-                    </e>
-                  </e>
-                </e>
-              </e>
-              <e p="Interface" t="Include">
-                <e p="Layer_01" t="Include">
-                  <e p="Factory" t="Include">
-                    <e p="FactoryInterfaces.cs" t="Include" />
-                  </e>
-                  <e p="Interface.Layer_01.asmdef" t="Include" />
-                  <e p="Manager" t="Include">
-                    <e p="ManagerInterfaces.cs" t="Include" />
-                    <e p="ManagerInvokeInterfaces.cs" t="Include" />
-                  </e>
-                  <e p="Registry" t="Include">
-                    <e p="RegistoryCollectionInterfaces.cs" t="Include" />
-                    <e p="RegistoryInterfaces.cs" t="Include" />
-                  </e>
-                  <e p="Repository" t="Include">
-                    <e p="RepositoryInterfaces.cs" t="Include" />
-                  </e>
-                </e>
-                <e p="Layer_02" t="Include">
-                  <e p="Factory" t="Include">
-                    <e p="FactoryInterfaces.cs" t="Include" />
-                  </e>
-                  <e p="Interface.Layer_02.asmdef" t="Include" />
-                  <e p="UseCase" t="Include">
-                    <e p="UseCaseInterfaces.cs" t="Include" />
-                  </e>
-                </e>
-                <e p="Layer_03" t="Include">
-                  <e p="Controller" t="Include">
-                    <e p="ControllerInterfaces.cs" t="Include" />
-                  </e>
-                  <e p="Facade" t="Include">
-                    <e p="FacadeInterfaces.cs" t="Include" />
-                  </e>
-                  <e p="Interface.Layer_03.asmdef" t="Include" />
-                </e>
-                <e p="Layer_04" t="Include">
-                  <e p="Interface.Layer_04.asmdef" t="Include" />
-                  <e p="View" t="Include">
-                    <e p="ViewInterfaces.cs" t="Include" />
-                  </e>
-                </e>
-              </e>
-              <e p="ISequence.cs" t="Include" />
-              <e p="NpcSpawnManager.cs" t="Include" />
-              <e p="RootSequence.cs" t="Include" />
-              <e p="SequenceController.cs" t="Include" />
-              <e p="Shared" t="Include">
-                <e p="Model" t="Include">
-                  <e p="Enums.cs" t="Include" />
-                  <e p="Models.cs" t="Include" />
-                  <e p="Props.cs" t="Include" />
-                </e>
-                <e p="Shared.asmdef" t="Include" />
-              </e>
-              <e p="TilemapManager.cs" t="Include" />
-              <e p="TilePlaceManager.cs" t="Include" />
-              <e p="Z_Reference" t="Include">
-                <e p="Editor" t="Include">
-                  <e p="GameNpcSystemリファレンス.cs" t="Include" />
-                  <e p="ScriptReference.cs" t="Include" />
-                </e>
-              </e>
-            </e>
             <e p="GameComponents" t="Include">
               <e p="GameCamera" t="Include">
                 <e p="GameCameraAdapter.cs" t="Include" />
@@ -114,6 +29,9 @@
                 </e>
               </e>
               <e p="Npc" t="Include">
+                <e p="Impliment" t="Include">
+                  <e p="NpcActionPattern.cs" t="Include" />
+                </e>
                 <e p="NpcAi" t="Include">
                   <e p="NpcActionConditionUseCase.cs" t="Include" />
                   <e p="NpcActionUseCase.cs" t="Include" />
@@ -165,6 +83,10 @@
                 </e>
               </e>
               <e p="TilemapParams" t="Include">
+                <e p="Tests" t="Include">
+                  <e p="TestTilemapParams.cs" t="Include" />
+                  <e p="TilemapParamsTests.asmdef" t="Include" />
+                </e>
                 <e p="TilemapParamModel.cs" t="Include" />
                 <e p="TilemapParamRepository.cs" t="Include" />
                 <e p="TilemapParamsFacade.cs" t="Include" />
@@ -181,12 +103,16 @@
               </e>
               <e p="TilemapPlaceController" t="Include">
                 <e p="PlaceTileBehaviours" t="Include">
-                  <e p="PlaceTileBehaviourRect.cs" t="Include" />
-                  <e p="PlaceTileBehaviourRectParam.cs" t="Include" />
-                  <e p="PlaceTileBehaviourRectPreview.cs" t="Include" />
-                  <e p="PlaceTileBehaviourSingle.cs" t="Include" />
-                  <e p="PlaceTileBehaviourSingleParam.cs" t="Include" />
-                  <e p="PlaceTileBehaviourSinglePreview.cs" t="Include" />
+                  <e p="Rect" t="Include">
+                    <e p="PlaceTileBehaviourRect.cs" t="Include" />
+                    <e p="PlaceTileBehaviourRectParam.cs" t="Include" />
+                    <e p="PlaceTileBehaviourRectPreview.cs" t="Include" />
+                  </e>
+                  <e p="Single" t="Include">
+                    <e p="PlaceTileBehaviourSingle.cs" t="Include" />
+                    <e p="PlaceTileBehaviourSingleParam.cs" t="Include" />
+                    <e p="PlaceTileBehaviourSinglePreview.cs" t="Include" />
+                  </e>
                 </e>
                 <e p="PlaceTileUseCase.cs" t="Include" />
                 <e p="TilemapPlaceControllerInstaller.cs" t="Include" />
@@ -210,6 +136,7 @@
               <e p="ProjectInstaller.cs" t="Include" />
               <e p="SettingProvider.cs" t="Include" />
             </e>
+            <e p="Scripts.asmdef" t="Include" />
             <e p="Utility" t="Include">
               <e p="DebugLogExtensions.cs" t="Include" />
             </e>
@@ -650,68 +577,6 @@
           </e>
           <e p="MiniJSON" t="Include">
             <e p="MiniJSON.cs" t="Include" />
-          </e>
-          <e p="NavMeshComponents-2019.3-2D" t="Include">
-            <e p="Examples" t="Include">
-              <e p="Editor" t="Include">
-                <e p="NavMeshComponentsExamplesEditor.asmdef" t="Include" />
-                <e p="NavMeshPrefabInstanceEditor.cs" t="Include" />
-              </e>
-              <e p="NavMeshComponentsExamples.asmdef" t="Include" />
-              <e p="Scripts" t="Include">
-                <e p="AgentLinkMover.cs" t="Include" />
-                <e p="ClickToMove.cs" t="Include" />
-                <e p="DestroyOnTrigger.cs" t="Include" />
-                <e p="DungeonManager.cs" t="Include" />
-                <e p="EnableIffSleeping.cs" t="Include" />
-                <e p="FreeCam.cs" t="Include" />
-                <e p="LocalNavMeshBuilder.cs" t="Include" />
-                <e p="MeshTool.cs" t="Include" />
-                <e p="NavMeshPrefabInstance.cs" t="Include" />
-                <e p="NavMeshSourceTag.cs" t="Include" />
-                <e p="Oscillator.cs" t="Include" />
-                <e p="RandomInstancing.cs" t="Include" />
-                <e p="RandomWalk.cs" t="Include" />
-                <e p="SpawnPrefabOnKeyDown.cs" t="Include" />
-              </e>
-            </e>
-            <e p="NavMeshComponents" t="Include">
-              <e p="Editor" t="Include">
-                <e p="NavMeshAssetManager.cs" t="Include" />
-                <e p="NavMeshBuilder2DEditor.cs" t="Include" />
-                <e p="NavMeshComponentsEditor.asmdef" t="Include" />
-                <e p="NavMeshComponentsGUIUtility.cs" t="Include" />
-                <e p="NavMeshLinkEditor.cs" t="Include" />
-                <e p="NavMeshModifierEditor.cs" t="Include" />
-                <e p="NavMeshModifierVolumeEditor.cs" t="Include" />
-                <e p="NavMeshSurfaceEditor.cs" t="Include" />
-              </e>
-              <e p="Scripts" t="Include">
-                <e p="NavMeshBuilder2D.cs" t="Include" />
-                <e p="NavMeshComponents.asmdef" t="Include" />
-                <e p="NavMeshLink.cs" t="Include" />
-                <e p="NavMeshModifier.cs" t="Include" />
-                <e p="NavMeshModifierVolume.cs" t="Include" />
-                <e p="NavMeshSourceTag2D.cs" t="Include" />
-                <e p="NavMeshSurface.cs" t="Include" />
-              </e>
-            </e>
-            <e p="Tests" t="Include">
-              <e p="Editor" t="Include">
-                <e p="NavMeshComponentsTestsEditmode.asmdef" t="Include" />
-                <e p="NavMeshModifierVolumeInPrefabTests.cs" t="Include" />
-                <e p="NavMeshSurfaceInPrefabTests.cs" t="Include" />
-                <e p="NavMeshSurfaceInPrefabVariantTests.cs" t="Include" />
-                <e p="PrefabSavingUtil.cs" t="Include" />
-                <e p="PrefabStageAutoSavingUtil.cs" t="Include" />
-              </e>
-              <e p="NavMeshComponentsTestsPlaymode.asmdef" t="Include" />
-              <e p="NavMeshSurfaceAgentTests.cs" t="Include" />
-              <e p="NavMeshSurfaceLinkTests.cs" t="Include" />
-              <e p="NavMeshSurfaceModifierTests.cs" t="Include" />
-              <e p="NavMeshSurfaceModifierVolumeTests.cs" t="Include" />
-              <e p="NavMeshSurfaceTests.cs" t="Include" />
-            </e>
           </e>
           <e p="Plugins" t="Include">
             <e p="Zenject" t="Include">
@@ -1236,6 +1101,7 @@
             <e p="StateMachineInfo.cs" t="Include" />
             <e p="StateMachineSample.cs" t="Include" />
           </e>
+          <e p="ThirdPirty.asmdef" t="Include" />
           <e p="Toast_AstarAlgorithm" t="Include">
             <e p="AstarAlgorithm.asmdef" t="Include" />
             <e p="AstarAlgorithm.cs" t="Include" />
@@ -1307,23 +1173,14 @@
         </e>
       </e>
       <e p="AstarAlgorithm.csproj" t="IncludeRecursive" />
-      <e p="Game.Layer_02.csproj" t="IncludeRecursive" />
-      <e p="Interface.FirstLayer.csproj" t="IncludeRecursive" />
-      <e p="Interface.Layer_01.csproj" t="IncludeRecursive" />
-      <e p="Interface.Layer_02.csproj" t="IncludeRecursive" />
-      <e p="Interface.Layer_04.csproj" t="IncludeRecursive" />
-      <e p="NavMeshComponents.csproj" t="IncludeRecursive" />
-      <e p="NavMeshComponentsEditor.csproj" t="IncludeRecursive" />
-      <e p="NavMeshComponentsExamples.csproj" t="IncludeRecursive" />
-      <e p="NavMeshComponentsExamplesEditor.csproj" t="IncludeRecursive" />
-      <e p="NavMeshComponentsTestsEditmode.csproj" t="IncludeRecursive" />
-      <e p="NavMeshComponentsTestsPlaymode.csproj" t="IncludeRecursive" />
       <e p="NecRougue.sln" t="IncludeFlat" />
       <e p="obj" t="ExcludeRecursive" />
       <e p="Packages" t="ExcludeRecursive" />
-      <e p="Shared.csproj" t="IncludeRecursive" />
+      <e p="Scripts.csproj" t="IncludeRecursive" />
       <e p="Statemachine.csproj" t="IncludeRecursive" />
       <e p="Temp\bin" t="ExcludeRecursive" />
+      <e p="Tests.csproj" t="IncludeRecursive" />
+      <e p="ThirdPirty.csproj" t="IncludeRecursive" />
       <e p="UniRx.csproj" t="IncludeRecursive" />
       <e p="UniRx.Examples.csproj" t="IncludeRecursive" />
       <e p="Unity.2D.Tilemap.Extras.csproj" t="IncludeRecursive" />
