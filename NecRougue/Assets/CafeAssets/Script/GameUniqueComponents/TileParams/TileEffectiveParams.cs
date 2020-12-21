@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
 using CafeAssets.Script.GameComponents.TilemapParams;
 using UnityEngine;

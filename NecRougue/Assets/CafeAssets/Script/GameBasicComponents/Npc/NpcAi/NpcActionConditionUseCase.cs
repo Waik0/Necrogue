@@ -33,26 +33,6 @@ namespace CafeAssets.Script.GameComponents.Npc.NpcAi
                     Random.Range(0f,1f) > _fallDownProbability;
         }
     }
-    //todo なおす
-    public class NpcMoveToChairCondition : INpcActionConditionUseCase
-    {
-        public NpcActionPattern TargetPattern { get; private set; } = NpcActionPattern.MoveToChair;
-        private ITilemapUseCase _tilemapUseCase;
-        //private ITilemapParamUseCase _tilemapParamUseCase;
-    
-        public NpcMoveToChairCondition(
-            ITilemapUseCase tilemapUseCase
-        //    ITilemapParamUseCase tilemapParamUseCase
-        )
-        {
-            _tilemapUseCase = tilemapUseCase;
-        //    _tilemapParamUseCase = tilemapParamUseCase;
-        }
-        public bool CanAction()
-        {
-            return false;
-            //    return _tilemapParamUseCase.FindCanSitDownPlace().Length > 0;
-        }
-    }
+
 //緊急脱出
 }

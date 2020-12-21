@@ -7,7 +7,7 @@
       <e p="Assets" t="Include">
         <e p="CafeAssets" t="Include">
           <e p="Script" t="Include">
-            <e p="GameComponents" t="Include">
+            <e p="GameBasicComponents" t="Include">
               <e p="GameCamera" t="Include">
                 <e p="GameCameraAdapter.cs" t="Include" />
                 <e p="GameCameraInstaller.cs" t="Include" />
@@ -29,9 +29,6 @@
                 </e>
               </e>
               <e p="Npc" t="Include">
-                <e p="Impliment" t="Include">
-                  <e p="NpcActionPattern.cs" t="Include" />
-                </e>
                 <e p="NpcAi" t="Include">
                   <e p="NpcActionConditionUseCase.cs" t="Include" />
                   <e p="NpcActionUseCase.cs" t="Include" />
@@ -91,7 +88,6 @@
                 <e p="TilemapParamRepository.cs" t="Include" />
                 <e p="TilemapParamsFacade.cs" t="Include" />
                 <e p="TilemapParamsImpliment" t="Include">
-                  <e p="TileEffectiveParams.cs" t="Include" />
                   <e p="TileStaticParams.cs" t="Include" />
                 </e>
                 <e p="TilemapParamsInstaller.cs" t="Include" />
@@ -129,6 +125,24 @@
                   <e p="TilemapAdapterForPreview.cs" t="Include" />
                 </e>
                 <e p="TilemapPlacePreviewInstaller.cs" t="Include" />
+              </e>
+            </e>
+            <e p="GameUniqueComponents" t="Include">
+              <e p="NpcActions" t="Include">
+                <e p="MoveToChair" t="Include">
+                  <e p="NpcMoveToChair.cs" t="Include" />
+                  <e p="NpcMoveToChairCondition.cs" t="Include" />
+                </e>
+                <e p="NpcActionPattern.cs" t="Include" />
+              </e>
+              <e p="TilemapUtilities" t="Include">
+                <e p="FindChair" t="Include">
+                  <e p="FindChair.cs" t="Include" />
+                </e>
+                <e p="TilemapUtilityInstaller.cs" t="Include" />
+              </e>
+              <e p="TileParams" t="Include">
+                <e p="TileEffectiveParams.cs" t="Include" />
               </e>
             </e>
             <e p="Installer" t="Include">
