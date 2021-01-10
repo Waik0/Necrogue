@@ -33,6 +33,9 @@ namespace CafeAssets.Script.System.GameCoreSystem
                     {
                         Priority = new List<NpcActionPattern>()
                         {
+                            //座ってるとき
+                            NpcActionPattern.Order,
+                            //フリーの時
                             NpcActionPattern.MoveToChair,
                             NpcActionPattern.MoveToRandomPlace,
                             NpcActionPattern.Stop,
@@ -41,6 +44,22 @@ namespace CafeAssets.Script.System.GameCoreSystem
                     Move = new NpcMoveModel()
                     {
                         Position = Vector3.zero,
+                    }
+                });
+                _npcSpawner.Spawn(new NpcFacadeModel()
+                {
+                    Ai = new NpcAiModel()
+                    {
+                        Priority = new List<NpcActionPattern>()
+                        {
+                            NpcActionPattern.MoveToOrder,
+                            NpcActionPattern.MoveToRandomPlace,
+                            NpcActionPattern.Stop,
+                        }
+                    },
+                    Move = new NpcMoveModel()
+                    {
+                        Position = Vector3.one,
                     }
                 });
             }

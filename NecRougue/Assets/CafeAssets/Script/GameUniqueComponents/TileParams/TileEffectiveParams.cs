@@ -16,11 +16,11 @@ public enum TileEffectParams
 }
 
 [Serializable]
-public class TileEffectiveParamModel : ITileParamsModel<TileEffectParams>
+public class TileEffectiveParamModel : ITileParamsModelBase<TileEffectParams>
 {
 
     public int Param { get; set; }
-
+    public int Size { get; set; }
     public TileEffectParams Key { get; set; }
     
 }

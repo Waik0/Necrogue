@@ -3,30 +3,37 @@ using UnityEngine;
 
 namespace CafeAssets.Script.GameComponents.TilemapParams
 {
-    interface ITilemapParameterRepository 
+    public interface ITileParamsModelBase<T>
     {
-        Dictionary<Vector3Int,List<ITileParamsModelBase>> Entity { get; }
-        void Add(Vector3Int key, List<ITileParamsModelBase> model);
-        
-        List<ITileParamsModelBase> Get(Vector3Int key);
+        int Param { get; set; }
+        int Size { get; set; }
+        T Key { get; }
+        //Vector2Int Size { get; set; }
+    }
+    public interface ITilemapParameterRepository<T> where T : struct
+    {
+        Dictionary<Vector3Int,List<ITileParamsModelBase<T>>> Entity { get; }
+        void Add(Vector3Int key, List<ITileParamsModelBase<T>> model);
+
+        List<ITileParamsModelBase<T>> Get(Vector3Int key);
         void Remove(Vector3Int key);
     }
     /// <summary>
     /// タイルマップに関するデータを保持
     /// </summary>
-    sealed class TilemapParameterRepositoryInternal : ITilemapParameterRepository
+    public sealed class TilemapParameterRepositoryInternal<T> : ITilemapParameterRepository<T> where T : struct
     {
 
-        private Dictionary<Vector3Int, List<ITileParamsModelBase>> _entity = new Dictionary<Vector3Int,List<ITileParamsModelBase>>(); 
-        public Dictionary<Vector3Int, List<ITileParamsModelBase>> Entity => _entity;
+        private Dictionary<Vector3Int, List<ITileParamsModelBase<T>>> _entity = new Dictionary<Vector3Int,List<ITileParamsModelBase<T>>>(); 
+        public Dictionary<Vector3Int, List<ITileParamsModelBase<T>>> Entity => _entity;
 
-        public void Add(Vector3Int key, List<ITileParamsModelBase> model)
+        public void Add(Vector3Int key, List<ITileParamsModelBase<T>> model)
         {
             if(!_entity.ContainsKey(key))
                 _entity.Add(key,null);
             _entity[key] = model;
         }
-        public List<ITileParamsModelBase> Get(Vector3Int key)
+        public List<ITileParamsModelBase<T>> Get(Vector3Int key)
         {
             if (!_entity.ContainsKey(key))
                 return null;

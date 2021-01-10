@@ -1,4 +1,5 @@
 ﻿using CafeAssets.Script.GameComponents.Npc.NpcAi;
+using ModestTree;
 using UnityEngine;
 
 namespace CafeAssets.Script.GameComponents.Npc.NpcMove
@@ -21,6 +22,7 @@ namespace CafeAssets.Script.GameComponents.Npc.NpcMove
             {
                 return gameObject.transform.position;
             }
+            Assert.IsNotNull(gameObject);
             return Vector2.zero;
         }
 

@@ -3,6 +3,7 @@ using CafeAssets.Script.GameComponents.Npc.NpcMove;
 using CafeAssets.Script.System.GameNpcSystem;
 using UnityEngine;
 using Zenject;
+using NotImplementedException = System.NotImplementedException;
 
 namespace CafeAssets.Script.GameComponents.Npc
 {
@@ -10,20 +11,21 @@ namespace CafeAssets.Script.GameComponents.Npc
 
     /// <summary>
     /// Npc Component System
-    /// ver 0.1
     /// 
     /// NPCの動作、状態、パラメータを管理するコンポーネント群
     /// 
     /// </summary>
     public interface INpcFacade
     {
+        string Id { get; }
+        GameObject GameObject { get; }
         /// <summary>
         /// 現在の行動状態
         /// </summary>
         /// <returns></returns>
         NpcActionPattern CurrentAction();
-        string[] GetParamKeys();
-        int GetParam(string key);
+
+        INpcParamRegistry OwnParamRegistry();
     }
 
     #endregion
@@ -34,22 +36,25 @@ namespace CafeAssets.Script.GameComponents.Npc
     sealed class NpcFacade : MonoBehaviour, INpcFacade, INpcCollection, IPoolable<NpcFacadeModel, IMemoryPool>
     {
         public NpcActionPattern CurrentAction() => _aiUseCase.Current;
+  
+
         private INpcAiUseCase _aiUseCase;
-        private INpcParamUseCase _paramUseCase;
         private INpcRegistry _registry;
         private INpcMoveUseCase _moveUseCase;
-
+        private INpcParamRegistry _npcParamRegistry;
+        public string Id { get; private set; }  
+        public GameObject GameObject => gameObject;
         [Inject]
         void Inject(
             INpcAiUseCase aiUseCase,
             INpcMoveUseCase moveUseCase,
-            INpcParamUseCase paramUseCase,
-            INpcRegistry registry
+            INpcRegistry registry,
+            INpcParamRegistry paramRegistry
         )
         {
             _aiUseCase = aiUseCase;
             _moveUseCase = moveUseCase;
-            _paramUseCase = paramUseCase;
+            _npcParamRegistry = paramRegistry;
             _registry = registry;
         }
 
@@ -62,9 +67,10 @@ namespace CafeAssets.Script.GameComponents.Npc
         {
             Debug.Log("Spawned " + gameObject.name);
             p1.Move.Self = gameObject;
+            Id = p1.Id;
             _aiUseCase.Reset(p1.Ai);
             _moveUseCase.Reset(p1.Move);
-            _paramUseCase.Reset();
+            _npcParamRegistry.Reset();
             _registry.Add(this);
           
         }
@@ -79,17 +85,12 @@ namespace CafeAssets.Script.GameComponents.Npc
         public void Tick()
         {
             _aiUseCase.UpdateAction();
+            _npcParamRegistry.Tick();
         }
-
-
-        public string[] GetParamKeys()
+        public INpcParamRegistry OwnParamRegistry()
         {
-            return _paramUseCase.GetKeys();
+            return _npcParamRegistry;
         }
-
-        public int GetParam(string key)
-        {
-            return _paramUseCase.Get(key);
-        }
+        
     }
 }

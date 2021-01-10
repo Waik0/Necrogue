@@ -16,10 +16,11 @@ public enum TileStaticParams
 /// todo リネーム
 /// </summary>
 [Serializable]
-public class TileStaticParamModel : ITileParamsModel<TileStaticParams>
+public class TileStaticParamModel : ITileParamsModelBase<TileStaticParams>
 {
     
     public int Param { get; set; }
+    public int Size { get; set; }
 
     public TileStaticParams Key { get; set; }
 
@@ -28,13 +29,15 @@ public class TileStaticParamModel : ITileParamsModel<TileStaticParams>
 public class TileStaticParamModelInitial
 {
     [SerializeField] private TileStaticParams _key;
+    [SerializeField] private int _size;
     [SerializeField] private int _param;
     
     public TileStaticParamModel CreateCopy() {
         return new TileStaticParamModel()
         {
             Key = _key,
-            Param = _param
+            Param = _param,
+            Size =  _size
         };
     }
 }

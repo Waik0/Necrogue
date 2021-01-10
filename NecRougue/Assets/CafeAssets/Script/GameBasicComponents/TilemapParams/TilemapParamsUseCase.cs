@@ -8,51 +8,91 @@ using NotImplementedException = System.NotImplementedException;
 
 namespace CafeAssets.Script.GameComponents.TilemapParams
 {
-    
-    internal interface ITilemapParamsUseCase
+    public interface ITilemapParamsUseCase<T> where T : struct
     {
-        Dictionary<Vector3Int,List<ITileParamsModelBase>> Entity { get; }
-        void SetTileParam(Vector3Int key,List<ITileParamsModelBase> tileModel);
-        ITileParamsModel<T> GetTileParam<T>(Vector3Int pos, T key) where T : struct;
-        void UpdateTileParam<T>(Vector3Int pos, T key, int Param) where T : struct;
+        Dictionary<Vector3Int,List<ITileParamsModelBase<T>>> Entity { get; }
+        void SetTileParam(Vector3Int key,List<ITileParamsModelBase<T>> tileModel);
+        int GetTileParam(Vector2Int pos, T key);
+        Dictionary<T,int> GetTileParams(Vector2Int pos);
+        void UpdateTileParam(Vector3Int pos, T key, int Param);
         void RemoveTileParam(Vector3Int pos);
         //void SetTileParams(Vector2Int key,ITileModel[] tileModel);
     }
-    sealed class TilemapParamsUseCase : ITilemapParamsUseCase
+    public sealed class TilemapParamsUseCase<T> : ITilemapParamsUseCase<T> where T : struct
     {
-        private ITilemapParameterRepository _repository;
+        private ITilemapParameterRepository<T> _repository;
         public TilemapParamsUseCase(
-            ITilemapParameterRepository repository
+            ITilemapParameterRepository<T> repository
         )
         {
             _repository = repository;
         }
 
-        public Dictionary<Vector3Int, List<ITileParamsModelBase>> Entity => _repository.Entity;
-        public void SetTileParam(Vector3Int pos,List<ITileParamsModelBase> tileModel)
+        public Dictionary<Vector3Int, List<ITileParamsModelBase<T>>> Entity => _repository.Entity;
+        public void SetTileParam(Vector3Int pos,List<ITileParamsModelBase<T>> tileModel)
         {
             _repository.Add(pos,tileModel);
         }
 
-        public ITileParamsModel<T> GetTileParam<T>(Vector3Int pos, T key) where T : struct
+        public int GetTileParam(Vector2Int pos, T key)
         {
-            foreach (var tileParamsModelBase in _repository.Get(pos))
+            int param = 0;
+            //全パラメータを探索し、効果範囲にposが含まれるパラメータを取得
+            foreach (var keyValuePair in _repository.Entity)
             {
-                if (tileParamsModelBase is ITileParamsModel<T> c && c.Key.Equals(key))
+                var rect = new RectInt(new Vector2Int(keyValuePair.Key.x,keyValuePair.Key.y), Vector2Int.zero);
+               
+                foreach (var tileParamsModelBase in keyValuePair.Value)
                 {
-                    return c;
+                    if (!tileParamsModelBase.Key.Equals(key))
+                    {
+                        continue;
+                    }
+
+                    rect.position = new Vector2Int(keyValuePair.Key.x - tileParamsModelBase.Size,
+                        keyValuePair.Key.y - tileParamsModelBase.Size);
+                    rect.size = new Vector2Int(tileParamsModelBase.Size * 2  + 1, tileParamsModelBase.Size * 2 + 1);
+                    //Debug.Log(rect);
+                    if (rect.Contains(pos))
+                    {
+                        param += tileParamsModelBase.Param;
+                    }
                 }
             }
-            return null;
+            return param;
+        }
+
+        public Dictionary<T,int> GetTileParams(Vector2Int pos)
+        {
+            Dictionary<T,int> param = new Dictionary<T, int>();
+            //全パラメータを探索し、効果範囲にposが含まれるパラメータを取得
+            foreach (var keyValuePair in _repository.Entity)
+            {
+                var rect = new RectInt(new Vector2Int(keyValuePair.Key.x,keyValuePair.Key.y), Vector2Int.zero);
+                foreach (var tileParamsModelBase in keyValuePair.Value)
+                {
+      
+                    rect.position = new Vector2Int(keyValuePair.Key.x - tileParamsModelBase.Size,
+                        keyValuePair.Key.y - tileParamsModelBase.Size);
+                    rect.size = new Vector2Int(tileParamsModelBase.Size * 2  + 1, tileParamsModelBase.Size * 2 + 1);
+                    if (!rect.Contains(pos)) continue;
+                    if (!param.ContainsKey(tileParamsModelBase.Key))
+                    {
+                        param.Add(tileParamsModelBase.Key,0);
+                    }
+                    param[tileParamsModelBase.Key] = tileParamsModelBase.Param;
+                }
+            }
+            return param;
         }
 
 
-        public void UpdateTileParam<T>(Vector3Int pos, T key, int Param) where T : struct
+        public void UpdateTileParam(Vector3Int pos, T key, int Param)
         {
             var data = _repository.Get(pos);
             foreach (var tilemapParamsModelBase in data)
             {
-                if (tilemapParamsModelBase is ITileParamsModel<T> c && c.Key.Equals(key))
+                if (tilemapParamsModelBase is ITileParamsModelBase<T> c && c.Key.Equals(key))
                 {
                     Debug.Log($" {pos} {key} 値更新");
                     c.Param = Param;

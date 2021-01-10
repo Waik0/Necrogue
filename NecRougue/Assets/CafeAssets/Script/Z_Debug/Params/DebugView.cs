@@ -8,27 +8,29 @@ using UniRx;
 using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
-
 public class DebugView : MonoBehaviour,IDebugView
 {
     [SerializeField] private Text _text;
     private ITileSelectUseCase _tileSelectUseCase;
     private IGameInputController _gameInputView;
     private IPlaceTileUseCase _mapPlaceUseCase;
-    private ITilemapParamsFacade _tilemapParamsFacade;
+    private ITilemapParamsFacade<TileEffectParams> _tilemapEffectParamsFacade;
+    private ITilemapParamsFacade<TileStaticParams> _tilemapStaticParamsFacade;
     [Inject]
     void Inject(
         ITileSelectUseCase tileSelectUseCase,
         IGameInputController gameInputView,
         IPlaceTileUseCase mapPlaceUseCase,
-        ITilemapParamsFacade tilemapParamsFacade,
+        ITilemapParamsFacade<TileEffectParams> tilemapEffectParamsFacade,
+        ITilemapParamsFacade<TileStaticParams> tilemapStaticParamsFacade,
         ITilemapUseCase tilemapUseCase)
     {
         _tileSelectUseCase = tileSelectUseCase;
         _gameInputView = gameInputView;
         _mapPlaceUseCase = mapPlaceUseCase;
-        _tilemapParamsFacade = tilemapParamsFacade;
-        _tilemapParamsFacade.OnUpdateTileParams.Subscribe(_ => OnUpdateTile()).AddTo(this);
+        _tilemapEffectParamsFacade = tilemapEffectParamsFacade;
+        _tilemapStaticParamsFacade = tilemapStaticParamsFacade;
+        _tilemapEffectParamsFacade.OnUpdateTileParams.Subscribe(_ => OnUpdateTile()).AddTo(this);
     }
 
     void Update()
@@ -67,11 +69,11 @@ public class DebugView : MonoBehaviour,IDebugView
     //Param集計情報更新
     void OnUpdateTile()
     {
-        UpdateParams(_staticParams);
-        UpdateParams(_effectiveParams);
+        UpdateParams(_tilemapStaticParamsFacade,_staticParams);
+        UpdateParams(_tilemapEffectParamsFacade,_effectiveParams);
     }
 
-    void UpdateParams<T>(Dictionary<T,int> dic )where T : struct
+    void UpdateParams<T>(ITilemapParamsFacade<T> facade,Dictionary<T,int> dic )where T : struct
     {
         if (dic == null)
         {
@@ -85,16 +87,14 @@ public class DebugView : MonoBehaviour,IDebugView
             }
             dic[value] = 0;
         }
-        foreach (var keyValuePair in _tilemapParamsFacade.Entity)
+        foreach (var keyValuePair in facade.Entity)
         {
             foreach (var tileParamsModelBase in keyValuePair.Value)
             {
-                if (tileParamsModelBase is ITileParamsModel<T> m)
+                if (tileParamsModelBase is ITileParamsModelBase<T> m)
                 {
-                    Debug.Log(m.Key);
                     if (!dic.ContainsKey(m.Key))
                     {
-                       
                         dic.Add(m.Key,0);
                     }
 

@@ -14,10 +14,12 @@ public class NpcInstaller : Installer<NpcInstaller>
     public override void InstallBindings()
     {
         Container.BindInterfacesTo<NpcAiUseCase>().AsSingle();
-        Container.BindInterfacesTo<NpcParamUseCase>().AsSingle();
+        Container.BindInterfacesTo<NpcParamRegistry>().AsSingle();
         Container.BindInterfacesTo<NpcMoveUseCase>().AsSingle();
+        Container.BindInterfacesTo<NpcAstarMoveUseCase>().AsSingle();
         InstallNpcAction();
         InstallNpcCondition();
+        InstallNpcParams();
     }
 
     private void InstallNpcAction()
@@ -27,6 +29,8 @@ public class NpcInstaller : Installer<NpcInstaller>
         Container.BindInterfacesTo<NpcStop>().AsCached();
         Container.BindInterfacesTo<NpcMoveToRandomPlace>().AsCached();
         Container.BindInterfacesTo<NpcMoveToChair>().AsCached();
+        Container.BindInterfacesTo<NpcOrder>().AsCached();
+        Container.BindInterfacesTo<NpcMoveToOrder>().AsCached();
 
     }
 
@@ -35,5 +39,17 @@ public class NpcInstaller : Installer<NpcInstaller>
         Container.BindInterfacesTo<NpcStopCondition>().AsCached();
         Container.BindInterfacesTo<NpcMoveToRandomPlaceCondition>().AsCached();
         Container.BindInterfacesTo<NpcMoveToChairCondition>().AsCached();
+        Container.BindInterfacesTo<NpcOrderCondition>().AsCached();
+        Container.BindInterfacesTo<NpcMoveToOrderCondition>().AsCached();
+
+    }
+
+    private void InstallNpcParams()
+    {
+        Container.BindInterfacesAndSelfTo<NpcParamSitDown>().AsSingle();
+        Container.BindInterfacesAndSelfTo<NpcParamOrder>().AsSingle();
+        Container.BindInterfacesAndSelfTo<NpcParamTakeOrder>().AsSingle();
+        Container.BindInterfacesAndSelfTo<NpcParamWaitTime>().AsSingle();
+
     }
 }

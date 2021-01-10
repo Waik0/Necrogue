@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ContentModelStore">
-    <e p="C:\Users\stoas\.Rider2019.3\system\extResources" t="IncludeRecursive" />
-    <e p="C:\Users\stoas\.Rider2019.3\system\resharper-host\local\Transient\ReSharperHost\v193\SolutionCaches\_NecRougue.-987795839.00" t="ExcludeRecursive" />
+    <e p="C:\Users\stoas\AppData\local\JetBrains\Rider2020.3\extResources" t="IncludeRecursive" />
+    <e p="C:\Users\stoas\AppData\local\JetBrains\Rider2020.3\resharper-host\local\Transient\Rider\v203\SolutionCaches\_NecRougue.-987795839.00" t="ExcludeRecursive" />
     <e p="E:\works\unity\Necrogue\unity\NecRougue" t="IncludeRecursive">
       <e p="Assets" t="Include">
         <e p="CafeAssets" t="Include">
@@ -39,10 +39,12 @@
                 <e p="NpcFacadeModel.cs" t="Include" />
                 <e p="NpcInstaller.cs" t="Include" />
                 <e p="NpcMove" t="Include">
+                  <e p="NpcAstarMoveUseCase.cs" t="Include" />
                   <e p="NpcMoveUseCase.cs" t="Include" />
                 </e>
                 <e p="NpcParam" t="Include">
                   <e p="NpcParamModel.cs" t="Include" />
+                  <e p="NpcParamRegistry.cs" t="Include" />
                   <e p="NpcParamUseCase.cs" t="Include" />
                 </e>
                 <e p="NpcView.cs" t="Include" />
@@ -91,6 +93,7 @@
                   <e p="TileStaticParams.cs" t="Include" />
                 </e>
                 <e p="TilemapParamsInstaller.cs" t="Include" />
+                <e p="TilemapParamsProvider.cs" t="Include" />
                 <e p="TilemapParamsUseCase.cs" t="Include" />
               </e>
               <e p="TilemapPassability" t="Include">
@@ -129,11 +132,33 @@
             </e>
             <e p="GameUniqueComponents" t="Include">
               <e p="NpcActions" t="Include">
+                <e p="Call" t="Include">
+                  <e p="NpcCall.cs" t="Include" />
+                  <e p="NpcCallCondition.cs" t="Include" />
+                </e>
                 <e p="MoveToChair" t="Include">
                   <e p="NpcMoveToChair.cs" t="Include" />
                   <e p="NpcMoveToChairCondition.cs" t="Include" />
                 </e>
+                <e p="MoveToNpc" t="Include">
+                  <e p="MoveToNpc.cs" t="Include" />
+                </e>
+                <e p="MoveToOrder" t="Include">
+                  <e p="NpcMoveToOrder.cs" t="Include" />
+                  <e p="NpcMoveToOrderCondition.cs" t="Include" />
+                </e>
                 <e p="NpcActionPattern.cs" t="Include" />
+                <e p="Order" t="Include">
+                  <e p="NpcOrder.cs" t="Include" />
+                  <e p="NpcOrderCondition.cs" t="Include" />
+                </e>
+              </e>
+              <e p="NpcParams" t="Include">
+                <e p="NpcParamCollector.cs" t="Include" />
+                <e p="NpcParamType.cs" t="Include" />
+              </e>
+              <e p="NpcUtils" t="Include">
+                <e p="NpcFinder.cs" t="Include" />
               </e>
               <e p="TilemapUtilities" t="Include">
                 <e p="FindChair" t="Include">

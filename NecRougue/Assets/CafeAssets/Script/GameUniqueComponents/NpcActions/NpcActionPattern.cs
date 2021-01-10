@@ -7,15 +7,21 @@ using UnityEngine;
 /// </summary>
 public enum NpcActionPattern
 {
+    //共通
     Stop,
-    MoveToRandomPlace,
-    MoveToChair,
-    MoveToNpc,
-    Order,
     Talk,
+    MoveToNpc,
+    Paid,
+    //客
+    Call,
+    Order,
+    Pay,
+    MoveToChair,
+    //店員
+    MoveToRandomPlace,
+    MoveToOrder,
     Cook,
     Carry,
-    Pay,
     Clean,
     Fortune,
 }

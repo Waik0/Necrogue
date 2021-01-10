@@ -84,7 +84,7 @@ public class AstarAlgorithm
                 candidate.Add(new Vector2Int(x + i, y + j));
             }
         }
-        Debug.Log("Can : "+candidate.Count);
+
         return candidate;
 
     }

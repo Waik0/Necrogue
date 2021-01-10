@@ -1,10 +1,12 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 /// <summary>
 /// レジストリで管理するNpc
 /// </summary>
 public interface INpcCollection
 {
+    string Id { get;  }
     void Tick();
 }
 public interface INpcRegistry
@@ -12,6 +14,7 @@ public interface INpcRegistry
     IEnumerable<INpcCollection> Entity { get; }
     void Add(INpcCollection element);
     void Remove(INpcCollection element);
+    INpcCollection Find(string id);
     void Update();
 }
 /// <summary>
@@ -31,6 +34,11 @@ public class NpcRegistry : INpcRegistry
     public void Remove(INpcCollection enemy)
     {
         _entities.Remove(enemy);
+    }
+
+    public INpcCollection Find(string id)
+    {
+        return _entities.FirstOrDefault(npcCollection => npcCollection.Id == id);
     }
 
     public void Update()

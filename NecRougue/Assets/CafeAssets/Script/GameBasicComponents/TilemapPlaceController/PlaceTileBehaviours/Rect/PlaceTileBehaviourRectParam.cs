@@ -12,13 +12,16 @@ namespace CafeAssets.Script.GameComponents.TilemapPlaceController
     {
         private Vector3Int _rectStartPos;
         private ITilemapUseCase _tilemapUseCase;
-        private ITilemapParamsFacade _tilemapParamsFacade;
+        private ITilemapParamsFacade<TileEffectParams> _tilemapEffectParamsFacade;
+        private ITilemapParamsFacade<TileStaticParams> _tilemapStaticParamsFacade;
         public PlaceTileBehaviourRectParam(
             ITilemapUseCase tilemapUseCase, 
-            ITilemapParamsFacade tilemapParamsFacade)
+            ITilemapParamsFacade<TileEffectParams> tilemapEffectParamsFacade,
+            ITilemapParamsFacade<TileStaticParams> tilemapStaticParamsFacade)
         {
             _tilemapUseCase = tilemapUseCase;
-            _tilemapParamsFacade = tilemapParamsFacade;
+            _tilemapEffectParamsFacade = tilemapEffectParamsFacade;
+            _tilemapStaticParamsFacade = tilemapStaticParamsFacade;
         }
 
         public PlaceTileMode TargetPlaceMode => PlaceTileMode.PlaceTileRect;
@@ -36,6 +39,46 @@ namespace CafeAssets.Script.GameComponents.TilemapPlaceController
 
         }
 
+        void SetStatic(int sx, int sy,int z,int lx,int ly, ITileModel model)
+        {
+            var keyValuePair = new (Vector3Int pos,  List<ITileParamsModelBase<TileStaticParams>> model)[lx * ly];
+            for (var i = 0; i < lx; i++)
+            {
+                for (var j = 0; j < ly; j++)
+                {
+                    
+                    var p = new List<ITileParamsModelBase<TileStaticParams>>();
+                    //EffectiveTileの場合パラメーター設定
+                    if (model is ITileModel staticModel)
+                    {
+                        p.AddRange(staticModel.StaticParams);//コピーをもらってくる
+                    }
+
+                    keyValuePair[i * ly + j] = (new Vector3Int(sx + i, sy + j, z),p);
+                }
+            }
+            _tilemapStaticParamsFacade.SetTileParam(keyValuePair);
+        }
+        void SetEffect(int sx, int sy,int z,int lx,int ly, ITileModel model)
+        {
+            var keyValuePair = new (Vector3Int pos,  List<ITileParamsModelBase<TileEffectParams>> model)[lx * ly];
+            for (var i = 0; i < lx; i++)
+            {
+                for (var j = 0; j < ly; j++)
+                {
+                    
+                    var p = new List<ITileParamsModelBase<TileEffectParams>>();
+                    //EffectiveTileの場合パラメーター設定
+                    if (model is ITileEffectiveModel effectiveModel)
+                    {
+                        p.AddRange(effectiveModel.EffectiveParams);//コピーをもらってくる
+                    }
+
+                    keyValuePair[i * ly + j] = (new Vector3Int(sx + i, sy + j, z),p);
+                }
+            }
+            _tilemapEffectParamsFacade.SetTileParam(keyValuePair);
+        }
         public void EndPlace(Vector3 pos, ITileModel model)
         {
             DebugLog.LogClassName(this, "PARAM配置");
@@ -50,28 +93,8 @@ namespace CafeAssets.Script.GameComponents.TilemapPlaceController
             var ey = Mathf.Max(start.y, end.y);
             var lx = ex - sx;
             var ly = ey - sy;
-            var keyValuePair = new (Vector3Int pos,  List<ITileParamsModelBase> model)[lx * ly];
-            for (var i = 0; i < lx; i++)
-            {
-                for (var j = 0; j < ly; j++)
-                {
-                    
-                    var p = new List<ITileParamsModelBase>();
-                    //パラメーター設定
-                    if (model is ITileModel tileModel)
-                    {
-                        p.AddRange(tileModel.StaticParams);//コピーをもらってくる
-                    }
-                    //EffectiveTileの場合パラメーター設定
-                    if (model is ITileEffectiveModel effectiveModel)
-                    {
-                        p.AddRange(effectiveModel.EffectiveParams);//コピーをもらってくる
-                    }
-
-                    keyValuePair[i * ly + j] = (new Vector3Int(sx + i, sy + j, end.z),p);
-                }
-            }
-            _tilemapParamsFacade.SetTileParam(keyValuePair);
+            SetEffect(sx, sy, z, lx, ly, model);
+            SetStatic(sx, sy, z, lx, ly, model);
         }
     }
 }

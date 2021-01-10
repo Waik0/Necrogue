@@ -11,15 +11,14 @@ namespace CafeAssets.Script.GameComponents.TilemapParams
     #region BoundsIO
     /// <summary>
     /// TilemapParams Component System
-    /// ver 0.1
     /// 
     /// タイルマップのタイルごとに与えられるデータ群を管理するコンポーネント
     /// 
     /// </summary>
-    public interface ITilemapParamsFacade
+    public interface ITilemapParamsFacade<T>
     {
         IObservable<Unit> OnUpdateTileParams { get; }
-        Dictionary<Vector3Int, List<ITileParamsModelBase>> Entity { get; }
+        Dictionary<Vector3Int, List<ITileParamsModelBase<T>>> Entity { get; }
         /// <summary>
         /// タイルのパラメーターをセットする。
         /// 既にセットされている場合は上書きする。
@@ -27,8 +26,8 @@ namespace CafeAssets.Script.GameComponents.TilemapParams
         /// </summary>
         /// <param name="pos"></param>
         /// <param name="model"></param>
-        void SetTileParam(Vector3Int pos, List<ITileParamsModelBase>  model);
-        void SetTileParam((Vector3Int pos, List<ITileParamsModelBase> model)[] KeyValuePair);
+        void SetTileParam(Vector3Int pos, List<ITileParamsModelBase<T>>  model);
+        void SetTileParam((Vector3Int pos, List<ITileParamsModelBase<T>> model)[] KeyValuePair);
 
         /// <summary>
         /// 
@@ -37,7 +36,8 @@ namespace CafeAssets.Script.GameComponents.TilemapParams
         /// <param name="key"></param>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        ITileParamsModel<T> GetTileParam<T>(Vector3Int pos, T key) where T : struct;
+        int GetTileParam(Vector2Int pos, T key);
+        Dictionary<T,int> GetTileParams(Vector2Int pos);
         /// <summary>
         /// 1箇所のパラメーター群の特定のパラメーターを書き換える
         /// </summary>
@@ -45,7 +45,7 @@ namespace CafeAssets.Script.GameComponents.TilemapParams
         /// <param name="key"></param>
         /// <param name="Param"></param>
         /// <typeparam name="T"></typeparam>
-        void UpdateTileParam<T>(Vector3Int pos, T key, int Param) where T : struct;
+        void UpdateTileParam(Vector3Int pos, T key, int Param);
  
         /// <summary>
         /// パラメーター群を削除する
@@ -53,69 +53,74 @@ namespace CafeAssets.Script.GameComponents.TilemapParams
         /// <param name="pos"></param>
         void RemoveTileParam(Vector3Int pos);
     }
- 
-    /// <summary>
-    /// モデルに継承させるインターフェイス
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    public interface ITileParamsModel<T> : ITileParamsModelBase where T : struct
-    {
-        T Key { get; }
-    }
-
-    #endregion
     
+    #endregion
+
     /// <summary>
     /// Facade実装
     /// </summary>
-    sealed class TilemapParamsFacade : ITilemapParamsFacade
+    public class TilemapParamsFacade<T> : ITilemapParamsFacade<T> where T : struct
+
     {
-        private ISubject<Unit> _onUpdateTiles;
+    private ISubject<Unit> _onUpdateTiles;
 
-        public IObservable<Unit> OnUpdateTileParams => _onUpdateTiles ?? (_onUpdateTiles = new Subject<Unit>());
-        
-        private ITilemapParamsUseCase _useCase;
+    public IObservable<Unit> OnUpdateTileParams => _onUpdateTiles ?? (_onUpdateTiles = new Subject<Unit>());
 
-        public TilemapParamsFacade(
-            ITilemapParamsUseCase useCase
-        )
+    private ITilemapParamsUseCase<T> _useCase;
+
+    public TilemapParamsFacade(
+        ITilemapParamsUseCase<T> useCase
+    )
+    {
+        _useCase = useCase;
+    }
+
+    public Dictionary<Vector3Int, List<ITileParamsModelBase<T>>> Entity => _useCase.Entity;
+
+    /// <summary>
+    /// パラメーターをセットする。
+    /// 既にセットされている場合は上書きする。
+    /// </summary>
+    public void SetTileParam(Vector3Int pos, List<ITileParamsModelBase<T>> model)
+    {
+        _useCase.SetTileParam(pos, model);
+        _onUpdateTiles?.OnNext(Unit.Default);
+    }
+
+    public void SetTileParam((Vector3Int pos, List<ITileParamsModelBase<T>> model)[] KeyValuePair)
+    {
+        foreach (var valueTuple in KeyValuePair)
         {
-            _useCase = useCase;
-        }
-        public Dictionary<Vector3Int, List<ITileParamsModelBase>> Entity => _useCase.Entity;
-        /// <summary>
-        /// パラメーターをセットする。
-        /// 既にセットされている場合は上書きする。
-        /// </summary>
-        public void SetTileParam(Vector3Int pos,List<ITileParamsModelBase> model)
-        {
-            _useCase.SetTileParam(pos,model);
-            _onUpdateTiles?.OnNext(Unit.Default);
-        }
-
-        public void SetTileParam((Vector3Int pos, List<ITileParamsModelBase> model)[] KeyValuePair)
-        {
-            foreach (var valueTuple in KeyValuePair)
-            {
-                _useCase.SetTileParam(valueTuple.pos,valueTuple.model);
-            }
-
-            _onUpdateTiles?.OnNext(Unit.Default);
-        }
-
-        public ITileParamsModel<T> GetTileParam<T>(Vector3Int pos, T key) where T : struct
-        {
-            return _useCase.GetTileParam(pos, key);
+            _useCase.SetTileParam(valueTuple.pos, valueTuple.model);
         }
 
-        public void UpdateTileParam<T>(Vector3Int pos, T key, int Param) where T : struct
-        {
-            _useCase.UpdateTileParam(pos,key,Param);
-        }
+        _onUpdateTiles?.OnNext(Unit.Default);
+    }
+    /// <summary>
+    /// posに影響しているパラメータを取得
+    /// </summary>
+    /// <param name="pos"></param>
+    /// <param name="key"></param>
+    /// <returns></returns>
 
-        public void RemoveTileParam(Vector3Int pos)
-        {
-            _useCase.RemoveTileParam(pos);
-        }
+    public int GetTileParam(Vector2Int pos, T key)
+    {
+        return _useCase.GetTileParam(pos, key);
+    }
+
+    public Dictionary<T,int> GetTileParams(Vector2Int pos)
+    {
+        return _useCase.GetTileParams(pos);
+    }
+
+    public void UpdateTileParam(Vector3Int pos, T key, int Param)
+    {
+        _useCase.UpdateTileParam(pos, key, Param);
+    }
+
+    public void RemoveTileParam(Vector3Int pos)
+    {
+        _useCase.RemoveTileParam(pos);
+    }
     }
 }

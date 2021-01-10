@@ -32,7 +32,6 @@ namespace CafeAssets.Script.GameComponents.Tilemap
     public class ProvideParameterModelSet
     {
         public string Name;
-        public TilemapParameterOperations Operation;
         public int Num;
     }
     /// <summary>

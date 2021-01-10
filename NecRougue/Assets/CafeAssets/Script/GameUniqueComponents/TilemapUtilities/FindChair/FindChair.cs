@@ -23,9 +23,9 @@ namespace CafeAssets.Script.GameUniqueComponents.FindChair
             Full = 0,
             CanSit = 1,
         }
-        private ITilemapParamsFacade _tilemapParamsFacade;
+        private ITilemapParamsFacade<TileEffectParams> _tilemapParamsFacade;
         public FindChair(
-            ITilemapParamsFacade tilemapParamsFacade)
+            ITilemapParamsFacade<TileEffectParams> tilemapParamsFacade)
         {
             _tilemapParamsFacade = tilemapParamsFacade;
         }
@@ -56,7 +56,7 @@ namespace CafeAssets.Script.GameUniqueComponents.FindChair
             {
                 foreach (var tileParamsModelBase in keyValuePair.Value)
                 {
-                    var param = tileParamsModelBase as ITileParamsModel<TileEffectParams>;
+                    var param = tileParamsModelBase;// as ITileParamsModelBase<TileEffectParams>;
                     if (param == null)
                     {
                         continue;
