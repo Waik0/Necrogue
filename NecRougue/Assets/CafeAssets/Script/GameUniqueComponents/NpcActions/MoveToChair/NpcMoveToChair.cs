@@ -81,7 +81,6 @@ using UnityEngine;
         
         void OnEndMove()
         {
-            CurrentStatus = NpcActionStatus.Complete;
             //座った
             _npcParamSit.State = NpcParamSitDown.SitDownState.Sit;
             _npcParamWaitTime.Time = 600;
@@ -96,6 +95,7 @@ using UnityEngine;
             if (_npcAstarMoveUseCase.CurrentStatus == MoveState.Complete)
             {
                 CurrentStatus = NpcActionStatus.Complete;
+                OnEndMove();
             }
         }
     }

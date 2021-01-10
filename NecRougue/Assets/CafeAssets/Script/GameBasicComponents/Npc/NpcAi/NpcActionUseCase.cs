@@ -70,16 +70,11 @@ namespace CafeAssets.Script.System.GameNpcSystem
         public void StartAction()
         {
             CurrentStatus = NpcActionStatus.Doing;
-            SetParam();
+            _sitDown.State = NpcParamSitDown.SitDownState.Stand;
             _astarMoveUseCase.Reset();
             var from = _moveUseCase.CurrentPos();
             var to = _tilemapPassabilityUseCase.GetRandomPassableTilePos(from,25);
             _astarMoveUseCase.Start(to);
-        }
-
-        void SetParam()
-        {
-            _sitDown.State = NpcParamSitDown.SitDownState.Stand;
         }
 
         public void EndAction()

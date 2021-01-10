@@ -60,8 +60,9 @@ public class NpcMoveToOrder : INpcActionUseCase
         if (_moveTo == null)
         {
             SearchOrder();
+            return;
         }
-        
+        Debug.Log(_npcAstarMoveUseCase.CurrentStatus);
         if (_npcAstarMoveUseCase.CurrentStatus == MoveState.Moving)
         {
             _npcAstarMoveUseCase.Tick();
@@ -71,7 +72,7 @@ public class NpcMoveToOrder : INpcActionUseCase
         {
             CurrentStatus = NpcActionStatus.Complete;
         }
-        
+
     }
     /// <summary>
     /// 客を探す

@@ -31,7 +31,7 @@ public class NpcOrderCondition : INpcActionConditionUseCase
         
         var pos = (Vector2) _npcFacade.GameObject.transform.position;
         var tilePos = _tilemapUseCase.WorldToCell(new Vector3(pos.x, pos.y, 0));
-        var order = _tilemapParams.GetTileParam((Vector2Int)tilePos,TileEffectParams.Order);
-        return order > 0;
+        //var order = _tilemapParams.GetTileParam((Vector2Int)tilePos,TileEffectParams.Order);
+        return true;
     }
 }

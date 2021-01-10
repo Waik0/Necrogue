@@ -65,14 +65,15 @@ public class NpcAstarMoveUseCase : INpcAstarMoveUseCase　
         to.z = 0;
         _aimList = _tilemapPassabilityUseCase.GetRoute(from, to);
         CurrentStatus = MoveState.Moving;
+        OnNextMove();
     }
     public void Start(Vector2 to)
     {
         _from = _moveUseCase.CurrentPos();
         var from = _moveUseCase.CurrentPos();
-        _to = to;
         _aimList = _tilemapPassabilityUseCase.GetRoute(from, to);
         CurrentStatus = MoveState.Moving;
+        OnNextMove();
     }
 
         void AddProgress()

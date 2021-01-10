@@ -67,7 +67,8 @@ namespace CafeAssets.Script.GameComponents.Npc
         {
             Debug.Log("Spawned " + gameObject.name);
             p1.Move.Self = gameObject;
-            Id = p1.Id;
+            Id = gameObject.GetInstanceID().ToString();
+            Debug.Log(Id);
             _aiUseCase.Reset(p1.Ai);
             _moveUseCase.Reset(p1.Move);
             _npcParamRegistry.Reset();
