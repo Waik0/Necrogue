@@ -4,7 +4,25 @@
     <e p="C:\Users\stoas\AppData\local\JetBrains\Rider2020.3\extResources" t="IncludeRecursive" />
     <e p="C:\Users\stoas\AppData\local\JetBrains\Rider2020.3\resharper-host\local\Transient\Rider\v203\SolutionCaches\_NecRougue.-987795839.00" t="ExcludeRecursive" />
     <e p="E:\works\unity\Necrogue\unity\NecRougue" t="IncludeRecursive">
+      <e p="Assembly-CSharp.csproj" t="IncludeRecursive" />
       <e p="Assets" t="Include">
+        <e p="Basic3DTileSystem" t="Include">
+          <e p="Core" t="Include">
+            <e p="Script" t="Include">
+              <e p="Basic3DTilemapSystem.Core.asmdef" t="Include" />
+              <e p="Tilemap3D.cs" t="Include" />
+              <e p="Tilemap3DFacade.cs" t="Include" />
+              <e p="TileModel3D.cs" t="Include" />
+              <e p="TileModel3DList.cs" t="Include" />
+              <e p="TileModel3DLoader.cs" t="Include" />
+            </e>
+          </e>
+          <e p="Example" t="Include">
+            <e p="Script" t="Include">
+              <e p="TilemapSystem3DExample.cs" t="Include" />
+            </e>
+          </e>
+        </e>
         <e p="CafeAssets" t="Include">
           <e p="Script" t="Include">
             <e p="GameBasicComponents" t="Include">
@@ -40,6 +58,7 @@
                 <e p="NpcInstaller.cs" t="Include" />
                 <e p="NpcMove" t="Include">
                   <e p="NpcAstarMoveUseCase.cs" t="Include" />
+                  <e p="NpcDstarMoveUseCase.cs" t="Include" />
                   <e p="NpcMoveUseCase.cs" t="Include" />
                 </e>
                 <e p="NpcParam" t="Include">
@@ -613,6 +632,10 @@
               </e>
               <e p="readme.txt" t="Include" />
             </e>
+          </e>
+          <e p="DstarAlgorithm" t="Include">
+            <e p="DStarLite.cs" t="Include" />
+            <e p="TestProgram.cs" t="Include" />
           </e>
           <e p="MiniJSON" t="Include">
             <e p="MiniJSON.cs" t="Include" />
@@ -1212,6 +1235,7 @@
         </e>
       </e>
       <e p="AstarAlgorithm.csproj" t="IncludeRecursive" />
+      <e p="Basic2DTilemapSystem.Core.csproj" t="IncludeRecursive" />
       <e p="NecRougue.sln" t="IncludeFlat" />
       <e p="obj" t="ExcludeRecursive" />
       <e p="Packages" t="ExcludeRecursive" />
