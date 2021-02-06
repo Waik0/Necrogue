@@ -30,6 +30,7 @@ namespace Basic3DTileSystem.Source.Core.Script
         private readonly Vector3 _singleCellSize = new Vector3Int(1, 1, 1);
         //3次元ジャグ配列でオブジェクトを管理
         private ITileModel3D[,,] _entity = new ITileModel3D[XMax, YMax, ZMax];
+
         public void ClearAllTiles()
         {
             foreach (var tileModel3D in _entity)

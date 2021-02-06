@@ -21,7 +21,7 @@ namespace Basic3DTileSystem.Example.Script
         private ITilemap3DEditFacade _editFacade;
      
         [SerializeField] private TileModel3DList _model3DList;
-       
+        [SerializeField] private Transform _parent;
         private Coroutine _coroutine = null;
         [Inject]
         void Inject(
@@ -32,6 +32,7 @@ namespace Basic3DTileSystem.Example.Script
         }
         void Start()
         {
+            _editFacade.SetParent(_parent);
             _editFacade.SetTileList(_model3DList);
             var pos = new List<Vector3Int>();
             _coroutine = StartCoroutine(Test());
@@ -44,7 +45,7 @@ namespace Basic3DTileSystem.Example.Script
             {
                 for (int j = 0; j < 3; j++)
                 {
-                    _editFacade.SetTile(new Vector3Int(i,0,j),0);
+                    //_editFacade.SetTile(new Vector3Int(i,0,j),0);
                     yield return null;
                 }
             }

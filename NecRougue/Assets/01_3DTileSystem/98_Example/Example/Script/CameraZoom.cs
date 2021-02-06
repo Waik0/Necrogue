@@ -10,7 +10,7 @@ public class CameraZoom : MonoBehaviour
     {
         var scroll = Input.mouseScrollDelta.y;
         _cam.orthographicSize += scroll;
-
+        
 
     }
     
