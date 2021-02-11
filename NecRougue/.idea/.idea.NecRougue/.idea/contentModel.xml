@@ -103,18 +103,14 @@
             <e p="Tile3DSystemDebugView.cs" t="Include" />
           </e>
         </e>
-        <e p="02_TowerDefenceAssets" t="Include">
+        <e p="11_TowerDefenceAssets" t="Include">
           <e p="Script" t="Include">
+            <e p="CollisionController.cs" t="Include" />
             <e p="FieldModel" t="Include">
               <e p="BuildFieldModel.cs" t="Include" />
               <e p="FloorFieldModel.cs" t="Include" />
             </e>
             <e p="GameMain.cs" t="Include" />
-            <e p="InputType" t="Include">
-              <e p="InputTypeInstaller.cs" t="Include" />
-              <e p="MoveCamera.cs" t="Include" />
-              <e p="SelectInputType.cs" t="Include" />
-            </e>
           </e>
           <e p="TowerDefence.asmdef" t="Include" />
         </e>
