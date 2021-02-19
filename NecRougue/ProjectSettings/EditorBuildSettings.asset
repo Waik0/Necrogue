@@ -17,10 +17,10 @@ EditorBuildSettings:
   - enabled: 0
     path: 
     guid: 00000000000000000000000000000000
-  - enabled: 1
-    path: Assets/CafeAssets/Scenes/Startup.unity
-    guid: 931edcbda4914fe44a9282c00b62b6dc
-  - enabled: 1
-    path: Assets/CafeAssets/Scenes/Game.unity
-    guid: ba29a9ade41f28843b7d91a54aabdf37
+  - enabled: 0
+    path: 
+    guid: 00000000000000000000000000000000
+  - enabled: 0
+    path: 
+    guid: 00000000000000000000000000000000
   m_configObjects: {}
