@@ -30,7 +30,6 @@ public class PieceSample : MonoBehaviour
     }
     public void StartCalc(Vector2 pos,float ang)
     {
-        Debug.Log("ASDFASDFSAFFASFASFSDFSAFSAFSDA");
         gameObject.AddComponent<PolygonCollider2D>();
         transform.eulerAngles = new Vector3(0, 0, ang);
         transform.position = pos;
