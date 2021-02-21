@@ -4,6 +4,9 @@ using System.IO;
 using System.Text;
 using UnityEngine;
 using UnityEditor;
+
+#if UNITY_EDITOR
+
 public class EditorUtil
 {
     public static string DragAndDropRect()
@@ -93,3 +96,5 @@ public class EditorUtil
     }
 }
 
+
+#endif
