@@ -131,6 +131,12 @@ public class InGameSample : MonoBehaviour
 
     IEnumerator Fall()
     {
+        var s = 1;
+        while (s < 10)
+        {
+            yield return null;
+            s++;
+        }
         var endCount = 0;
         while (true)
         {
@@ -164,7 +170,11 @@ public class InGameSample : MonoBehaviour
                     _statemachine.Next(State.GameOver);
                     yield break;
                 }
-                Physics2D.Simulate(.05f);
+
+                for (int j = 0; j < 100; j++)
+                {
+                    Physics2D.Simulate(.0005f);
+                }
                 yield return null;
             }
             _statemachine.Next(State.CheckHeight);

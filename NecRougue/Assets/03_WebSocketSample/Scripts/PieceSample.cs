@@ -32,11 +32,11 @@ public class PieceSample : MonoBehaviour
     }
     public void StartCalc(Vector2 pos,int ang)
     {
+        transform.position = pos;
         gameObject.AddComponent<PolygonCollider2D>();
         gameObject.AddComponent<Rigidbody2D>();
         _rigidbody2D = GetComponent<Rigidbody2D>();
         transform.eulerAngles = new Vector3(0, 0, ang);
-        transform.position = pos;
         _rigidbody2D.velocity = new Vector2(0,0);
         _rigidbody2D.angularVelocity = 0;
         _rigidbody2D.simulated = true;
