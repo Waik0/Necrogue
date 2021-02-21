@@ -10,6 +10,9 @@ public class PieceSample : MonoBehaviour
     private Rigidbody2D _rigidbody2D;
     [SerializeField]
     private SpriteRenderer _sprite;
+
+    private bool _startCalc;
+    private int _time = 0;
     public void Init(Sprite sprite)
     {
         if (GetComponent<PolygonCollider2D>())
@@ -18,7 +21,7 @@ public class PieceSample : MonoBehaviour
         }
         _sprite.sprite = sprite;
         _rigidbody2D.simulated = false;
-       
+        _startCalc = false;
     }
 
     public void SetAng(float ang)
@@ -27,13 +30,15 @@ public class PieceSample : MonoBehaviour
     }
     public void StartCalc(Vector2 pos,float ang)
     {
+        Debug.Log("ASDFASDFSAFFASFASFSDFSAFSAFSDA");
         gameObject.AddComponent<PolygonCollider2D>();
         transform.eulerAngles = new Vector3(0, 0, ang);
         transform.position = pos;
-        _rigidbody2D.velocity = Vector2.zero;
+        _rigidbody2D.velocity = new Vector2(0,0.1f);
         _rigidbody2D.angularVelocity = 0;
         _rigidbody2D.simulated = true;
-        
+        _startCalc = true;
+        _time = 0;
     }
 
     public bool IsSleep() => _rigidbody2D.IsSleeping();
@@ -41,6 +46,33 @@ public class PieceSample : MonoBehaviour
     private Color _c = new Color(.5f, .5f, .5f);
     void FixedUpdate()
     {
-        _sprite.color = _rigidbody2D.IsSleeping() ? _c : Color.white;
+        if (_startCalc)
+        {
+            _time++;
+            if (_time > 50)
+            {
+                var a = Mathf.Abs(_rigidbody2D.angularVelocity) < .5f;
+                var v = _rigidbody2D.velocity.magnitude < .005f;
+                if (a)
+                {
+                    _rigidbody2D.angularVelocity = 0;
+                }
+                if (v)
+                {
+                    _rigidbody2D.velocity = Vector2.zero;
+                }
+
+                if (a && v)
+                {
+                    _rigidbody2D.Sleep();
+                }
+
+
+            }
+
+            var sleep = _rigidbody2D.IsSleeping();
+            _sprite.color = sleep ? _c : Color.white;
+            if (_rigidbody2D.simulated && sleep) _time = 100;
+        }
     }
 }

@@ -25,8 +25,9 @@ public class WebSocketSample: MonoBehaviour{
         //ゲーム内
         Cursor,
         FirstData,//hostのみ シードとプレイヤー順
-        Turn,//hostのみ 次のプレイヤーを通知
+        //Turn,//hostのみ 次のプレイヤーを通知
         Fall,
+        EndCheck,
         //
         Chat,
     }

@@ -35,6 +35,7 @@ public class InGameSample : MonoBehaviour
     public Vector2Int SpawnPoint => _spawnPoint;
     public Action<int> OnDecideNewSpawnPoint;
     public Action OnGameOver;
+    public bool IsRotate { get; set; }
     void Start()
     {
         _statemachine = new Statemachine<State>();
@@ -54,6 +55,19 @@ public class InGameSample : MonoBehaviour
     public void ReStart(uint seed)
     {
         _random = new Unity.Mathematics.Random(seed);
+        Physics2D.angularSleepTolerance = 100f;
+        Physics2D.linearSleepTolerance = 2f;
+        _camera.transform.position = new Vector3(0,0,-10);
+        _spawnPoint = new Vector2Int(0, 30);
+        _pieceList.RemoveAll(_ =>
+        {
+            Destroy(_.gameObject);
+            return true;
+        });
+        if (_currentPiece)
+        {
+            Destroy(_currentPiece.gameObject);
+        }
         _statemachine.Next(State.Init);
     }
 
@@ -61,9 +75,12 @@ public class InGameSample : MonoBehaviour
     {
         _spawnPoint = new Vector2Int(0, 30 + up);
         _camera.transform.position = new Vector3(0, up, -10);
-        _statemachine.Next(State.Spawn);
     }
 
+    public void SetNext()
+    {
+        _statemachine.Next(State.Spawn);
+    }
     public void SetNewX(int x)
     {
         _currentX = x;
@@ -89,20 +106,7 @@ public class InGameSample : MonoBehaviour
     }
     IEnumerator Init()
     {
-        Physics2D.angularSleepTolerance = 100f;
-        Physics2D.linearSleepTolerance = 2f;
-        _camera.transform.position = new Vector3(0,0,-10);
-        _spawnPoint = new Vector2Int(0, 30);
-        _pieceList.RemoveAll(_ =>
-        {
-            Destroy(_.gameObject);
-            return true;
-        });
-        if (_currentPiece)
-        {
-            Destroy(_currentPiece.gameObject);
-        }
-        _statemachine.Next(State.Spawn);
+       
         yield return null;
     }
 
@@ -115,9 +119,10 @@ public class InGameSample : MonoBehaviour
 
     IEnumerator Rotate()
     {
+        IsRotate = true;
         while (true)
         {
-            Roll();
+            if(IsRotate) Roll();
             yield return null;
         }
     }
@@ -134,9 +139,14 @@ public class InGameSample : MonoBehaviour
                 _statemachine.Next(State.GameOver);
                 yield break;
             }
+
             if (end)
             {
                 endCount++;
+            }
+            else
+            {
+                endCount = 0;
             }
 
             if (endCount > 10)
@@ -151,12 +161,12 @@ public class InGameSample : MonoBehaviour
     {
         bool isHit = true;
         int up = -50;
+        var c = 0;
         while (isHit)
         {
             var origin = new Vector2(-500,up);
             var direction = new Vector2(1, 0);
             RaycastHit2D hit = Physics2D.Raycast(origin,direction, 1000);
-            Debug.Log(hit.collider);
             isHit = hit.collider;
             //衝突時のRayを画面に表示
             if (hit.collider){
@@ -167,7 +177,12 @@ public class InGameSample : MonoBehaviour
                 Debug.DrawRay(origin, direction * 1000, Color.green, 3, false);
             }
             up++;
-            yield return null;
+            c++;
+            if (c > 10)
+            {
+                c = 0;
+                yield return null;
+            }
         }
 
         up += 10;

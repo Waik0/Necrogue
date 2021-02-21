@@ -9,28 +9,28 @@ using Zenject;
 
 public class GameFlowSample : MonoBehaviour
 {
-    //logger
-    private string l;
-
-    private void Start()
-    {
-        Application.logMessageReceived += LogCallback;
-    }
-
-    private void OnDestroy()
-    {
-        Application.logMessageReceived -= LogCallback;
-    }
-
-    void LogCallback(string condition, string stackTrace, LogType type)
-    {
-        l += condition + "\n"; 
-    }
-    void OnGUI()
-    {
-        GUILayout.Label(l);
-    }
-    //---
+    // //logger
+    // private string l;
+    //
+    // private void Start()
+    // {
+    //     Application.logMessageReceived += LogCallback;
+    // }
+    //
+    // private void OnDestroy()
+    // {
+    //     Application.logMessageReceived -= LogCallback;
+    // }
+    //
+    // void LogCallback(string condition, string stackTrace, LogType type)
+    // {
+    //     l += condition + "\n"; 
+    // }
+    // void OnGUI()
+    // {
+    //     GUILayout.Label(l);
+    // }
+    // //---
     public enum State
     {
         Init,

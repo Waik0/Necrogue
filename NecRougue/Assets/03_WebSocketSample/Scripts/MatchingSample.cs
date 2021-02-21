@@ -51,7 +51,6 @@ public class MatchingSample : MonoBehaviour
     }
     void Route(WebSocketSampleResponce res)
     {
-        Debug.Log(res.command);
         switch (res.command)
         {
             case WebSocketSample.TestCommands.Join:
