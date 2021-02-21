@@ -1,9 +1,8 @@
 ﻿using UnityEngine;
-[RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(SpriteRenderer))]
 public class PieceSample : MonoBehaviour
 {
-    [SerializeField]
+    //[SerializeField]
     private Rigidbody2D _rigidbody2D;
     [SerializeField]
     private SpriteRenderer _sprite;
@@ -16,8 +15,14 @@ public class PieceSample : MonoBehaviour
         {
             Destroy(GetComponent<PolygonCollider2D>());
         }
+
+        if (GetComponent<Rigidbody2D>())
+        {
+            Destroy(GetComponent<Rigidbody2D>());
+        }
+
         _sprite.sprite = sprite;
-        _rigidbody2D.simulated = false;
+//        _rigidbody2D.simulated = false;
         _startCalc = false;
     }
 
@@ -25,12 +30,14 @@ public class PieceSample : MonoBehaviour
     {
         transform.eulerAngles = new Vector3(0, 0, ang);
     }
-    public void StartCalc(Vector2 pos,float ang)
+    public void StartCalc(Vector2 pos,int ang)
     {
         gameObject.AddComponent<PolygonCollider2D>();
+        gameObject.AddComponent<Rigidbody2D>();
+        _rigidbody2D = GetComponent<Rigidbody2D>();
         transform.eulerAngles = new Vector3(0, 0, ang);
         transform.position = pos;
-        _rigidbody2D.velocity = new Vector2(0,0.1f);
+        _rigidbody2D.velocity = new Vector2(0,0);
         _rigidbody2D.angularVelocity = 0;
         _rigidbody2D.simulated = true;
         _startCalc = true;
@@ -40,7 +47,7 @@ public class PieceSample : MonoBehaviour
     public bool IsSleep() => _rigidbody2D.IsSleeping();
     public bool IsDead() => transform.position.y < -100;
     private Color _c = new Color(.5f, .5f, .5f);
-    void FixedUpdate()
+    public void Check()
     {
         if (_startCalc)
         {

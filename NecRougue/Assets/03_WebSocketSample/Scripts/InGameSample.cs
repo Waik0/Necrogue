@@ -38,6 +38,7 @@ public class InGameSample : MonoBehaviour
     public bool IsRotate { get; set; }
     void Start()
     {
+        Application.targetFrameRate = 60;
         //Physics2D.autoSimulation = false;
         _statemachine = new Statemachine<State>();
         _statemachine.Init(this);
@@ -88,7 +89,7 @@ public class InGameSample : MonoBehaviour
         if (_currentPiece) 
             _currentPiece.transform.position = new Vector3(_currentX, _spawnPoint.y, 0);
     }
-    public bool Fall(Vector2 pos ,float ang)
+    public bool Fall(Vector2Int pos ,int ang)
     {
         if (_currentPiece)
         {
@@ -152,11 +153,21 @@ public class InGameSample : MonoBehaviour
 
             if (endCount > 10)
             {
-                _statemachine.Next(State.CheckHeight);
+                //_statemachine.Next(State.CheckHeight);
                 endCount = 0;
             }
-
-            Physics2D.Simulate(.025f);
+            for (int i = 0; i < 200; i++)
+            {
+                dead = _pieceList.Any(_ => _.IsDead());
+                if (dead)
+                {
+                    _statemachine.Next(State.GameOver);
+                    yield break;
+                }
+                Physics2D.Simulate(.05f);
+                yield return null;
+            }
+            _statemachine.Next(State.CheckHeight);
             yield return null;
         }
     }
@@ -210,7 +221,7 @@ public class InGameSample : MonoBehaviour
         OnGameOver?.Invoke(); 
         yield return null;
     }
-    private void FixedUpdate()
+    private void Update()
     {
         _statemachine.Update();
     }

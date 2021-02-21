@@ -48,6 +48,7 @@ public class InGameScreenSample : MonoBehaviour
 
     void OnEnable()
     {
+        //Application.targetFrameRate = 60;
         if (_ws.IsHost)
         {
             SendFirstData();
@@ -74,7 +75,6 @@ public class InGameScreenSample : MonoBehaviour
         }
         _ggText.text = $"{name} のまけ";
         UpdateScore();
-        _retry.gameObject.SetActive(_ws.IsHost);
     }
     void Route(WebSocketSampleResponce res)
     {
@@ -98,7 +98,7 @@ public class InGameScreenSample : MonoBehaviour
     //host
     void SendFirstData()
     {
-        _retry.gameObject.SetActive(false);
+        _retry.gameObject.SetActive(_ws.IsHost);
         string[] users = _matchingSample.UserData.Keys.OfType<string>().ToArray();
         int r = Random.Range(int.MinValue,int.MaxValue);
         uint u = (uint)int.MaxValue + (uint)r;
