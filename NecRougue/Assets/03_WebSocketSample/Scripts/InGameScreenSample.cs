@@ -212,7 +212,7 @@ public class InGameScreenSample : MonoBehaviour
         _scoreText.text = "";
         foreach (var keyValuePair in _scores)
         {
-            _scoreText.text = keyValuePair.Value.name + ":" + keyValuePair.Value.lose;
+            _scoreText.text += keyValuePair.Value.name + ":" + keyValuePair.Value.lose;
         }
 
        

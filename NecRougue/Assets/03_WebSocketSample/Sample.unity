@@ -141,7 +141,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &4652156
 RectTransform:
   m_ObjectHideFlags: 0
@@ -926,7 +926,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: WS Sample
+  m_Text: "\u3044\u3089\u3059\u3068\u3084\u30BF\u30EF\u30FC\u30D0\u30C8\u30EB"
 --- !u!222 &255817009
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2180,7 +2180,7 @@ MonoBehaviour:
     m_Alignment: 0
     m_AlignByGeometry: 0
     m_RichText: 1
-    m_HorizontalOverflow: 0
+    m_HorizontalOverflow: 1
     m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: 
@@ -3591,6 +3591,7 @@ MonoBehaviour:
   _content: {fileID: 836425387}
   _text: {fileID: 836425388}
   _input: {fileID: 361323493}
+  _matchingSample: {fileID: 1207827941}
 --- !u!1 &2034435028
 GameObject:
   m_ObjectHideFlags: 0

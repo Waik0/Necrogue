@@ -38,6 +38,7 @@ public class InGameSample : MonoBehaviour
     public bool IsRotate { get; set; }
     void Start()
     {
+        //Physics2D.autoSimulation = false;
         _statemachine = new Statemachine<State>();
         _statemachine.Init(this);
     }
@@ -154,6 +155,8 @@ public class InGameSample : MonoBehaviour
                 _statemachine.Next(State.CheckHeight);
                 endCount = 0;
             }
+
+            Physics2D.Simulate(.025f);
             yield return null;
         }
     }
