@@ -24,6 +24,6 @@ EditorBuildSettings:
     path: 
     guid: 00000000000000000000000000000000
   - enabled: 1
-    path: Assets/03_WebSocketSample/Sample.unity
-    guid: a2f59c3bead05284b9bf37a1fdb6d3de
+    path: Assets/02_WebRTCSample/Sample.unity
+    guid: b823aff4c8d1e004fb8bcd6a8c7735d2
   m_configObjects: {}

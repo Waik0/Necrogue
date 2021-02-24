@@ -45,3 +45,5 @@ Manager 特定のInterfaceを実装したインスタンスを集約して実装
 
 Model データ
 
+
+

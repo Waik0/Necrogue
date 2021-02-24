@@ -2,15 +2,6 @@
 <project version="4">
   <component name="ContentModelStore">
     <e p="C:\Users\stoas\AppData\local\JetBrains\Rider2020.3\extResources" t="IncludeRecursive" />
-    <e p="C:\Users\stoas\AppData\local\JetBrains\Rider2020.3\javascript\typings\express\4.17.11\node_modules\@types\body-parser" t="IncludeRecursive" />
-    <e p="C:\Users\stoas\AppData\local\JetBrains\Rider2020.3\javascript\typings\express\4.17.11\node_modules\@types\connect" t="IncludeRecursive" />
-    <e p="C:\Users\stoas\AppData\local\JetBrains\Rider2020.3\javascript\typings\express\4.17.11\node_modules\@types\express" t="IncludeRecursive" />
-    <e p="C:\Users\stoas\AppData\local\JetBrains\Rider2020.3\javascript\typings\express\4.17.11\node_modules\@types\express-serve-static-core" t="IncludeRecursive" />
-    <e p="C:\Users\stoas\AppData\local\JetBrains\Rider2020.3\javascript\typings\express\4.17.11\node_modules\@types\mime" t="IncludeRecursive" />
-    <e p="C:\Users\stoas\AppData\local\JetBrains\Rider2020.3\javascript\typings\express\4.17.11\node_modules\@types\node" t="IncludeRecursive" />
-    <e p="C:\Users\stoas\AppData\local\JetBrains\Rider2020.3\javascript\typings\express\4.17.11\node_modules\@types\qs" t="IncludeRecursive" />
-    <e p="C:\Users\stoas\AppData\local\JetBrains\Rider2020.3\javascript\typings\express\4.17.11\node_modules\@types\range-parser" t="IncludeRecursive" />
-    <e p="C:\Users\stoas\AppData\local\JetBrains\Rider2020.3\javascript\typings\express\4.17.11\node_modules\@types\serve-static" t="IncludeRecursive" />
     <e p="C:\Users\stoas\AppData\local\JetBrains\Rider2020.3\resharper-host\local\Transient\Rider\v203\SolutionCaches\_NecRougue.-987795839.00" t="ExcludeRecursive" />
     <e p="E:\works\unity\Necrogue\unity\NecRougue" t="IncludeRecursive">
       <e p="Assembly-CSharp.csproj" t="IncludeRecursive" />
@@ -28,6 +19,13 @@
         </e>
         <e p="02_WebRTCSample" t="Include">
           <e p="Scripts" t="Include">
+            <e p="PeerSpawnerSample.cs" t="Include" />
+            <e p="Signaling.cs" t="Include" />
+            <e p="TORTECClient.cs" t="Include" />
+            <e p="TORTECHost.cs" t="Include" />
+            <e p="TRTCBase.cs" t="Include" />
+            <e p="TRTCPeer.cs" t="Include" />
+            <e p="WebRTCStateManager.cs" t="Include" />
             <e p="WebRTCTest.cs" t="Include" />
           </e>
         </e>
@@ -321,6 +319,48 @@
               <e p="UnityWinRTBridge" t="Include">
                 <e p="Thread.cs" t="Include" />
                 <e p="ThreadPoolScheduler_UnityWinRT.cs" t="Include" />
+              </e>
+            </e>
+          </e>
+        </e>
+        <e p="Samples" t="Include">
+          <e p="WebRTC" t="Include">
+            <e p="2.3.2-preview" t="Include">
+              <e p="Example" t="Include">
+                <e p="Bandwidth" t="Include">
+                  <e p="BandwidthSample.cs" t="Include" />
+                </e>
+                <e p="ChangeCodecs" t="Include">
+                  <e p="ChangeCodecsSample.cs" t="Include" />
+                </e>
+                <e p="DataChannel" t="Include">
+                  <e p="DataChannelSample.cs" t="Include" />
+                </e>
+                <e p="MediaStream" t="Include">
+                  <e p="MediaStreamSample.cs" t="Include" />
+                </e>
+                <e p="MultiplePeerConnections" t="Include">
+                  <e p="MultiplePeerConnectionsSample.cs" t="Include" />
+                </e>
+                <e p="MultiVideoReceive" t="Include">
+                  <e p="MultiVideoReceiveSample.cs" t="Include" />
+                </e>
+                <e p="MungeSDP" t="Include">
+                  <e p="MungeSDPSample.cs" t="Include" />
+                </e>
+                <e p="PeerConnection" t="Include">
+                  <e p="PeerConnectionSample.cs" t="Include" />
+                </e>
+                <e p="Stats" t="Include">
+                  <e p="StatsSample.cs" t="Include" />
+                </e>
+                <e p="TrickleIce" t="Include">
+                  <e p="TrickleIceSample.cs" t="Include" />
+                </e>
+                <e p="Unity.WebRTC.Samples.asmdef" t="Include" />
+                <e p="VideoReceive" t="Include">
+                  <e p="VideoReceiveSample.cs" t="Include" />
+                </e>
               </e>
             </e>
           </e>
@@ -1016,6 +1056,7 @@
       <e p="Unity.2D.Tilemap.Extras.csproj" t="IncludeRecursive" />
       <e p="Unity.2D.Tilemap.Extras.Editor.csproj" t="IncludeRecursive" />
       <e p="Unity.2D.Tilemap.Extras.Placeholder.EditorTests.csproj" t="IncludeRecursive" />
+      <e p="Unity.WebRTC.Samples.csproj" t="IncludeRecursive" />
       <e p="Zenject-Editor.csproj" t="IncludeRecursive" />
       <e p="Zenject-PoolMonitor-Editor.csproj" t="IncludeRecursive" />
       <e p="Zenject-ReflectionBaking-Editor.csproj" t="IncludeRecursive" />

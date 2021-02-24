@@ -1,103 +1,109 @@
-﻿using System;
+﻿using System.Collections;
 using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
+using Toast.WebRTCUtil;
 using Unity.WebRTC;
 using UnityEngine;
-using Cysharp.Threading.Tasks;
 
-namespace Toast.WebRTCUtil
+namespace Toast.RealTimeCommunication
 {
     using DataChannelDictionary = Dictionary<int, RTCDataChannel>;
-
-    public class WebRTCTest : MonoBehaviour
+    public class TRTCBase : MonoBehaviour
     {
-        protected string signalingURL = "";
-        protected string signalingKey = "";
-        protected string roomId = "";
+  
 
-        [SerializeField, Tooltip("Time interval for polling from signaling server")]
-        private float interval = 5.0f;
-
-        private Signaling signaling = null;
-
-        private readonly Dictionary<string, RTCPeerConnection> peerConnections =
+        protected int _interval = 10;
+        private Signaling _signaling = null;
+        private RTCConfiguration _rtcConfiguration;
+        protected readonly Dictionary<string, RTCPeerConnection> _peerConnections =
             new Dictionary<string, RTCPeerConnection>();
-
-        private readonly Dictionary<RTCPeerConnection, DataChannelDictionary> m_mapPeerAndChannelDictionary =
+        protected readonly Dictionary<RTCPeerConnection, DataChannelDictionary> m_mapPeerAndChannelDictionary =
             new Dictionary<RTCPeerConnection, DataChannelDictionary>();
-
-        private RTCConfiguration rtcConfiguration;
-        private void Start()
+        
+        public virtual void Stop()
         {
-            signalingURL = "wss://ayame-labo.shiguredo.jp/signaling";
-            signalingKey = "hqP9UNNTNlUIbAHLLdFGGXO7a1Ui1WzlAiNz9qKfPazaCOFB";
-            roomId = "Waik0@hoge";
-            StartSignaling();
+            if (_signaling != null)
+            {
+                _signaling.Stop();
+                _signaling = null;
+            }
+            foreach (var rtcPeerConnection in _peerConnections)
+            {
+                rtcPeerConnection.Value?.Close();
+                rtcPeerConnection.Value?.Dispose();
+            }
+            _peerConnections.Clear();
+            m_mapPeerAndChannelDictionary.Clear();
+            _rtcConfiguration = new RTCConfiguration();
+        }
+
+        protected void StartSignaling(string signalingURL, string key,string id)
+        {
             WebRTCStateManager.Instance.Init();
-            // RTCConfiguration config = default;
-            // config.iceServers = new[] { new RTCIceServer { urls = new[] { "stun:stun.l.google.com:19302" } } };
-            //
-            // var pc = new RTCPeerConnection(ref config);
+            _rtcConfiguration = new RTCConfiguration();
+            _signaling?.Stop();
+            _signaling = new Signaling(signalingURL, key, id, _interval);
+            _signaling.OnAccept += OnAccept;
+            _signaling.OnAnswer += OnAnswer;
+            _signaling.OnOffer += OnOffer;
+            _signaling.OnClose += OnCloseSocket;
+            _signaling.OnIceCandidate += OnIceCandidate;
+            _signaling.Start();
+        }
+        protected void SendOfferAsync(AcceptMessage acceptMessage)
+        {
+            SendOffer(acceptMessage.connectionId, this._rtcConfiguration).Forget();
+        }
+        protected void EndSignaling()
+        {
+            _signaling?.Stop(); 
+        }
+
+        protected void CloseChannel()
+        {
+            
+        }
+        protected void EndRTC()
+        {
+            WebRTCStateManager.Instance.Dispose();
+            OnDisconnected();
         }
         private void OnDestroy()
         {
-            signaling?.Stop();
-            WebRTCStateManager.Instance.Dispose();
-       
+            EndSignaling();
+            EndRTC();
         }
 
-        public void StartSignaling()
+        protected virtual void OnCloseSocket(int code,string reason)
         {
-            this.rtcConfiguration = new RTCConfiguration();
-
-            if (this.signaling == null)
-            {
-                this.signaling = new Signaling(signalingURL, signalingKey, roomId, interval);
-
-                this.signaling.OnAccept += OnAccept;
-                this.signaling.OnAnswer += OnAnswer;
-                this.signaling.OnOffer += OnOffer;
-                this.signaling.OnIceCandidate += OnIceCandidate;
-            }
-
-            this.signaling.Start();
         }
-
-        public virtual void Stop()
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="ayameSignaling"></param>
+        protected virtual void OnAccept(Signaling ayameSignaling)
         {
-            if (this.signaling != null)
-            {
-                this.signaling.Stop();
-                this.signaling = null;
-
-                this.peerConnections.Clear();
-                this.m_mapPeerAndChannelDictionary.Clear();
-                this.rtcConfiguration = new RTCConfiguration();
-            }
-        }
-
-        void OnAccept(Signaling ayameSignaling)
-        {
+            Debug.Log("OnAccept");
             AcceptMessage acceptMessage = ayameSignaling.m_acceptMessage;
 
             bool shouldSendOffer = acceptMessage.isExistClient;
 
-            this.rtcConfiguration.iceServers = acceptMessage.ToRTCIceServers();
+            this._rtcConfiguration.iceServers = acceptMessage.ToRTCIceServers();
 
             // 相手からのOfferを待つ
             if (!shouldSendOffer) return;
 
-            this.SendOffer(acceptMessage.connectionId, this.rtcConfiguration).Forget();
+            SendOffer(acceptMessage.connectionId, this._rtcConfiguration).Forget();
         }
-
         async UniTask<bool> SendOffer(string connectionId, RTCConfiguration configuration)
         {
             var pc = new RTCPeerConnection(ref configuration);
-            this.peerConnections.Add(connectionId, pc);
+            _peerConnections.Add(connectionId, pc);
 
             // create data chennel
             RTCDataChannelInit dataChannelOptions = new RTCDataChannelInit();
 
-            RTCDataChannel dataChannel = pc.CreateDataChannel("dataChannel", dataChannelOptions);
+            RTCDataChannel dataChannel = pc.CreateDataChannel("meta", dataChannelOptions);
             dataChannel.OnMessage = bytes => OnMessage(dataChannel, bytes);
             dataChannel.OnOpen = () => OnOpenChannel(connectionId, dataChannel);
             dataChannel.OnClose = () => OnCloseChannel(connectionId, dataChannel);
@@ -105,20 +111,17 @@ namespace Toast.WebRTCUtil
             pc.OnDataChannel = new DelegateOnDataChannel(channel => { OnDataChannel(pc, channel); });
             pc.OnIceCandidate = new DelegateOnIceCandidate(candidate =>
             {
-                this.signaling.SendCandidate(connectionId, candidate);
+                _signaling.SendCandidate(connectionId, candidate);
             });
-
             pc.OnIceConnectionChange = new DelegateOnIceConnectionChange(state =>
             {
                 if (state == RTCIceConnectionState.Disconnected)
                 {
                     pc.Close();
-                    this.peerConnections.Remove(connectionId);
-
-                    this.OnDisconnected();
+                    _peerConnections.Remove(connectionId);
+                    OnDisconnected();
                 }
             });
-
             RTCOfferOptions options = new RTCOfferOptions();
             options.iceRestart = false;
             options.offerToReceiveAudio = false;
@@ -127,18 +130,22 @@ namespace Toast.WebRTCUtil
             var offer = pc.CreateOffer(ref options);
             await offer;
             if (offer.IsError) return false;
-
             var desc = offer.Desc;
-            var localDescriptionOperation = pc.SetLocalDescription(ref desc);
-
-            this.signaling.SendOffer(connectionId, pc.LocalDescription);
+            var localDescriptionOperation = pc.SetLocalDescription(ref desc); 
+            _signaling.SendOffer(connectionId, pc.LocalDescription);
 
             return true;
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="signaling"></param>
+        /// <param name="e"></param>
         void OnOffer(ISignaling signaling, DescData e)
         {
-            if (this.peerConnections.ContainsKey(e.connectionId)) return;
+            
+            Debug.Log("OnOffer");
+            if (_peerConnections.ContainsKey(e.connectionId)) return;
 
             RTCSessionDescription sessionDescriotion;
             sessionDescriotion.type = RTCSdpType.Offer;
@@ -149,13 +156,13 @@ namespace Toast.WebRTCUtil
 
         async UniTask<bool> SendAnswer(string connectionId, RTCSessionDescription sessionDescriotion)
         {
-            var pc = new RTCPeerConnection(ref this.rtcConfiguration);
-            this.peerConnections.Add(connectionId, pc);
+            var pc = new RTCPeerConnection(ref _rtcConfiguration);
+            _peerConnections.Add(connectionId, pc);
 
             pc.OnDataChannel = new DelegateOnDataChannel(channel => { OnDataChannel(pc, channel); });
             pc.OnIceCandidate = new DelegateOnIceCandidate(candidate =>
             {
-                this.signaling.SendCandidate(connectionId, candidate);
+                _signaling.SendCandidate(connectionId, candidate);
             });
 
             pc.OnIceConnectionChange = new DelegateOnIceConnectionChange(state =>
@@ -163,7 +170,11 @@ namespace Toast.WebRTCUtil
                 if (state == RTCIceConnectionState.Disconnected)
                 {
                     pc.Close();
-                    this.peerConnections.Remove(connectionId);
+                    if (m_mapPeerAndChannelDictionary.ContainsKey(pc))
+                    {
+                        m_mapPeerAndChannelDictionary.Remove(pc);
+                    }
+                    _peerConnections.Remove(connectionId);
 
                     this.OnDisconnected();
                 }
@@ -183,24 +194,26 @@ namespace Toast.WebRTCUtil
             await localDescriptionOperation;
             if (localDescriptionOperation.IsError) return false;
 
-            this.signaling.SendAnswer(connectionId, desc);
+            _signaling.SendAnswer(connectionId, desc);
 
             return true;
         }
 
         void OnAnswer(ISignaling signaling, DescData e)
         {
+            
+            Debug.Log("OnAnswer");
             RTCSessionDescription desc = new RTCSessionDescription();
             desc.type = RTCSdpType.Answer;
             desc.sdp = e.sdp;
 
-            RTCPeerConnection pc = this.peerConnections[e.connectionId];
+            RTCPeerConnection pc = _peerConnections[e.connectionId];
             pc.SetRemoteDescription(ref desc);
         }
 
         void OnIceCandidate(ISignaling signaling, CandidateData e)
         {
-            if (!this.peerConnections.TryGetValue(e.connectionId, out var pc)) return;
+            if (!_peerConnections.TryGetValue(e.connectionId, out var pc)) return;
 
 
             RTCIceCandidateInit rtcIceCandidateInit = new RTCIceCandidateInit();
@@ -219,6 +232,8 @@ namespace Toast.WebRTCUtil
         /// <param name="channel"></param>
         void OnDataChannel(RTCPeerConnection pc, RTCDataChannel channel)
         {
+            
+            Debug.Log("OnDataChannel");
             Debug.Log("DataChannel Connect");
             if (!m_mapPeerAndChannelDictionary.TryGetValue(pc, out var channels))
             {
@@ -229,7 +244,7 @@ namespace Toast.WebRTCUtil
             channels.Add(channel.Id, channel);
 
             channel.OnMessage = bytes => OnMessage(channel, bytes);
-            channel.OnClose = () => OnCloseChannel(this.signaling.m_acceptMessage.connectionId, channel);
+            channel.OnClose = () => OnCloseChannel(_signaling.m_acceptMessage.connectionId, channel);
 
             this.OnConnected();
         }
@@ -240,7 +255,9 @@ namespace Toast.WebRTCUtil
         /// <param name="channel"></param>
         void OnOpenChannel(string connectionId, RTCDataChannel channel)
         {
-            var pc = this.peerConnections[connectionId];
+            
+            Debug.Log("OnOpenChannel");
+            var pc = _peerConnections[connectionId];
 
             if (!m_mapPeerAndChannelDictionary.TryGetValue(pc, out var channels))
             {
@@ -262,23 +279,26 @@ namespace Toast.WebRTCUtil
         /// <param name="channel"></param>
         void OnCloseChannel(string connectionId, RTCDataChannel channel)
         {
+            
+            Debug.Log("OnCloseChannel");
             this.OnDisconnected();
         }
 
         protected virtual void OnMessage(RTCDataChannel channel, byte[] bytes)
         {
             string text = System.Text.Encoding.UTF8.GetString(bytes);
-            this.OnMessage(text);
+          
+            this.OnMessage(  channel.Label,text);
         }
 
-        protected virtual void OnMessage(string message)
+        protected virtual void OnMessage(string label,string message)
         {
-            Debug.LogFormat("OnMessage {0}", message);
+            Debug.LogFormat("OnMessage {0} {1}", label,message);
         }
 
-        public void SendMessage(string message)
+        public void SendMessage(string channel, string message)
         {
-            RTCDataChannel dataChannel = this.GetDataChannel("dataChannel");
+            RTCDataChannel dataChannel = this.GetDataChannel(channel);
             if (dataChannel == null) return;
 
             if (dataChannel.ReadyState != RTCDataChannelState.Open)
@@ -292,23 +312,23 @@ namespace Toast.WebRTCUtil
             Debug.Log("Send Message");
         }
 
-        protected bool SendMessage(byte[] bytes)
-        {
-            RTCDataChannel dataChannel = this.GetDataChannel("dataChannel");
-            if (dataChannel == null) return false;
-
-            if (dataChannel.ReadyState != RTCDataChannelState.Open)
-            {
-                Debug.LogError("Not Open.");
-                return false;
-            }
-
-            dataChannel.Send(bytes);
-
-            Debug.Log("Send Message");
-
-            return true;
-        }
+        // protected bool SendMessage(byte[] bytes)
+        // {
+        //     RTCDataChannel dataChannel = this.GetDataChannel("dataChannel");
+        //     if (dataChannel == null) return false;
+        //
+        //     if (dataChannel.ReadyState != RTCDataChannelState.Open)
+        //     {
+        //         Debug.LogError("Not Open.");
+        //         return false;
+        //     }
+        //
+        //     dataChannel.Send(bytes);
+        //
+        //     Debug.Log("Send Message");
+        //
+        //     return true;
+        // }
 
         protected virtual void OnConnected()
         {
@@ -322,7 +342,7 @@ namespace Toast.WebRTCUtil
 
         protected bool IsConnected()
         {
-            RTCDataChannel dataChannel = this.GetDataChannel("dataChannel");
+            RTCDataChannel dataChannel = GetDataChannel("dataChannel");
             if (dataChannel == null) return false;
             return dataChannel.ReadyState == RTCDataChannelState.Open;
         }
@@ -338,27 +358,6 @@ namespace Toast.WebRTCUtil
             }
 
             return null;
-        }
-
-        RTCConfiguration GetSelectedSdpSemantics()
-        {
-            RTCConfiguration config = default;
-            var rtcIceServers = new List<RTCIceServer>();
-
-            foreach (var iceServer in this.signaling.m_acceptMessage.iceServers)
-            {
-                RTCIceServer rtcIceServer = new RTCIceServer();
-                rtcIceServer.urls = iceServer.urls.ToArray();
-                rtcIceServer.username = iceServer.username;
-                rtcIceServer.credential = iceServer.credential;
-                rtcIceServer.credentialType = RTCIceCredentialType.OAuth;
-
-                rtcIceServers.Add(rtcIceServer);
-            }
-
-            config.iceServers = rtcIceServers.ToArray();
-
-            return config;
         }
     }
 }
