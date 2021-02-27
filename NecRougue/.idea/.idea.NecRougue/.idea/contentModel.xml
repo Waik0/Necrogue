@@ -20,12 +20,6 @@
         <e p="02_WebRTCSample" t="Include">
           <e p="Scripts" t="Include">
             <e p="PeerSpawnerSample.cs" t="Include" />
-            <e p="Signaling.cs" t="Include" />
-            <e p="TORTECClient.cs" t="Include" />
-            <e p="TORTECHost.cs" t="Include" />
-            <e p="TRTCBase.cs" t="Include" />
-            <e p="TRTCPeer.cs" t="Include" />
-            <e p="WebRTCStateManager.cs" t="Include" />
             <e p="WebRTCTest.cs" t="Include" />
           </e>
         </e>
@@ -41,6 +35,40 @@
             <e p="TitleScreenSample.cs" t="Include" />
             <e p="WebSocketErrorHandleSample.cs" t="Include" />
             <e p="WebSocketSample.cs" t="Include" />
+          </e>
+        </e>
+        <e p="04_SaboRocket" t="Include">
+          <e p="Scripts" t="Include">
+            <e p="ChannelDebug.cs" t="Include" />
+            <e p="CreateRoomView.cs" t="Include" />
+            <e p="Game" t="Include">
+              <e p="Cursor.cs" t="Include" />
+              <e p="GameDataModel.cs" t="Include" />
+              <e p="InGameClientSequence.cs" t="Include" />
+              <e p="InGameHostSequence.cs" t="Include" />
+              <e p="InGameUseCase.cs" t="Include" />
+              <e p="Piece.cs" t="Include" />
+              <e p="PiecePreview.cs" t="Include" />
+            </e>
+            <e p="Matching" t="Include">
+              <e p="MatchingClientSequence.cs" t="Include" />
+              <e p="MatchingClientView.cs" t="Include" />
+              <e p="MatchingHostSequence.cs" t="Include" />
+              <e p="MatchingHostView.cs" t="Include" />
+            </e>
+            <e p="NetworkClientUseCase.cs" t="Include" />
+            <e p="NetworkHostUseCase.cs" t="Include" />
+            <e p="NetworkTest" t="Include">
+              <e p="NetworkClientInfoView.cs" t="Include" />
+              <e p="NetworkHostInfoView.cs" t="Include" />
+              <e p="NetworkTest.cs" t="Include" />
+            </e>
+            <e p="RootSequence.cs" t="Include" />
+            <e p="SceneInstaller.cs" t="Include" />
+            <e p="Title" t="Include">
+              <e p="TitleSequence.cs" t="Include" />
+              <e p="TitleView.cs" t="Include" />
+            </e>
           </e>
         </e>
         <e p="Plugins" t="Include">
@@ -1039,6 +1067,18 @@
               <e p="EditorUtil.cs" t="Include" />
             </e>
           </e>
+          <e p="Toast_RTC" t="Include">
+            <e p="Signaling.cs" t="Include" />
+            <e p="Toast.RTC.asmdef" t="Include" />
+            <e p="TORTECClient.cs" t="Include" />
+            <e p="TortecClientUseCase.cs" t="Include" />
+            <e p="TORTECHost.cs" t="Include" />
+            <e p="TORTECHostUseCase.cs" t="Include" />
+            <e p="TORTECUseCaseBase.cs" t="Include" />
+            <e p="TRTCBase.cs" t="Include" />
+            <e p="TRTCPeer.cs" t="Include" />
+            <e p="WebRTCStateManager.cs" t="Include" />
+          </e>
           <e p="Toast_WebSocket" t="Include">
             <e p="Protocol.cs" t="Include" />
             <e p="WssigClient.cs" t="Include" />
@@ -1051,6 +1091,7 @@
       <e p="Statemachine.csproj" t="IncludeRecursive" />
       <e p="Temp\bin" t="ExcludeRecursive" />
       <e p="ThirdPirty.csproj" t="IncludeRecursive" />
+      <e p="Toast.RTC.csproj" t="IncludeRecursive" />
       <e p="UniRx.csproj" t="IncludeRecursive" />
       <e p="UniRx.Examples.csproj" t="IncludeRecursive" />
       <e p="Unity.2D.Tilemap.Extras.csproj" t="IncludeRecursive" />

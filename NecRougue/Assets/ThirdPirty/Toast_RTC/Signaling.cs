@@ -169,6 +169,10 @@ namespace Toast.WebRTCUtil
             this.clientId = RandomString(17);
         }
 
+        public bool IsConnecting()
+        {
+            return m_webSocket?.IsAlive ?? false;
+        }
         string RandomString(int strLength)
         {
             string result = "";

@@ -77,6 +77,7 @@ namespace Toast.WebRTCUtil
 
         void OnAccept(Signaling ayameSignaling)
         {
+            
             AcceptMessage acceptMessage = ayameSignaling.m_acceptMessage;
 
             bool shouldSendOffer = acceptMessage.isExistClient;
@@ -240,6 +241,7 @@ namespace Toast.WebRTCUtil
         /// <param name="channel"></param>
         void OnOpenChannel(string connectionId, RTCDataChannel channel)
         {
+            Debug.Log("DataChannel Connect");
             var pc = this.peerConnections[connectionId];
 
             if (!m_mapPeerAndChannelDictionary.TryGetValue(pc, out var channels))
