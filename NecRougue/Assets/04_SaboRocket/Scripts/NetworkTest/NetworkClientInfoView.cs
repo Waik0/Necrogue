@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Toast.RealTimeCommunication;
 using UnityEngine;
 using UnityEngine.UI;
 [RequireComponent(typeof(TortecClientUseCase))]

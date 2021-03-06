@@ -6,46 +6,43 @@ using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
 
-public class MatchingHostView : MonoBehaviour
+namespace Toast.RealTimeCommunication
 {
-    [SerializeField] private Transform _viewRoot;
-    [SerializeField] private Text _roomName;
-    [SerializeField] private Text _peers;
-    private MatchingHostSequence _matchingSequence;
-    private ITortecHostUseCase _tortecHost;
-    [Inject]
-    void Inject(
-        MatchingHostSequence matchingSequence,
-        ITortecHostUseCase tortecHost
+
+    public class MatchingHostView : MonoBehaviour
+    {
+        [SerializeField] private Transform _viewRoot;
+        [SerializeField] private Text _roomName;
+        [SerializeField] private Text _peers;
+        private MatchingHostSequence _matchingSequence;
+        private ITortecHostUseCaseWithWebSocket _tortecHost;
+
+        [Inject]
+        void Inject(
+            MatchingHostSequence matchingSequence,
+            ITortecHostUseCaseWithWebSocket tortecHost
         )
-    {
-        _tortecHost = tortecHost;
-        _matchingSequence = matchingSequence;
-        _matchingSequence.OnActiveSequence.Subscribe(OnChangeActive).AddTo(this);
-        tortecHost.OnCreateRoom.Subscribe(OnCreateRoom).AddTo(this);
-        _viewRoot.gameObject.SetActive(false);
-    }
-
-    public void EndMatching()
-    {
-        _matchingSequence.ToGame();
-    }
-    void OnChangeActive(bool active)
-    {
-        _viewRoot.gameObject.SetActive(active);
-    }
-
-    void OnCreateRoom(string name)
-    {
-        _roomName.text = name;
-    }
-
-    private void Update()
-    {
-        _peers.text = "";
-        foreach (var rtcPeerConnection in _tortecHost.ConnectionPeers())
         {
-            _peers.text += rtcPeerConnection.ToString() + "\n";
+            _tortecHost = tortecHost;
+            _matchingSequence = matchingSequence;
+            _matchingSequence.OnActiveSequence.Subscribe(OnChangeActive).AddTo(this);
+            matchingSequence.OnCreateRoom.Subscribe(OnCreateRoom).AddTo(this);
+            _viewRoot.gameObject.SetActive(false);
+        }
+
+        void OnChangeActive(bool active)
+        {
+            _viewRoot.gameObject.SetActive(active);
+        }
+
+        void OnCreateRoom(string name)
+        {
+            _roomName.text = name;
+        }
+
+        private void Update()
+        {
+       
         }
     }
 }

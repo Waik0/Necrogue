@@ -9,6 +9,7 @@ using Zenject;
 
 public class MatchingClientSequence : IDisposable
 {
+
     public enum State
     {
         Wait,
@@ -18,9 +19,14 @@ public class MatchingClientSequence : IDisposable
     }
 
     private Statemachine<State> _statemachine = new Statemachine<State>();
-    private ITortecClientUseCase _clientUseCase;
+    private ITortecClientUseCaseWithWebSocket _clientUseCase;
     private Subject<bool> _onActiveSequence = new Subject<bool>();
     private string _roomName;
+    //receiver
+    private PlayerDataUseCase _playerDataUseCase;
+    private IGameStartReceiver _gameStartReceiver;
+    //other
+    private Ping _ping;
     #region public
     public IObservable<bool> OnActiveSequence => _onActiveSequence;
     public State CurrentState => _statemachine.Current;
@@ -39,6 +45,10 @@ public class MatchingClientSequence : IDisposable
         _statemachine.Update();
     }
 
+    public void ToGame()
+    {
+        _statemachine.Next(State.ToGame);
+    }
     public void Join(string room)
     {
         _roomName = room;
@@ -48,14 +58,32 @@ public class MatchingClientSequence : IDisposable
 
     [Inject]
     void Inject(
-        ITortecClientUseCase clientUseCase
+        ITortecClientUseCaseWithWebSocket clientUseCase,
+        IGameStartReceiver gameStartReceiver,
+        PlayerDataUseCase playerDataUseCase,
+        Ping ping
     )
     {
+        _ping = ping;
         _clientUseCase = clientUseCase;
         _statemachine = new Statemachine<State>();
         _statemachine.Init(this);
+        _playerDataUseCase = playerDataUseCase;
+        _gameStartReceiver = gameStartReceiver;
+        ReceiverInit();
     }
 
+    void ReceiverInit()
+    {
+        _gameStartReceiver.StartSubscribe(_clientUseCase);
+        _gameStartReceiver.OnGameStart = gameStartData =>
+        {
+            _playerDataUseCase.SetPlayerList(gameStartData.players);
+            Debug.Log("プレイヤー" + gameStartData.players.Count+ "人");
+            _statemachine.Next(State.ToGame);
+        };
+        _clientUseCase.OnOpenCallback.Subscribe(_ => _ping.StartPing(_clientUseCase));
+    }
     IEnumerator Wait()
     {
         _roomName = PlayerPrefs.GetString("roomNameCache","");
@@ -63,9 +91,11 @@ public class MatchingClientSequence : IDisposable
     }
     IEnumerator JoinRoom()
     {
-        _clientUseCase.JoinRoom(_roomName);
+        if (!_clientUseCase.IsOpen)
+        {
+            _clientUseCase.JoinRoom(_roomName);
+        }
         yield return null;
-        _statemachine.Next(State.ToGame);
     }
 
     public void Dispose()

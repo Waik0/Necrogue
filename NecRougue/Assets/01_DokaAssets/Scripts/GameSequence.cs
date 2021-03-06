@@ -30,8 +30,8 @@ public class GameSequence : ITickable,IInitializable
     }
 
     public void Initialize()
-    {      
-
+    {
+        
         _statemachine = new Statemachine<GameState>();
         _statemachine.Init(this);
         

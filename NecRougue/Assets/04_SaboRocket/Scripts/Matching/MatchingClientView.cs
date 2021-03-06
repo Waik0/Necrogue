@@ -13,17 +13,17 @@ public class MatchingClientView : MonoBehaviour
     
     [SerializeField] private InputField _inputField;
     private MatchingClientSequence _matchingSequence;
-    private ITortecClientUseCase _tortecClient;
+    private ITortecClientUseCaseWithWebSocket _tortecClient;
     [Inject]
     void Inject(
         MatchingClientSequence matchingSequence,
-        ITortecClientUseCase tortecClient
+        ITortecClientUseCaseWithWebSocket tortecClient
     )
     {
         _tortecClient = tortecClient;
         _matchingSequence = matchingSequence;
         _matchingSequence.OnActiveSequence.Subscribe(OnChangeActive).AddTo(this);
-        tortecClient.OnJoinRoom.Subscribe(OnJoinRoom).AddTo(this);
+        //tortecClient.OnJoinRoom.Subscribe(OnJoinRoom).AddTo(this);
         _viewRoot.gameObject.SetActive(false);
     }
 
@@ -40,13 +40,5 @@ public class MatchingClientView : MonoBehaviour
     {
         _roomName.text = name;
     }
-
-    private void Update()
-    {
-        _peers.text = "";
-        foreach (var rtcPeerConnection in _tortecClient.ConnectionPeers())
-        {
-            _peers.text += rtcPeerConnection.ToString() + "\n";
-        }
-    }
+    
 }

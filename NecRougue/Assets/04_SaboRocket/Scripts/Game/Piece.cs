@@ -4,15 +4,9 @@ using UnityEngine;
 
 public class Piece : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    public void SetVertex(Vector2Int pos, int angle)
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        transform.eulerAngles = new Vector3(0, 0, angle);
+        transform.position = new Vector3(pos.x, pos.y, 0);
     }
 }

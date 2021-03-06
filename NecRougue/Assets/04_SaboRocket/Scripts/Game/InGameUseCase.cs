@@ -14,7 +14,19 @@ public class InGameUseCase : MonoBehaviour
     public Dictionary<string, PlayerData> PlayerDatas { get; } = new Dictionary<string, PlayerData>();
     public Dictionary<string, Cursor> CursorDatas { get; } = new Dictionary<string, Cursor>();
     public int CurrentSprite { get; private set; }
-    private int _currentTurn = 0;
+    public int CurrentAngle { get; private set; }
+    public int CurrentTurn { get; private set; }
+    public void Initialize()
+    {
+        PlayerDatas.Clear();
+        foreach (var keyValuePair in CursorDatas)
+        {
+            Destroy(keyValuePair.Value);
+        }
+        CursorDatas.Clear();
+    }
+
+
     public void SetPlayerList(List<string> playerIDs)
     {
         foreach (var keyValuePair in CursorDatas)
@@ -51,20 +63,20 @@ public class InGameUseCase : MonoBehaviour
     {
         if (CursorDatas.ContainsKey(cursorData.id))
         {
-            CursorDatas[cursorData.id]?.SetPos(cursorData.worldPos);
+            CursorDatas[cursorData.id]?.SetPos(cursorData);
         }
         else
         {
             CursorDatas.Add(cursorData.id, Instantiate(_cursorPrefab));
             CursorDatas[cursorData.id].SetName(cursorData.id);
-            CursorDatas[cursorData.id].SetPos(cursorData.worldPos);
+            CursorDatas[cursorData.id].SetPos(cursorData);  
         }
     }
-    public void NextTurn()
+    public void NextTurn(int turn)
     {
-        _currentTurn++;
-        CurrentSprite = Random.Range(0, _preview.CandidateNum);
-        _preview.SetSprite(CurrentSprite);
+        //_currentTurn = turn;
+        //CurrentSprite = Random.Range(0, _preview.CandidateNum);
+        //_preview.SetSprite(CurrentSprite);
     }
 
     public void Fall()
