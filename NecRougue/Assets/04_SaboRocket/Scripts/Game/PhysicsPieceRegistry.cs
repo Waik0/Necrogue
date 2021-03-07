@@ -20,7 +20,7 @@ public class PhysicsPieceRegistry : MonoBehaviour
     {
         _physicsPieces.RemoveAll(p =>
         {
-            Destroy(p);
+            Destroy(p.gameObject);
             return true;
         });
 
@@ -30,7 +30,7 @@ public class PhysicsPieceRegistry : MonoBehaviour
     {
         var prefab = _pieceDatas.GetPiece(id);
         var p = Instantiate(prefab.PhysicsPrefab);
-        p.Place(pos, angle);
+        p.Place(pos, angle,id);
         _physicsPieces.Add(p);
     }
 }

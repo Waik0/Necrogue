@@ -61,6 +61,13 @@ public class ClientRootSequence : MonoBehaviour
         while (true)
         {
             _inGameClientSequence.UpdateSequence();
+            switch (_inGameClientSequence.CurrentState)
+            {
+                case InGameClientSequence.State.ToTitle:
+                    SceneManager.LoadScene("Title");
+                    _inGameClientSequence.StopSequence();
+                    break;
+            }
             yield return null;
         }
         yield return null; 

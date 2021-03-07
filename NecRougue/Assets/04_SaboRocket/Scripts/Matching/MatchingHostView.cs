@@ -14,6 +14,7 @@ namespace Toast.RealTimeCommunication
         [SerializeField] private Transform _viewRoot;
         [SerializeField] private Text _roomName;
         [SerializeField] private Text _peers;
+
         private MatchingHostSequence _matchingSequence;
         private ITortecHostUseCaseWithWebSocket _tortecHost;
 
@@ -39,6 +40,8 @@ namespace Toast.RealTimeCommunication
         {
             _roomName.text = name;
         }
+
+     
 
         private void Update()
         {

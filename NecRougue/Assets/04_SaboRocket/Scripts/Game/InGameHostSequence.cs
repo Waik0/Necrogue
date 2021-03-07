@@ -31,13 +31,15 @@ public class InGameHostSequence : IDisposable
     private IInputReceiver _inputReceiver;
     private ITimelineDataReceiver _timelineDataReceiver;
     private HandDataReceiver _handDataReceiver;
+    private RollDataReceiver _rollDataReceiver;
     //sender
     private ICursorMessageSender _cursorMessageSender;
     private IGameSequenceDataSender _gameSequenceDataSender;
     private InputSender _inputSender;
     private TimelineDataSender _timelineDataSender;
     private HandDataSender _handDataSender;
-
+    private DeckDataSender _deckDataSender;
+    private RollDataSender _rollDataSender;
     //other
     private ITortecHostUseCaseWithWebSocket _hostUseCase;
     private PlayerDataUseCase _playerDataUseCase;
@@ -49,8 +51,10 @@ public class InGameHostSequence : IDisposable
     private PieceViewerUseCase _pieceViewerUseCase;
     private DeckUseCase _deckUseCase;
     private HandUseCase _handUseCase;
-
-    private List<int> _myHand = new List<int>();
+    private RollUseCase _rollUseCase;
+    private ResultUseCase _resultUseCase;
+    
+    private PiecePreview _preview;
     //event
     private Subject<bool> _onActiveSequence = new Subject<bool>();
     private Subject<State> _onChangeState = new Subject<State>();
@@ -59,7 +63,6 @@ public class InGameHostSequence : IDisposable
     public IObservable<bool> OnActiveSequence => _onActiveSequence;
     public IObservable<State> OnChangeState => _onChangeState;
     public State CurrentState => _statemachine.Current;
-    public string TurnPlayer { get; set; }
     public void ResetSequence()
     {
         _onActiveSequence?.OnNext(true);
@@ -86,11 +89,16 @@ public class InGameHostSequence : IDisposable
         ICursorMessageReceiver cursorMessageReceiver,
         IInputReceiver inputReceiver,
         ITimelineDataReceiver timelineDataReceiver,
+        HandDataReceiver handDataReceiver,
+        RollDataReceiver rollDataReceiver,
         //sender
         ICursorMessageSender cursorMessageSender,
         IGameSequenceDataSender gameSequenceDataSender,
         InputSender inputSender,
         TimelineDataSender timelineDataSender,
+        DeckDataSender deckDataSender,
+        HandDataSender handDataSender,
+        RollDataSender rollDataSender,
         //other
         PlayerDataUseCase playerDataUseCase,
         PlayerTurnUseCase playerTurnUseCase,
@@ -101,8 +109,9 @@ public class InGameHostSequence : IDisposable
         PieceViewerUseCase pieceViewerUseCase,
         DeckUseCase deckUseCase,
         HandUseCase handUseCase,
-        HandDataSender handDataSender,
-        HandDataReceiver handDataReceiver
+        RollUseCase rollUseCase,
+        ResultUseCase resultUseCase,
+        PiecePreview preview
     )
     {
         _statemachine = new Statemachine<State>();
@@ -127,6 +136,12 @@ public class InGameHostSequence : IDisposable
         _deckUseCase = deckUseCase;
         _handDataReceiver = handDataReceiver;
         _handDataSender = handDataSender;
+        _deckDataSender = deckDataSender;
+        _rollDataSender = rollDataSender;
+        _rollUseCase = rollUseCase;
+        _rollDataReceiver = rollDataReceiver;
+        _resultUseCase = resultUseCase;
+        _preview = preview;
         ReceiverInit();
     }
 
@@ -145,7 +160,11 @@ public class InGameHostSequence : IDisposable
         _inputReceiver.OnGetInputData = (id,data) =>
         {
             Debug.Log("GetInput");
+            //手札消す
+            //すぐ引く
             _handUseCase.DeleteHand(id,data.pieceId);
+            _handUseCase.TryDraw(id);
+            _deckDataSender.SendDeckData(new DeckData(){deck = _deckUseCase.Deck,index = _deckUseCase.Index},_hostUseCase);
             _handDataSender.SendHandData(new HandData(){hand = _handUseCase.GetHand(id)},_hostUseCase);
             _pieceRegistry.Spawn(data.pieceId,data.pos,data.angle);
             NextState(State.CalcPhysics);
@@ -161,12 +180,18 @@ public class InGameHostSequence : IDisposable
     IEnumerator Init()
     {
         Debug.Log("StaetInitialize");
+        //プレイヤーの確定
+        _playerDataUseCase.SetPlayerList(_hostUseCase.ConnectionIds());
         _cursorDataUseCase.Init();
         _playerTurnUseCase.Init();
         _pieceRegistry.Init();
         _pieceViewerUseCase.Init();
-        //プレイヤーの確定
-        _playerDataUseCase.SetPlayerList(_hostUseCase.ConnectionIds());
+        _deckUseCase.InitRandom();//デッキ初期化
+        _handUseCase.Init();
+        _pieceRegistry.Init();
+        _pieceViewerUseCase.Init();
+        _rollUseCase.RandomInitRoll(_playerDataUseCase.Players);
+      
         Debug.Log("Complete");
         _gameSequenceDataSender.SendReadyData(_hostUseCase);
         NextState(State.GameStart);
@@ -174,11 +199,12 @@ public class InGameHostSequence : IDisposable
     }
     IEnumerator GameStart()
     {
+
         Debug.Log("GameStart");
-        _deckUseCase.InitRandom();//デッキ初期化
-        _handUseCase.Init();
+        //初期ドロー
         _handUseCase.FirstDraw(_playerDataUseCase.Players);
-     
+        _deckDataSender.SendDeckData(new DeckData(){deck = _deckUseCase.Deck,index = _deckUseCase.Index},_hostUseCase);
+        _handDataSender.SendHandDataAll(_handUseCase.Hands,_hostUseCase);
         _cursorMessageSender.StartSendCoroutine(_hostUseCase);
         NextState(State.WaitReady);
         yield return null;
@@ -203,17 +229,23 @@ public class InGameHostSequence : IDisposable
         Debug.Log("WaitInput"); 
         int angle = 0;
         Debug.Log($"IAM :{_hostUseCase.SelfId} NOW : { _playerTurnUseCase.CurrentPlayer }");
+        if (_playerTurnUseCase.CurrentPlayer != _hostUseCase.SelfId)
+        {
+            yield break;
+        }
+        _preview.SetActive(true);
+        _preview.SetPreview(_handUseCase.GetHand(_playerTurnUseCase.CurrentPlayer)[0]);
         while (true)
         {
-            if (_playerTurnUseCase.CurrentPlayer != _hostUseCase.SelfId)
-            {
-                break;
-            }
-            angle++;
+          
+            angle+=5;
             angle = angle % 360;
             var hand = _handUseCase.GetHand(_playerTurnUseCase.CurrentPlayer);
+            _preview.Rotate(angle);
+            _preview.SetPos(Camera.main.ScreenToWorldPoint(Input.mousePosition));
             if (_inputSender.TrySend(hand[0], angle, _hostUseCase))
             {
+                _preview.SetActive(false);
                   break;
             }
             yield return null;
@@ -247,14 +279,25 @@ public class InGameHostSequence : IDisposable
     IEnumerator CleanUp()
     {
         _playerTurnUseCase.NextTurn();
-        _gameSequenceDataSender.SendReadyData(_hostUseCase);
-        _statemachine.Next(State.WaitReady);
+        var isEnd = _resultUseCase.CheckIsEnd();
+        if (!isEnd)
+        {
+            _gameSequenceDataSender.SendReadyData(_hostUseCase);
+            _statemachine.Next(State.WaitReady);
+        }
+        else
+        {
+            NextState(State.GameSet);
+        }
         yield return null;
     }
     IEnumerator GameSet()
     {
         _cursorMessageSender.EndSendCoroutine();
+        _readyStateChecker.AllFalse();
+        _gameSequenceDataSender.SendGameOverData(_resultUseCase.CalcResult(),_hostUseCase);
         yield return null;
+        NextState(State.Init);
     } 
     public void Dispose()
     {

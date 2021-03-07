@@ -10,7 +10,7 @@ public class PlayerData
     public string Name;
 }
 
-[SerializeField]
+[Serializable]
 public class PlayerGameData
 {
     public string id;
@@ -43,7 +43,7 @@ public class InputData
     public int angle;
 }
 
-[SerializeField]
+[Serializable]
 public class CursorData
 {
     public bool down;
@@ -51,12 +51,12 @@ public class CursorData
     public Vector2 worldPos;//端末依存回避のためworld
 }
 //ゲーム開始通知
-[SerializeField]
+[Serializable]
 public class GameStartData
 {
     public List<string> players;
 }
-[SerializeField]
+[Serializable]
 public class GameSequenceData
 {
     public enum Command
@@ -70,11 +70,28 @@ public class GameSequenceData
     public Command command;
     public int currentTurn;
     public string currentPlayer;
+    public ResultData ResultData;
 }
-
-[SerializeField]
+[Serializable]
 public class HandData
 {
     public string playerId;
     public List<int> hand;
+}
+[Serializable]
+public class DeckData
+{
+    public int index;
+    public List<int> deck;
+}
+[Serializable]
+public class RollData
+{
+    public enum Roll
+    {
+        Blue,
+        Red
+    }
+    public string playerId;
+    public Roll roll;
 }

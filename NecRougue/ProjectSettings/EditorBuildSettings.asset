@@ -11,6 +11,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/04_SaboRocket/Scene/GameHost.unity
     guid: 7c255ad3bd2c0d04b996b9943c5a6a20
+  - enabled: 1
+    path: Assets/04_SaboRocket/Scene/GameClient.unity
+    guid: 640e564ad7edc9440be344acd9a4c1f2
   - enabled: 0
     path: 
     guid: 00000000000000000000000000000000

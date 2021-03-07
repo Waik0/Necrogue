@@ -4,6 +4,7 @@ using UnityEngine;
 public interface IHandDataSender
 {
     void SendHandData(HandData handData, ITortecUseCaseBaseWithWebSocket peer);
+    void SendHandDataAll(Dictionary<string, List<int>> hands, ITortecUseCaseBaseWithWebSocket peer);
 }
 public class HandDataSender : IHandDataSender
 {

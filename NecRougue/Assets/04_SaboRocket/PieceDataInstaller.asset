@@ -17,3 +17,18 @@ MonoBehaviour:
     - Id: 0
       PhysicsPrefab: {fileID: 491819883980349978, guid: b842e9729c4e58741b660cfa5ad67637, type: 3}
       ViewPrefab: {fileID: 1374814279889654653, guid: def539f0e3c18384a947d817bbf6ff0d, type: 3}
+    - Id: 1
+      PhysicsPrefab: {fileID: 491819883980349978, guid: 55553f57de24360458c3d9efd9631a63, type: 3}
+      ViewPrefab: {fileID: 1374814279889654653, guid: b9a3beed092360b48b492d8ff0515cb9, type: 3}
+    - Id: 2
+      PhysicsPrefab: {fileID: 491819883980349978, guid: 629154a6ecb3bbe4ebfb968737b89729, type: 3}
+      ViewPrefab: {fileID: 1374814279889654653, guid: f479a478605097046895f518fbe3420c, type: 3}
+    - Id: 3
+      PhysicsPrefab: {fileID: 491819883980349978, guid: d0e70e024d3e53942b36ce617e5d2377, type: 3}
+      ViewPrefab: {fileID: 1374814279889654653, guid: 19b347fd3d0bb57459fa90d57a712b09, type: 3}
+    - Id: 4
+      PhysicsPrefab: {fileID: 491819883980349978, guid: e76300ccb23401347a2195510b4aacb9, type: 3}
+      ViewPrefab: {fileID: 1374814279889654653, guid: 8b972ee572ddeb34888b57b5635d6ed6, type: 3}
+    - Id: 5
+      PhysicsPrefab: {fileID: 491819883980349978, guid: ce8e01ea52d31e84bba62c185f515e78, type: 3}
+      ViewPrefab: {fileID: 1374814279889654653, guid: 2922977158e2b5b4baa404cf0ba6bebd, type: 3}

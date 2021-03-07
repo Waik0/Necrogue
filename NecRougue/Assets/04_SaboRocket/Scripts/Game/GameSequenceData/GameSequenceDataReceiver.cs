@@ -15,14 +15,14 @@ public interface IGameSequenceDataReceiver
     void EndSubscribe();
     Action<string> OnGetReady { set; }//Readyを送ったプレイヤー
     Action<int,string> OnGetNextTurn { set; }//ターン数、ターンプレイヤー
-    Action OnGetGameOver { set; }
+    Action<ResultData> OnGetGameOver { set; }
 }
 public class GameSequenceDataReceiver : IGameSequenceDataReceiver
 {
     private CompositeDisposable _compositeDisposable;
     public Action<string> OnGetReady { get; set; }//Readyを送ったプレイヤー
     public Action<int,string> OnGetNextTurn { get; set; }//ターン数、ターンプレイヤー
-    public Action OnGetGameOver { get; set; }
+    public Action<ResultData> OnGetGameOver { get; set; }
     public void StartSubscribe(ITortecUseCaseBaseWithWebSocket peer)
     {
         Debug.Log("Subscribe");
@@ -46,6 +46,7 @@ public class GameSequenceDataReceiver : IGameSequenceDataReceiver
                 OnGetNextTurn?.Invoke(gameSequenceData.currentTurn,gameSequenceData.currentPlayer);
                 break;
             case GameSequenceData.Command.GameOver:
+                OnGetGameOver?.Invoke(gameSequenceData.ResultData);
                 break;
         }
     }

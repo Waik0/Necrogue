@@ -54,6 +54,8 @@
                 <e p="CursorMessageSender.cs" t="Include" />
               </e>
               <e p="Deck" t="Include">
+                <e p="DeckDataReceiver.cs" t="Include" />
+                <e p="DeckDataSender.cs" t="Include" />
                 <e p="DeckUseCase.cs" t="Include" />
                 <e p="HandDataReceiver.cs" t="Include" />
                 <e p="HandDataSender.cs" t="Include" />
@@ -82,9 +84,23 @@
               <e p="PlayerDataUseCase.cs" t="Include" />
               <e p="PlayerTurnUseCase.cs" t="Include" />
               <e p="ReadyStateChecker.cs" t="Include" />
+              <e p="Result" t="Include">
+                <e p="ResultUseCase.cs" t="Include" />
+              </e>
+              <e p="Roll" t="Include">
+                <e p="RollDataReceiver.cs" t="Include" />
+                <e p="RollDataSender.cs" t="Include" />
+                <e p="RollUseCase.cs" t="Include" />
+              </e>
               <e p="TimelineData" t="Include">
                 <e p="TimelineDataReceiver.cs" t="Include" />
                 <e p="TimelineDataSender.cs" t="Include" />
+              </e>
+              <e p="View" t="Include">
+                <e p="DeckView.cs" t="Include" />
+                <e p="HandView.cs" t="Include" />
+                <e p="ResultView.cs" t="Include" />
+                <e p="RollView.cs" t="Include" />
               </e>
             </e>
             <e p="HostRootSequence.cs" t="Include" />
@@ -126,8 +142,16 @@
         <e p="05_MLAPISample" t="Include">
           <e p="MLAPISample.cs" t="Include" />
         </e>
-        <e p="06_SteamSample" t="Include">
-          <e p="SteamSample.cs" t="Include" />
+        <e p="06_SaboRocketSteam" t="Include">
+          <e p="SteamUtility" t="Include">
+            <e p="SteamCore.cs" t="Include" />
+            <e p="SteamNetwork" t="Include">
+              <e p="SteamMatchingManager.cs" t="Include" />
+              <e p="SteamNetworkingTest.cs" t="Include" />
+              <e p="SteamNetworkManager.cs" t="Include" />
+            </e>
+            <e p="SteamSample.cs" t="Include" />
+          </e>
         </e>
         <e p="Editor" t="Include">
           <e p="MLAPI" t="Include">

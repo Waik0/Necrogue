@@ -18,7 +18,7 @@ public class CursorDataUseCase
     {
         foreach (var s in CursorDatas.Keys.ToList())
         {
-            Object.Destroy(CursorDatas[s]);
+            Object.Destroy(CursorDatas[s].gameObject);
         }
         CursorDatas.Clear();
     }

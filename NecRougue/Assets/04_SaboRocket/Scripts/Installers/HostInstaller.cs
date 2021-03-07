@@ -34,6 +34,8 @@ public class HostInstaller : MonoInstaller
         Container.BindInterfacesAndSelfTo<TimelineDataSender>().AsSingle().NonLazy();
         Container.BindInterfacesAndSelfTo<InputSender>().AsSingle().NonLazy();
         Container.BindInterfacesAndSelfTo<HandDataSender>().AsSingle().NonLazy();
+        Container.BindInterfacesAndSelfTo<DeckDataSender>().AsSingle().NonLazy();
+        Container.BindInterfacesAndSelfTo<RollDataSender>().AsSingle().NonLazy();
     }
 
     void Receiver()
@@ -44,6 +46,8 @@ public class HostInstaller : MonoInstaller
         Container.BindInterfacesAndSelfTo<TimelineDataReceiver>().AsSingle().NonLazy();
         Container.BindInterfacesAndSelfTo<InputReceiver>().AsSingle().NonLazy();
         Container.BindInterfacesAndSelfTo<HandDataReceiver>().AsSingle().NonLazy();
+        Container.BindInterfacesAndSelfTo<DeckDataReceiver>().AsSingle().NonLazy();
+        Container.BindInterfacesAndSelfTo<RollDataReceiver>().AsSingle().NonLazy();
     }
 
     void Registry()
@@ -62,6 +66,8 @@ public class HostInstaller : MonoInstaller
         Container.BindInterfacesAndSelfTo<Ping>().FromNewComponentOnNewGameObject().AsSingle().NonLazy();
         Container.BindInterfacesAndSelfTo<HandUseCase>().AsSingle().NonLazy();
         Container.BindInterfacesAndSelfTo<DeckUseCase>().AsSingle().NonLazy();
+        Container.BindInterfacesAndSelfTo<RollUseCase>().AsSingle().NonLazy();
+        Container.BindInterfacesAndSelfTo<ResultUseCase>().FromNewComponentOnNewGameObject().AsSingle();
     }
     
 }

@@ -33,6 +33,8 @@ public class InGameClientSequence : IDisposable
     private IInputReceiver _inputReceiver;
     private ITimelineDataReceiver _timelineDataReceiver;
     private HandDataReceiver _handDataReceiver;
+    private DeckDataReceiver _deckDataReceiver;
+    private RollDataReceiver _rollDataReceiver;
     //other
     private ITortecClientUseCaseWithWebSocket _clientUseCase;
     private PlayerDataUseCase _playerDataUseCase;
@@ -41,7 +43,10 @@ public class InGameClientSequence : IDisposable
     private PieceViewerUseCase _pieceViewerUseCase;
     private DeckUseCase _deckUseCase;
     private HandUseCase _handUseCase;
-    
+    private RollUseCase _rollUseCase;
+    private ResultUseCase _resultUseCase;
+
+    private PiecePreview _preview;
     //event
     private Subject<bool> _onActiveSequence = new Subject<bool>();
     private Subject<State> _onChangeState = new Subject<State>();
@@ -50,7 +55,6 @@ public class InGameClientSequence : IDisposable
     public IObservable<bool> OnActiveSequence => _onActiveSequence;
     public IObservable<State> OnChangeState => _onChangeState;
     public State CurrentState => _statemachine.Current;
-    public string TurnPlayer { get; set; }
     public void ResetSequence()
     {
         _onActiveSequence?.OnNext(true);
@@ -81,11 +85,19 @@ public class InGameClientSequence : IDisposable
         IGameSequenceDataSender gameSequenceDataSender,
         ICursorMessageSender cursorMessageSender,
         InputSender inputSender,
+        HandDataReceiver handDataReceiver,
+        DeckDataReceiver deckDataReceiver,
+        RollDataReceiver rollDataReceiver,
         //other
         PlayerDataUseCase playerDataUseCase,
         PlayerTurnUseCase playerTurnUseCase,
         CursorDataUseCase cursorDataUseCase,
-        PieceViewerUseCase pieceViewerUseCase
+        PieceViewerUseCase pieceViewerUseCase,
+        HandUseCase handUseCase,
+        DeckUseCase deckUseCase,
+        RollUseCase rollUseCase,
+        ResultUseCase resultUseCase,
+        PiecePreview preview
     )
     {
         _statemachine = new Statemachine<State>();
@@ -102,9 +114,16 @@ public class InGameClientSequence : IDisposable
         _timelineDataReceiver = timelineDataReceiver;
         _pieceViewerUseCase = pieceViewerUseCase;
         _gameSequenceDataSender = gameSequenceDataSender;
+        _deckDataReceiver = deckDataReceiver;
+        _handDataReceiver = handDataReceiver;
+        _handUseCase = handUseCase;
+        _deckUseCase = deckUseCase;
+        _rollDataReceiver = rollDataReceiver;
+        _rollUseCase = rollUseCase;
+        _resultUseCase = resultUseCase;
+        _preview = preview;
         ReceiverInit();
     }
-
     void ReceiverInit()
     {
         _gameSequenceDataReceiver.StartSubscribe(_clientUseCase);
@@ -113,6 +132,11 @@ public class InGameClientSequence : IDisposable
             _playerTurnUseCase.CurrentPlayer = p;
             _playerTurnUseCase.CurrentTurn = t;
             NextState(State.WaitInput);
+        };
+        _gameSequenceDataReceiver.OnGetGameOver = result =>
+        {
+            NextState(State.GameSet);
+            _resultUseCase.SetResult(result);
         };
         _cursorMessageReceiver.StartSubscribe(_clientUseCase);
         _cursorMessageReceiver.OnGetCursorData = _cursorDataUseCase.SetCursorPos;
@@ -133,6 +157,16 @@ public class InGameClientSequence : IDisposable
         {
             _handUseCase.SetHand(data.playerId, data.hand);
         };
+        _deckDataReceiver?.StartSubscribe(_clientUseCase);
+        _deckDataReceiver.OnGetDeckData = data =>
+        {
+            _deckUseCase.SetDeck(data.deck, data.index);
+        };
+        _rollDataReceiver.StartSubscribe(_clientUseCase);
+        _rollDataReceiver.OnGetRollData = data =>
+        {
+            _rollUseCase.SetRoll(data.playerId,data.roll);
+        };
     }
 
     //プレイヤーの確定とチャンネルオープン
@@ -141,7 +175,6 @@ public class InGameClientSequence : IDisposable
         _cursorDataUseCase.Init();
         _playerTurnUseCase.Init();
         _pieceViewerUseCase.Init();
-        _gameSequenceDataSender.SendReadyData(_clientUseCase);
         Debug.Log("Complete");
         NextState(State.GameStart);
         yield return null;
@@ -155,6 +188,7 @@ public class InGameClientSequence : IDisposable
     }
     IEnumerator WaitReady()
     {
+        _gameSequenceDataSender.SendReadyData(_clientUseCase);
         yield return null;
     }
 
@@ -163,16 +197,22 @@ public class InGameClientSequence : IDisposable
         Debug.Log("WaitInput"); 
         int angle = 0;
         Debug.Log($"IAM :{_clientUseCase.SelfId} NOW : { _playerTurnUseCase.CurrentPlayer }");
+        if (_playerTurnUseCase.CurrentPlayer != _clientUseCase.SelfId)
+        {
+            yield break;
+        }
+        _preview.SetActive(true);
+        _preview.SetPreview(_handUseCase.GetHand(_playerTurnUseCase.CurrentPlayer)[0]);
         while (true)
         {
-            if (_playerTurnUseCase.CurrentPlayer != _clientUseCase.SelfId)
-            {
-                break;
-            }
-            angle++;
+           
+            angle+=5;
             angle = angle % 360;
+            _preview.Rotate(angle);
+            _preview.SetPos(Camera.main.ScreenToWorldPoint(Input.mousePosition));
             if (_inputSender.TrySend(_handUseCase.GetHand(_playerTurnUseCase.CurrentPlayer)[0],angle, _clientUseCase))
             {
+                _preview.SetActive(false);
                 break;
             }
             yield return null;
@@ -182,7 +222,7 @@ public class InGameClientSequence : IDisposable
 
     IEnumerator CalcPhysics()
     {
-        _statemachine.Next(State.Fall);
+        NextState(State.Fall);
         yield return null;
     }
     IEnumerator Fall()
@@ -190,12 +230,13 @@ public class InGameClientSequence : IDisposable
         yield return _pieceViewerUseCase.PlayAwait(null);
         yield return null;
         _gameSequenceDataSender.SendReadyData(_clientUseCase);
-        _statemachine.Next(State.WaitReady);
+        NextState(State.WaitReady);
     }
     IEnumerator GameSet()
     {
         _cursorMessageSender.EndSendCoroutine();
         yield return null;
+        NextState(State.Init);
     } 
     public void Dispose()
     {

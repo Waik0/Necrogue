@@ -9,6 +9,7 @@ public interface IGameSequenceDataSender
 {
     void SendReadyData(ITortecUseCaseBaseWithWebSocket peer);
     void SendNextTurnData(ITortecUseCaseBaseWithWebSocket peer, int turn, string player);
+    void SendGameOverData(ResultData resultData,ITortecUseCaseBaseWithWebSocket peer);
 }
 public class GameSequenceDataSender : IGameSequenceDataSender
 {
@@ -27,5 +28,12 @@ public class GameSequenceDataSender : IGameSequenceDataSender
         data.currentPlayer = player;
         peer.BroadcastAll(data);
     }
-    
+
+    public void SendGameOverData(ResultData resultData,ITortecUseCaseBaseWithWebSocket peer)
+    {
+        var data = new GameSequenceData();
+        data.command = GameSequenceData.Command.GameOver;
+        data.ResultData = resultData;
+        peer.BroadcastAll(data);
+    }
 }

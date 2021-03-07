@@ -22,7 +22,7 @@ public class PieceViewerUseCase : MonoBehaviour
     {
         foreach (var i in _pieces.Keys.ToArray())
         {
-            Destroy(_pieces[i]);
+            Destroy(_pieces[i].gameObject);
         }
         _pieces.Clear();
     }
