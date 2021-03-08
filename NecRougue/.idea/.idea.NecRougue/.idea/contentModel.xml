@@ -25,20 +25,6 @@
             <e p="WebRTCTest.cs" t="Include" />
           </e>
         </e>
-        <e p="03_WebSocketSample" t="Include">
-          <e p="Scripts" t="Include">
-            <e p="ChatScreenSample.cs" t="Include" />
-            <e p="GameFlowSample.cs" t="Include" />
-            <e p="GameSampleInstaller.cs" t="Include" />
-            <e p="InGameSample.cs" t="Include" />
-            <e p="InGameScreenSample.cs" t="Include" />
-            <e p="MatchingSample.cs" t="Include" />
-            <e p="PieceSample.cs" t="Include" />
-            <e p="TitleScreenSample.cs" t="Include" />
-            <e p="WebSocketErrorHandleSample.cs" t="Include" />
-            <e p="WebSocketSample.cs" t="Include" />
-          </e>
-        </e>
         <e p="04_SaboRocket" t="Include">
           <e p="Scripts" t="Include">
             <e p="ChannelDebug.cs" t="Include" />
@@ -73,13 +59,8 @@
                 <e p="InputReceiver.cs" t="Include" />
                 <e p="InputSender.cs" t="Include" />
               </e>
-              <e p="PhysicsPiece.cs" t="Include" />
               <e p="PhysicsPieceRegistry.cs" t="Include" />
               <e p="PhysicsUseCase.cs" t="Include" />
-              <e p="Piece" t="Include">
-                <e p="PieceViewerUseCase.cs" t="Include" />
-              </e>
-              <e p="Piece.cs" t="Include" />
               <e p="PiecePreview.cs" t="Include" />
               <e p="PlayerDataUseCase.cs" t="Include" />
               <e p="PlayerTurnUseCase.cs" t="Include" />
@@ -139,10 +120,28 @@
             <e p="TitleRootSequence.cs" t="Include" />
           </e>
         </e>
-        <e p="05_MLAPISample" t="Include">
-          <e p="MLAPISample.cs" t="Include" />
-        </e>
         <e p="06_SaboRocketSteam" t="Include">
+          <e p="Scripts" t="Include">
+            <e p="GameClient" t="Include">
+              <e p="Piece.cs" t="Include" />
+              <e p="PieceViewerUseCase.cs" t="Include" />
+            </e>
+            <e p="GameHost" t="Include">
+              <e p="GameHostSequence.cs" t="Include" />
+              <e p="GameHostSequenceInstaller.cs" t="Include" />
+              <e p="Physics" t="Include">
+                <e p="PhysicsPiece.cs" t="Include" />
+                <e p="PiecePhysicsUseCase.cs" t="Include" />
+              </e>
+              <e p="States" t="Include">
+                <e p="Animation.cs" t="Include" />
+                <e p="CalcPhysics.cs" t="Include" />
+                <e p="Init.cs" t="Include" />
+                <e p="WaitInput.cs" t="Include" />
+                <e p="WaitReady.cs" t="Include" />
+              </e>
+            </e>
+          </e>
           <e p="SteamUtility" t="Include">
             <e p="SteamCore.cs" t="Include" />
             <e p="SteamNetwork" t="Include">
@@ -154,23 +153,9 @@
           </e>
         </e>
         <e p="Editor" t="Include">
-          <e p="MLAPI" t="Include">
-            <e p="MLAPIProfiler.cs" t="Include" />
-            <e p="NetworkedAnimatorEditor.cs" t="Include" />
-            <e p="NetworkedBehaviourEditor.cs" t="Include" />
-            <e p="NetworkedObjectEditor.cs" t="Include" />
-            <e p="NetworkingManagerEditor.cs" t="Include" />
-            <e p="PostProcessScene.cs" t="Include" />
-            <e p="TrackedObjectEditor.cs" t="Include" />
-          </e>
           <e p="Steamworks.NET" t="Include">
             <e p="RedistCopy.cs" t="Include" />
             <e p="RedistInstall.cs" t="Include" />
-          </e>
-        </e>
-        <e p="MLAPI" t="Include">
-          <e p="Lib" t="Include">
-            <e p="MLAPI.xml" t="Include" />
           </e>
         </e>
         <e p="Plugins" t="Include">
@@ -1321,6 +1306,9 @@
             <e p="StateMachine.cs" t="Include" />
             <e p="StateMachineInfo.cs" t="Include" />
             <e p="StateMachineSample.cs" t="Include" />
+          </e>
+          <e p="StateMachineSystem2.0" t="Include">
+            <e p="StateMachine.cs" t="Include" />
           </e>
           <e p="ThirdPirty.asmdef" t="Include" />
           <e p="Toast_DebugLog" t="Include">
