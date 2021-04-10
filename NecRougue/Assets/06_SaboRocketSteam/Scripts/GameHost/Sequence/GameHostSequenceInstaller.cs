@@ -10,6 +10,7 @@ public class GameHostSequenceInstaller : MonoInstaller
 {
     public override void InstallBindings()
     {
+        Debug.Log("Bind : GameHostSequenceInstaller");
         Container.Bind<GameHostSequence>().FromNewComponentOnNewGameObject().AsSingle().NonLazy();
         Container.Bind<Init>().AsSingle();
         Container.Bind<WaitReady>().AsSingle();
@@ -17,5 +18,6 @@ public class GameHostSequenceInstaller : MonoInstaller
         Container.Bind<CalcPhysics>().AsSingle();
 
         Container.Bind<PiecePhysicsUseCase>().AsSingle();
+        Container.Bind<ReadyStateCheckerInteractor>().AsSingle();
     }
 }

@@ -27,14 +27,9 @@
         </e>
         <e p="04_SaboRocket" t="Include">
           <e p="Scripts" t="Include">
-            <e p="ChannelDebug.cs" t="Include" />
             <e p="ClientRootSequence.cs" t="Include" />
             <e p="CreateRoomView.cs" t="Include" />
             <e p="Game" t="Include">
-              <e p="Cursor" t="Include">
-                <e p="Cursor.cs" t="Include" />
-                <e p="CursorDataUseCase.cs" t="Include" />
-              </e>
               <e p="CursorMessage" t="Include">
                 <e p="CursorMessageReceiver.cs" t="Include" />
                 <e p="CursorMessageSender.cs" t="Include" />
@@ -46,7 +41,6 @@
                 <e p="HandDataReceiver.cs" t="Include" />
                 <e p="HandDataSender.cs" t="Include" />
               </e>
-              <e p="GameDataModel.cs" t="Include" />
               <e p="GameSequenceData" t="Include">
                 <e p="GameSequenceDataReceiver.cs" t="Include" />
                 <e p="GameSequenceDataReceiverClient.cs" t="Include" />
@@ -54,7 +48,6 @@
               </e>
               <e p="InGameClientSequence.cs" t="Include" />
               <e p="InGameHostSequence.cs" t="Include" />
-              <e p="InGameUseCase.cs" t="Include" />
               <e p="InputData" t="Include">
                 <e p="InputReceiver.cs" t="Include" />
                 <e p="InputSender.cs" t="Include" />
@@ -122,25 +115,55 @@
         </e>
         <e p="06_SaboRocketSteam" t="Include">
           <e p="Scripts" t="Include">
+            <e p="BridgeProperty.cs" t="Include" />
             <e p="GameClient" t="Include">
-              <e p="Piece.cs" t="Include" />
-              <e p="PieceViewerUseCase.cs" t="Include" />
+              <e p="Cursor" t="Include">
+                <e p="Cursor.cs" t="Include" />
+                <e p="CursorDataReceiver.cs" t="Include" />
+                <e p="CursorDataSender.cs" t="Include" />
+                <e p="CursorSystemInstaller.cs" t="Include" />
+                <e p="CursorViewPresenter.cs" t="Include" />
+              </e>
+              <e p="PieceView" t="Include">
+                <e p="Piece.cs" t="Include" />
+                <e p="PieceViewerUseCase.cs" t="Include" />
+              </e>
+              <e p="Sequence" t="Include">
+                <e p="GameClientSequence.cs" t="Include" />
+                <e p="GameClientSequenceInstaller.cs" t="Include" />
+                <e p="States" t="Include">
+                  <e p="Init.cs" t="Include" />
+                  <e p="PieceAnimation.cs" t="Include" />
+                  <e p="Reload.cs" t="Include" />
+                  <e p="WaitInputClient.cs" t="Include" />
+                  <e p="WaitReadyAll.cs" t="Include" />
+                </e>
+              </e>
             </e>
+            <e p="GameDataModel.cs" t="Include" />
             <e p="GameHost" t="Include">
-              <e p="GameHostSequence.cs" t="Include" />
-              <e p="GameHostSequenceInstaller.cs" t="Include" />
               <e p="Physics" t="Include">
                 <e p="PhysicsPiece.cs" t="Include" />
                 <e p="PiecePhysicsUseCase.cs" t="Include" />
               </e>
-              <e p="States" t="Include">
-                <e p="Animation.cs" t="Include" />
-                <e p="CalcPhysics.cs" t="Include" />
-                <e p="Init.cs" t="Include" />
-                <e p="WaitInput.cs" t="Include" />
-                <e p="WaitReady.cs" t="Include" />
+              <e p="PlayerData" t="Include">
+                <e p="PlayerDataInteractor.cs" t="Include" />
+              </e>
+              <e p="ReadyStateCheckerInteractor.cs" t="Include" />
+              <e p="Sequence" t="Include">
+                <e p="GameHostSequence.cs" t="Include" />
+                <e p="GameHostSequenceInstaller.cs" t="Include" />
+                <e p="States" t="Include">
+                  <e p="Animation.cs" t="Include" />
+                  <e p="CalcPhysics.cs" t="Include" />
+                  <e p="Init.cs" t="Include" />
+                  <e p="WaitInput.cs" t="Include" />
+                  <e p="WaitReady.cs" t="Include" />
+                </e>
               </e>
             </e>
+            <e p="ProjectInstaller.cs" t="Include" />
+            <e p="SceneProgress.cs" t="Include" />
           </e>
           <e p="SteamUtility" t="Include">
             <e p="SteamCore.cs" t="Include" />

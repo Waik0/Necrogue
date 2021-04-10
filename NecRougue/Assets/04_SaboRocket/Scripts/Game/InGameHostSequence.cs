@@ -33,7 +33,7 @@ public class InGameHostSequence : IDisposable
     private HandDataReceiver _handDataReceiver;
     private RollDataReceiver _rollDataReceiver;
     //sender
-    private ICursorMessageSender _cursorMessageSender;
+    //private ICursorMessageSender _cursorMessageSender;
     private IGameSequenceDataSender _gameSequenceDataSender;
     private InputSender _inputSender;
     private TimelineDataSender _timelineDataSender;
@@ -44,7 +44,7 @@ public class InGameHostSequence : IDisposable
     private ITortecHostUseCaseWithWebSocket _hostUseCase;
     private PlayerDataUseCase _playerDataUseCase;
     private PlayerTurnUseCase _playerTurnUseCase;
-    private CursorDataUseCase _cursorDataUseCase;
+    private CursorViewPresenter _cursorViewPresenter;
     private PhysicsUseCase _physicsUseCase;
     private PhysicsPieceRegistry _pieceRegistry;
     private ReadyStateChecker _readyStateChecker;
@@ -92,7 +92,7 @@ public class InGameHostSequence : IDisposable
         HandDataReceiver handDataReceiver,
         RollDataReceiver rollDataReceiver,
         //sender
-        ICursorMessageSender cursorMessageSender,
+        //ICursorMessageSender cursorMessageSender,
         IGameSequenceDataSender gameSequenceDataSender,
         InputSender inputSender,
         TimelineDataSender timelineDataSender,
@@ -102,7 +102,7 @@ public class InGameHostSequence : IDisposable
         //other
         PlayerDataUseCase playerDataUseCase,
         PlayerTurnUseCase playerTurnUseCase,
-        CursorDataUseCase cursorDataUseCase,
+        CursorViewPresenter cursorViewPresenter,
         PhysicsUseCase physicsUseCase,
         ReadyStateChecker readyStateChecker,
         PhysicsPieceRegistry physicsPieceRegistry,
@@ -123,9 +123,9 @@ public class InGameHostSequence : IDisposable
         _cursorMessageReceiver = cursorMessageReceiver;
         _playerTurnUseCase = playerTurnUseCase;
         _physicsUseCase = physicsUseCase;
-        _cursorMessageSender = cursorMessageSender;
+        //_cursorMessageSender = cursorMessageSender;
         _gameSequenceDataSender = gameSequenceDataSender;
-        _cursorDataUseCase = cursorDataUseCase;
+        _cursorViewPresenter = cursorViewPresenter;
         _inputSender = inputSender;
         _inputReceiver = inputReceiver;
         _pieceRegistry = physicsPieceRegistry;
@@ -155,7 +155,7 @@ public class InGameHostSequence : IDisposable
             NextState(State.WaitInput);
         };
         _cursorMessageReceiver.StartSubscribe(_hostUseCase);
-        _cursorMessageReceiver.OnGetCursorData = _cursorDataUseCase.SetCursorPos;
+       // _cursorMessageReceiver.OnGetCursorData = _cursorViewPresenter.SetCursorPos;
         _inputReceiver.StartSubscribe(_hostUseCase);
         _inputReceiver.OnGetInputData = (id,data) =>
         {
@@ -182,7 +182,7 @@ public class InGameHostSequence : IDisposable
         Debug.Log("StaetInitialize");
         //プレイヤーの確定
         _playerDataUseCase.SetPlayerList(_hostUseCase.ConnectionIds());
-        _cursorDataUseCase.Init();
+        //_cursorViewPresenter.Init();
         _playerTurnUseCase.Init();
         _pieceRegistry.Init();
         _pieceViewerUseCase.Init();
@@ -205,7 +205,7 @@ public class InGameHostSequence : IDisposable
         _handUseCase.FirstDraw(_playerDataUseCase.Players);
         _deckDataSender.SendDeckData(new DeckData(){deck = _deckUseCase.Deck,index = _deckUseCase.Index},_hostUseCase);
         _handDataSender.SendHandDataAll(_handUseCase.Hands,_hostUseCase);
-        _cursorMessageSender.StartSendCoroutine(_hostUseCase);
+        //_cursorMessageSender.StartSendCoroutine(_hostUseCase);
         NextState(State.WaitReady);
         yield return null;
     }
@@ -293,7 +293,7 @@ public class InGameHostSequence : IDisposable
     }
     IEnumerator GameSet()
     {
-        _cursorMessageSender.EndSendCoroutine();
+        //_cursorMessageSender.EndSendCoroutine();
         _readyStateChecker.AllFalse();
         _gameSequenceDataSender.SendGameOverData(_resultUseCase.CalcResult(),_hostUseCase);
         yield return null;

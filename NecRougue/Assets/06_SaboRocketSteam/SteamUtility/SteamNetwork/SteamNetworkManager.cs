@@ -75,6 +75,7 @@ public class SteamNetworkManager : MonoBehaviour
         {
             _subjects[packet.command].OnNext(new SubjectData() {fromId = from.m_SteamID, data = packet.payload});
         }
+        
     }
 
     SteamNetworkPacket ByteToCallbackData(byte[] bytes)
@@ -97,6 +98,18 @@ public class SteamNetworkManager : MonoBehaviour
         });
         byte[] bytes = System.Text.Encoding.UTF8.GetBytes(p);
         SteamNetworking.SendP2PPacket(steamId, bytes, (uint)bytes.Length, EP2PSend.k_EP2PSendReliable);
+    }
+
+    public static void SendTo<TData>(ulong steamId, TData data)
+    {
+        SendTo(new CSteamID(steamId),data);
+    }
+    public static void BroadcastTo<TData>(List<ulong> steamIds,TData data)
+    {
+        foreach (var steamId in steamIds)
+        {
+            SendTo(steamId, data);
+        }
     }
     //メッセージ受け取り時コールバック設定
     public static void SubscribeMessage<T>(Action<ulong,T> res,GameObject owner) where T : class
@@ -130,6 +143,11 @@ public class SteamNetworkManager : MonoBehaviour
         }
         var subject = subjects[TypeToKey<T>()];
         subject.Subscribe(d => res?.Invoke(d.fromId, JsonUtility.FromJson<T>(d.data))).AddTo(_instance).AddTo(owner);
+    }
+
+    public static ulong GetSelfId()
+    {
+        return SteamUser.GetSteamID().m_SteamID;
     }
 }
 

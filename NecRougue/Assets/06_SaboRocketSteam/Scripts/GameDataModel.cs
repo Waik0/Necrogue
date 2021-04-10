@@ -47,22 +47,22 @@ public class InputData
 public class CursorData
 {
     public bool down;
-    public string id;
+    public ulong id;
     public Vector2 worldPos;//端末依存回避のためworld
 }
-//ゲーム開始通知
+//マッチング→ゲーム通知
 [Serializable]
 public class GameStartData
 {
-    public List<string> players;
+    public List<ulong> players;
 }
 [Serializable]
 public class GameSequenceData
 {
     public enum Command
     {
-        //Start,//ゲーム開始時にホストが送る
-        Ready,//クライアントがゲーム開始を受け取ったら送る
+        Start,//ゲーム開始時にホストが送る
+        Ready,//ターンのはじめの足並みを合わせるための通信
         NextTurn,//
         GameOver,
     }

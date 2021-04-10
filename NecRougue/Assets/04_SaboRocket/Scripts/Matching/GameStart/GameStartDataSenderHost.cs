@@ -20,7 +20,7 @@ public class GameStartDataSender : IGameStartDataSender
         {
             peer.BroadcastAll(new GameStartData()
             {
-                players = peer.ConnectionIds(),
+                //players = peer.ConnectionIds(),
             });
         }
     }

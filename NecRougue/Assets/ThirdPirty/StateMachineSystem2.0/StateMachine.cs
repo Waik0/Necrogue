@@ -29,19 +29,56 @@ public abstract class State : IState
 }
 public class StateMachine
 {
-    private class CoroutineHolder : MonoBehaviour{}
+    private class StateMachineRoot : MonoBehaviour
+    {
+        #if UNITY_EDITOR
+        void OnGUI()
+        {
+            GUILayout.BeginHorizontal();
+            foreach (var componentsInChild in GetComponentsInChildren<CoroutineHolder>())
+            {
+                GUILayout.BeginVertical();
+                GUILayout.Label("StateMachine","box");
+                foreach (var stateMachineState in componentsInChild.StateMachine._states)
+                {
+                    if (componentsInChild.StateMachine._currentState == stateMachineState.Key)
+                    {
+                        GUI.enabled = false;
+                    }
+                    if (GUILayout.Button(stateMachineState.Key.Name))
+                    {
+                        componentsInChild.StateMachine.Next(stateMachineState.Key);
+                    }
+
+                    GUI.enabled = true;
+                }
+                GUILayout.EndVertical();
+            }
+            GUILayout.EndHorizontal();
+        }
+        #endif
+    }
+
+    private class CoroutineHolder : MonoBehaviour
+    {
+        public StateMachine StateMachine { get; set; }
+    }
     private static Transform _root;
     public static Transform Root
     {
         get
         {
             if (_root == null)
+            {
                 _root = new GameObject("StateMachines").transform;
+                _root.gameObject.AddComponent<StateMachineRoot>();
+            }
+
             return _root;
         }
     }
-    private MonoBehaviour _parent;
-    private MonoBehaviour Parent
+    private CoroutineHolder _parent;
+    private CoroutineHolder Parent
     {
         get
         {
@@ -50,6 +87,7 @@ public class StateMachine
                 var go = new GameObject("StateMachine",new []{typeof(CoroutineHolder)});
                 go.transform.parent = Root;
                 _parent = go.GetComponent<CoroutineHolder>();
+                _parent.StateMachine = this;
             }
             return _parent;
         }

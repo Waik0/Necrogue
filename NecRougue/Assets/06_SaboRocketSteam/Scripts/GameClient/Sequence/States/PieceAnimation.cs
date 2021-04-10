@@ -1,14 +1,15 @@
 ﻿using System.Collections;
-using System.Runtime.InteropServices;
+using System.Collections.Generic;
 using SaboRocketSteam.Scripts.GameHost.Physics;
+using SaboRocketSteam.Scripts.GameHost.States;
 using UnityEngine;
 using Zenject;
 
-namespace SaboRocketSteam.Scripts.GameHost.States
+namespace SaboRocketSteam.Scripts.GameClient.Sequence.States
 {
-    public class Init : State
+    public class PieceAnimation : State
     {
-        [Inject] private PiecePhysicsUseCase _physicsUseCase;
+
         public override void OnEnterState()
         { 
             Debug.Log("Enter");
@@ -17,9 +18,7 @@ namespace SaboRocketSteam.Scripts.GameHost.States
         public override IEnumerator Update()
         {
             Debug.Log("Initialize");
-            _physicsUseCase.Init();
-            Exit<WaitReady>();
-            yield break;
+            yield return null;
         }
 
         public override void OnExitState()

@@ -78,7 +78,7 @@ public class MatchingClientSequence : IDisposable
         _gameStartReceiver.StartSubscribe(_clientUseCase);
         _gameStartReceiver.OnGameStart = gameStartData =>
         {
-            _playerDataUseCase.SetPlayerList(gameStartData.players);
+            //_playerDataUseCase.SetPlayerList(gameStartData.players);
             Debug.Log("プレイヤー" + gameStartData.players.Count+ "人");
             _statemachine.Next(State.ToGame);
         };

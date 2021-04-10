@@ -24,7 +24,7 @@ public class InGameClientSequence : IDisposable
     }
     private Statemachine<State> _statemachine;
     //sender
-    private ICursorMessageSender _cursorMessageSender;
+    //private ICursorMessageSender _cursorMessageSender;
     private InputSender _inputSender;
     private IGameSequenceDataSender _gameSequenceDataSender;
     //receiver
@@ -39,7 +39,7 @@ public class InGameClientSequence : IDisposable
     private ITortecClientUseCaseWithWebSocket _clientUseCase;
     private PlayerDataUseCase _playerDataUseCase;
     private PlayerTurnUseCase _playerTurnUseCase;
-    private CursorDataUseCase _cursorDataUseCase;
+    private CursorViewPresenter _cursorViewPresenter;
     private PieceViewerUseCase _pieceViewerUseCase;
     private DeckUseCase _deckUseCase;
     private HandUseCase _handUseCase;
@@ -83,7 +83,7 @@ public class InGameClientSequence : IDisposable
         ITimelineDataReceiver timelineDataReceiver,
         //sender
         IGameSequenceDataSender gameSequenceDataSender,
-        ICursorMessageSender cursorMessageSender,
+        //ICursorMessageSender cursorMessageSender,
         InputSender inputSender,
         HandDataReceiver handDataReceiver,
         DeckDataReceiver deckDataReceiver,
@@ -91,7 +91,7 @@ public class InGameClientSequence : IDisposable
         //other
         PlayerDataUseCase playerDataUseCase,
         PlayerTurnUseCase playerTurnUseCase,
-        CursorDataUseCase cursorDataUseCase,
+        CursorViewPresenter cursorViewPresenter,
         PieceViewerUseCase pieceViewerUseCase,
         HandUseCase handUseCase,
         DeckUseCase deckUseCase,
@@ -107,8 +107,8 @@ public class InGameClientSequence : IDisposable
         _gameSequenceDataReceiver = gameSequenceDataReceiver;
         _cursorMessageReceiver = cursorMessageReceiver;
         _playerTurnUseCase = playerTurnUseCase;
-        _cursorMessageSender = cursorMessageSender;
-        _cursorDataUseCase = cursorDataUseCase;
+        //_cursorMessageSender = cursorMessageSender;
+        _cursorViewPresenter = cursorViewPresenter;
         _inputSender = inputSender;
         _inputReceiver = inputReceiver;
         _timelineDataReceiver = timelineDataReceiver;
@@ -139,7 +139,7 @@ public class InGameClientSequence : IDisposable
             _resultUseCase.SetResult(result);
         };
         _cursorMessageReceiver.StartSubscribe(_clientUseCase);
-        _cursorMessageReceiver.OnGetCursorData = _cursorDataUseCase.SetCursorPos;
+        //_cursorMessageReceiver.OnGetCursorData = _cursorViewPresenter.SetCursorPos;
         _inputReceiver.StartSubscribe(_clientUseCase);
         _inputReceiver.OnGetInputData = (id,data) =>
         {
@@ -172,7 +172,7 @@ public class InGameClientSequence : IDisposable
     //プレイヤーの確定とチャンネルオープン
     IEnumerator Init()
     {
-        _cursorDataUseCase.Init();
+        //_cursorViewPresenter.Init();
         _playerTurnUseCase.Init();
         _pieceViewerUseCase.Init();
         Debug.Log("Complete");
@@ -182,7 +182,7 @@ public class InGameClientSequence : IDisposable
     IEnumerator GameStart()
     {      
         Debug.Log("GameStart");
-        _cursorMessageSender.StartSendCoroutine(_clientUseCase);
+        //_cursorMessageSender.StartSendCoroutine(_clientUseCase);
         NextState(State.WaitReady);
         yield return null;
     }
@@ -234,7 +234,7 @@ public class InGameClientSequence : IDisposable
     }
     IEnumerator GameSet()
     {
-        _cursorMessageSender.EndSendCoroutine();
+        //_cursorMessageSender.EndSendCoroutine();
         yield return null;
         NextState(State.Init);
     } 

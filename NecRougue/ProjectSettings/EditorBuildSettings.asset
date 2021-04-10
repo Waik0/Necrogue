@@ -5,19 +5,16 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
-    path: Assets/04_SaboRocket/Scene/Title.unity
-    guid: 567011d530266194e8a7fd10e2aeb189
-  - enabled: 1
-    path: Assets/04_SaboRocket/Scene/GameHost.unity
-    guid: 7c255ad3bd2c0d04b996b9943c5a6a20
-  - enabled: 1
-    path: Assets/04_SaboRocket/Scene/GameClient.unity
-    guid: 640e564ad7edc9440be344acd9a4c1f2
   - enabled: 0
     path: 
     guid: 00000000000000000000000000000000
   - enabled: 0
     path: 
     guid: 00000000000000000000000000000000
+  - enabled: 1
+    path: Assets/06_SaboRocketSteam/Scene/SteamHost.unity
+    guid: a358f8bc2f0acc449b0b01114a30aa57
+  - enabled: 1
+    path: Assets/06_SaboRocketSteam/Scene/SteamClient.unity
+    guid: 7fe5ba1c5615aae4d9ec5c3833e5b164
   m_configObjects: {}

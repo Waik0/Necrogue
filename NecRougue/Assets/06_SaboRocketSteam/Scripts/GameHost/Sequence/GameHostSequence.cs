@@ -21,8 +21,4 @@ public class GameHostSequence : MonoBehaviour
         _stateMachine.Add(_calcPhysics);
         _stateMachine.Next<Init>();
     }
-    
-    
 }
-
-

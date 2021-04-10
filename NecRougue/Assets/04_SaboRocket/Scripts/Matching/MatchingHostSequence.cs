@@ -86,7 +86,7 @@ public class MatchingHostSequence : IDisposable
         _gameStartReceiver.StartSubscribe(_hostUseCase);
         _gameStartReceiver.OnGameStart = gameStartData =>
         {
-            _readyStateChecker.SetPlayers(gameStartData.players);
+            //_readyStateChecker.SetPlayers(gameStartData.players);
             _statemachine.Next(State.ToGame);
         };
         _gameSequenceDataReceiver.StartSubscribe(_hostUseCase);
